@@ -1,0 +1,139 @@
+import React, { useContext } from 'react';
+import Avatar from '@mui/material/Avatar';
+import './header.css';
+import { LoginContext } from '../ContextProvider/Context';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import logo from '../../assets/img/cover2.png';
+
+const AdminHeader = () => {
+  const { logindata, setLoginData } = useContext(LoginContext);
+
+  const history = useNavigate();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const logoutuser = async () => {
+    let token = localStorage.getItem('organiserdatatoken');
+
+    const res = await fetch('/organiserlogout', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+        Accept: 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (data.status == 201) {
+      console.log('organiser logout');
+      localStorage.removeItem('organiserdatatoken');
+      setLoginData(false);
+      history('/organiser');
+    } else {
+      console.log('error');
+    }
+  };
+
+  const goProfile = () => {
+    history('/organiser/profile');
+  };
+
+  const goError = () => {
+    toast.error('please Login first to access!', {
+      position: 'top-center',
+      autoClose: 1000,
+    });
+    history('/organiser/login');
+  };
+
+  return (
+    <>
+      <header>
+        <nav>
+          <div className='flex justify-between p-5 border shadow-md items-center'>
+            <NavLink to='/organiser'>
+              <div className='flex flex-col items-center'>
+                <img className='h-20' src={logo} />
+                <h1>Event Organisers</h1>
+              </div>
+            </NavLink>
+            <div className='avtar cursor-pointer'>
+              {logindata.ValidUserOne ? (
+                <Avatar
+                  style={{
+                    background: 'salmon',
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize',
+                  }}
+                  onClick={handleClick}
+                >
+                  {logindata.ValidUserOne.fname[0].toUpperCase()}
+                </Avatar>
+              ) : (
+                <Avatar style={{ background: 'blue' }} onClick={handleClick} />
+              )}
+            </div>
+
+            <Menu
+              id='basic-menu'
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              {logindata.ValidUserOne ? (
+                <>
+                  <MenuItem
+                    onClick={() => {
+                      goProfile();
+                      handleClose();
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      logoutuser();
+                      handleClose();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem
+                    onClick={() => {
+                      goError();
+                      handleClose();
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+                </>
+              )}
+            </Menu>
+          </div>
+        </nav>
+      </header>
+    </>
+  );
+};
+
+export default AdminHeader;
