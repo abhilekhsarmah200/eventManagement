@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
-const AdminHeader = () => {
+const AdminHeader = ({ loading }) => {
   const { logindata, setLoginData } = useContext(LoginContext);
 
   const history = useNavigate();
@@ -38,7 +38,7 @@ const AdminHeader = () => {
     console.log(data);
 
     if (data.status == 201) {
-      console.log('use logout');
+      console.log('admin logout');
       localStorage.removeItem('admindatatoken');
       setLoginData(false);
       history('/admin/dashboard');
@@ -68,20 +68,29 @@ const AdminHeader = () => {
               <h1 style={{ color: '#2d3748' }}>Admin Dashboard</h1>
             </NavLink>
             <div className='avtar cursor-pointer'>
-              {logindata.ValidUserOne ? (
-                <Avatar
-                  style={{
-                    background: 'salmon',
-                    fontWeight: 'bold',
-                    textTransform: 'capitalize',
-                  }}
-                  onClick={handleClick}
-                >
-                  {logindata.ValidUserOne.fname[0].toUpperCase()}
-                </Avatar>
-              ) : (
-                <Avatar style={{ background: 'blue' }} onClick={handleClick} />
-              )}
+              <>
+                {logindata.ValidUserOne ? (
+                  <Avatar
+                    style={{
+                      background: 'salmon',
+                      fontWeight: 'bold',
+                      textTransform: 'capitalize',
+                    }}
+                    onClick={handleClick}
+                  >
+                    {logindata.ValidUserOne.fname[0].toUpperCase()}
+                  </Avatar>
+                ) : (
+                  <>
+                    <>
+                      <Avatar
+                        style={{ background: 'blue' }}
+                        onClick={handleClick}
+                      />
+                    </>
+                  </>
+                )}
+              </>
             </div>
 
             <Menu

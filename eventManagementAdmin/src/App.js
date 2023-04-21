@@ -10,12 +10,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import AdminRegister from './components/Admin/Register';
 import AdminHeader from './components/Admin/Header';
 import AdminError from './components/Admin/Error';
+import ViewUsers from './components/Admin/ViewUsers';
 
 function App() {
   const [data, setData] = useState(false);
 
   // const { logindata, setLoginData } = useContext(LoginContext);
   const { loginAdmindata, setLoginAdminData } = useContext(LoginContext);
+  const [loading, setLoading] = useState(true);
 
   const history = useNavigate();
 
@@ -23,23 +25,28 @@ function App() {
 
   const DashboardAdminValid = async () => {
     let token = localStorage.getItem('admindatatoken');
-
-    const res2 = await fetch('/validadmin', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-    });
-    console.log({ data });
-
-    const data2 = await res2.json();
-
-    if (data2.status == 401 || !data) {
-      console.log('admin not valid');
-    } else {
-      console.log('admin verify');
-      setLoginAdminData(data);
+    let res2 = [];
+    try {
+      setLoading(true);
+      res2 = await fetch('/validadmin', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      });
+      console.log({ data });
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      const data2 = await res2.json();
+      if (data2.status == 401 || !data) {
+        console.log('admin not valid');
+      } else {
+        console.log('admin verify');
+        setLoginAdminData(data);
+      }
+      setLoading(false);
     }
   };
 
@@ -55,7 +62,7 @@ function App() {
     <>
       {data ? (
         <>
-          <AdminHeader />
+          <AdminHeader loading={loading} />
           <>
             <Routes>
               <Route
@@ -64,6 +71,10 @@ function App() {
               />
               <Route path='/admin/profile' element={<AdminProfile />} />
               <Route path='/admin/register' element={<AdminRegister />} />
+              <Route
+                path='/admin/view-users'
+                element={<ViewUsers datas={data} />}
+              />
               <Route path='/admin/login' element={<AdminLogin />} />
               <Route path='*' element={<AdminError />} />
             </Routes>

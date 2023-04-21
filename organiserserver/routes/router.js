@@ -240,7 +240,27 @@ router.post('/:id/:token', async (req, res) => {
     res.status(401).json({ status: 401, error });
   }
 });
+//Get all organisers
+router.get('/getallorganisers', async (req, res) => {
+  try {
+    const users = await userdb.find({});
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
 
+//Delete Organiser
+router.delete('/deleteorganiser/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await userdb.findByIdAndRemove({ _id: id });
+    res.status(200).send('User Deleted successfully');
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
 module.exports = router;
 
 // 2 way connection

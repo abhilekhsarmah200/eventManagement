@@ -56,16 +56,26 @@ const Dashboard = () => {
     }, 2000);
   }, []);
   console.log({ logindata });
+
+  const path = 'http://localhost:8010/public/images/';
   return (
     <>
       {data ? (
         <div className='flex flex-col justify-center items-center p-5 gap-4'>
           <div>
-            <img
-              src='./man.png'
-              className='h-40 rounded-full shadow-md'
-              alt=''
-            />
+            {logindata ? (
+              <img
+                src={`${path}${logindata.ValidUserOne.photo}`}
+                className='w-40 h-40 rounded-full shadow-md'
+                alt=''
+              />
+            ) : (
+              <img
+                src='./man.png'
+                className='h-40 rounded-full shadow-md'
+                alt=''
+              />
+            )}
           </div>
           <div>
             <TextField

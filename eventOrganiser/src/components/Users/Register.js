@@ -72,7 +72,11 @@ const Register = () => {
         position: 'top-center',
       });
     } else if (phone.length < 10) {
-      toast.error('please provide a valid number', {
+      toast.error('please provide a valid atleast 10 digit number', {
+        position: 'top-center',
+      });
+    } else if (phone.length > 10) {
+      toast.error('please provide a valid 10 digit number', {
         position: 'top-center',
       });
     } else if (address === '') {

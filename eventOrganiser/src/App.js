@@ -13,6 +13,7 @@ import { useEffect, useContext, useState } from 'react';
 import { LoginContext } from './components/ContextProvider/Context';
 import 'react-toastify/dist/ReactToastify.css';
 import './components/Users/mix.css';
+import SideBar from './components/SideBar.tsx';
 
 function App() {
   const [data, setData] = useState(false);
@@ -54,6 +55,7 @@ function App() {
       {data ? (
         <>
           <Header />
+          <SideBar />
 
           <Routes>
             <Route path='/organiser' exact element={<Home />} />

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import { ToastContainer, toast } from 'react-toastify';
 import { Avatar, Menu, MenuItem } from '@mui/material';
 import man from '../../assests/img/man.png';
+import axios from 'axios';
 
 const AdminProfile = () => {
   const { logindata, setLoginData } = useContext(LoginContext);

@@ -59,6 +59,7 @@ const AdminHeader = () => {
     });
     history('/login');
   };
+  const path = 'http://localhost:8010/public/images/';
 
   return (
     <>
@@ -70,17 +71,14 @@ const AdminHeader = () => {
               <h1>Event Partners</h1>
             </NavLink>
             <div className='avtar'>
-              {logindata.ValidUserOne ? (
-                <Avatar
-                  style={{
-                    background: 'salmon',
-                    fontWeight: 'bold',
-                    textTransform: 'capitalize',
-                  }}
-                  onClick={handleClick}
-                >
-                  {logindata.ValidUserOne.fname[0].toUpperCase()}
-                </Avatar>
+              {logindata ? (
+                <div className='cursor-pointer' onClick={handleClick}>
+                  <img
+                    src={`${path}${logindata.ValidUserOne.photo}`}
+                    className='w-14 h-14 rounded-full shadow-md'
+                    alt=''
+                  />
+                </div>
               ) : (
                 <Avatar style={{ background: 'blue' }} onClick={handleClick} />
               )}

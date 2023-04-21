@@ -5,6 +5,9 @@ var bcrypt = require('bcryptjs');
 const authenticate = require('../middleware/authenticate');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -18,55 +21,54 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Image Upload
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '_' + file.originalname);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = [
+    'image/jpeg',
+    'image/jpg',
+    'Image/png',
+    'Image/webp',
+  ];
+  if (allowedFileTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+let upload = multer({ storage, fileFilter });
+
 // for user registration
 
-router.post('/register', async (req, res) => {
-  const { fname, email, password, cpassword, phone, address, pinCode } =
-    req.body;
-
-  if (
-    !fname ||
-    !email ||
-    !password ||
-    !cpassword ||
-    !phone ||
-    !address ||
-    !pinCode
-  ) {
-    res.status(422).json({ error: 'fill all the details' });
+router.post('/register', upload.single('myFile'), async (req, res) => {
+  let photo = req.file ? req.file.filename : null;
+  let { fname, email, password, cpassword, phone, address, pinCode } = req.body;
+  let preuser = await userdb.findOne({ email: email });
+  if (preuser) {
+    res.status(422).json({ error: 'This Email is Already Exist' });
+  } else if (password !== cpassword) {
+    res.status(422).json({ error: 'Password and Confirm Password Not Match' });
   }
-
-  try {
-    const preuser = await userdb.findOne({ email: email });
-
-    if (preuser) {
-      res.status(422).json({ error: 'This Email is Already Exist' });
-    } else if (password !== cpassword) {
-      res
-        .status(422)
-        .json({ error: 'Password and Confirm Password Not Match' });
-    } else {
-      const finalUser = new userdb({
-        fname,
-        email,
-        password,
-        cpassword,
-        phone,
-        address,
-        pinCode,
-      });
-
-      // here password hasing
-
-      const storeData = await finalUser.save();
-
-      // console.log(storeData);
-      res.status(201).json({ status: 201, storeData });
-    }
-  } catch (error) {
-    res.status(422).json(error);
-    console.log('catch block error');
-  }
+  let data = new userdb({
+    fname,
+    email,
+    password,
+    cpassword,
+    phone,
+    address,
+    pinCode,
+    photo,
+  });
+  let response = await data.save();
+  res.status(200).json({ message: 'User Added SuccessFully' });
 });
 
 // user Login
@@ -238,6 +240,16 @@ router.post('/:id/:token', async (req, res) => {
     }
   } catch (error) {
     res.status(401).json({ status: 401, error });
+  }
+});
+
+//Access all users
+router.get('/getallusers', async (req, res) => {
+  try {
+    const users = await userdb.find({});
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
   }
 });
 

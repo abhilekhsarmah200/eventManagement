@@ -13,6 +13,7 @@ const port = 8010;
 //     res.status(201).json("server created")
 // });
 
+app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(cookiParser());
 app.use(cors());

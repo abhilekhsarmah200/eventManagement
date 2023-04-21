@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken');
 const keysecret = process.env.SECRET_KEY;
 
 const userSchema = new mongoose.Schema({
+  photo: {
+    type: String,
+  },
   fname: {
     type: String,
     required: true,
@@ -46,7 +49,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
   },
   address: {
-    type: Number,
+    type: String,
   },
   pinCode: {
     type: Number,

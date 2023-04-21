@@ -2,10 +2,15 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+// mongoose.Types.ObjectId.isValid('your id here');
 
 const keysecret = process.env.SECRET_KEY;
 
 const organisersSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+  },
   fname: {
     type: String,
     required: true,

@@ -46,7 +46,12 @@ export default function Admin() {
   return (
     <div>
       {data ? (
-        <div>Hellow Guys</div>
+        <>
+          <div>Hellow Guys</div>
+          <div>
+            <a href='/admin/view-users'>View Users</a>
+          </div>
+        </>
       ) : (
         <>
           <Box
