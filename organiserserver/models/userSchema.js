@@ -7,11 +7,19 @@ const jwt = require('jsonwebtoken');
 const keysecret = process.env.SECRET_KEY;
 
 const organisersSchema = new mongoose.Schema({
+  photo: {
+    type: String,
+  },
   userId: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
   },
   fname: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  vanueName: {
     type: String,
     required: true,
     trim: true,

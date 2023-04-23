@@ -59,7 +59,7 @@ const AdminLogin = () => {
     } else {
       // console.log("user login succesfully done");
 
-      const data = await fetch('http://localhost:8010/adminlogin', {
+      const data = await fetch('/adminlogin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

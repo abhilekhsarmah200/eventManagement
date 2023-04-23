@@ -1,39 +1,73 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import Stack from '@mui/material/Stack';
 
 const Register = () => {
   const [passShow, setPassShow] = useState(false);
   const [cpassShow, setCPassShow] = useState(false);
+  const [profileImage, setProfileImage] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
   const [inpval, setInpval] = useState({
     fname: '',
+    vanueName: '',
     email: '',
     password: '',
     cpassword: '',
     phone: '',
+    address: '',
+    pinCode: '',
+    photo: '',
   });
 
   const setVal = (e) => {
     // console.log(e.target.value);
-    const { name, value } = e.target;
 
-    setInpval(() => {
-      return {
-        ...inpval,
-        [name]: value,
-      };
+    setInpval({ ...inpval, [e.target.name]: e.target.value });
+  };
+
+  const setImage = (e) => {
+    const setProfile = e.target.files;
+    const selectedFilesArray = Array.from(setProfile);
+    const imageArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file);
     });
+    setInpval({ ...inpval, photo: e.target.files[0] });
+    setProfileImage(imageArray);
   };
 
   const re = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
 
   const addUserdata = async (e) => {
     e.preventDefault();
+    const url = 'http://localhost:8080/organiserregister';
+    const formdata = new FormData();
 
-    const { fname, email, password, cpassword, phone, address, pinCode } =
-      inpval;
+    formdata.append('myFile', inpval.photo, inpval.photo.name);
+    formdata.append('email', inpval.email);
+    formdata.append('fname', inpval.fname);
+    formdata.append('vanueName', inpval.vanueName);
+    formdata.append('password', inpval.password);
+    formdata.append('cpassword', inpval.cpassword);
+    formdata.append('phone', inpval.phone);
+    formdata.append('address', inpval.address);
+    formdata.append('pinCode', inpval.pinCode);
+    const {
+      fname,
+      vanueName,
+      email,
+      password,
+      cpassword,
+      phone,
+      address,
+      pinCode,
+      photo,
+    } = inpval;
 
     if (fname === '') {
       toast.warning('fname is required!', {
@@ -41,6 +75,10 @@ const Register = () => {
       });
     } else if (email === '') {
       toast.error('email is required!', {
+        position: 'top-center',
+      });
+    } else if (vanueName === '') {
+      toast.error('Vanue Name is required!', {
         position: 'top-center',
       });
     } else if (!email.includes('@')) {
@@ -72,11 +110,7 @@ const Register = () => {
         position: 'top-center',
       });
     } else if (phone.length < 10) {
-      toast.error('please provide a valid atleast 10 digit number', {
-        position: 'top-center',
-      });
-    } else if (phone.length > 10) {
-      toast.error('please provide a valid 10 digit number', {
+      toast.error('please provide a valid number', {
         position: 'top-center',
       });
     } else if (address === '') {
@@ -87,48 +121,26 @@ const Register = () => {
       toast.error('PIN Code required', {
         position: 'top-center',
       });
+    } else if (photo === 0) {
+      toast.error('Photo is required', {
+        position: 'top-center',
+      });
     } else {
       // console.log("user registration succesfully done");
 
-      const data = await fetch('/organiserregister', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fname,
-          email,
-          password,
-          cpassword,
-          phone,
-          address,
-          pinCode,
-        }),
-      });
-
-      const res = await data.json();
-      // console.log(res.status);
-
-      if (res.status === 201) {
-        toast.success('Registration Successfully done 😃!', {
-          position: 'top-center',
-        });
-        window.location = '/organiser/login';
-        setInpval({
-          ...inpval,
-          fname: '',
-          email: '',
-          password: '',
-          cpassword: '',
-          phone: '',
-          address: '',
-          pinCode: '',
-        });
-      } else {
-        toast.error('This Email is Already Exist', {
-          position: 'top-center',
-        });
-      }
+      try {
+        let res = await axios.post(url, formdata);
+        if (res.status === 422) {
+          toast.error('email is already taken', {
+            position: 'top-center',
+          });
+        } else {
+          toast.success('Registration Successfully done 😃!', {
+            position: 'top-center',
+          });
+          window.location = '/organiser';
+        }
+      } catch (error) {}
     }
   };
 
@@ -142,6 +154,44 @@ const Register = () => {
           </div>
 
           <form>
+            <div className='flex justify-center mb-4'>
+              {profileImage && (
+                <div>
+                  {profileImage?.map((img, index) => {
+                    return <img src={img} className='w-auto h-40 rounded-md' />;
+                  })}
+                </div>
+              )}
+            </div>
+            <div className='flex justify-center flex-col gap-4 items-center'>
+              {profileImage.length === 0 ? <div>Upload Main Photo</div> : null}
+
+              <Stack direction='row' alignItems='center' spacing={2}>
+                <Button variant='contained' component='label'>
+                  Upload
+                  <input
+                    onChange={setImage}
+                    hidden
+                    accept='image/*'
+                    multiple
+                    type='file'
+                  />
+                </Button>
+                <IconButton
+                  color='primary'
+                  aria-label='upload picture'
+                  component='label'
+                >
+                  <input
+                    onChange={setImage}
+                    hidden
+                    accept='image/*'
+                    type='file'
+                  />
+                  <PhotoCamera />
+                </IconButton>
+              </Stack>
+            </div>
             <div className='form_input'>
               <label htmlFor='fname'>Manager Name</label>
               <input
@@ -151,6 +201,17 @@ const Register = () => {
                 name='fname'
                 id='fname'
                 placeholder='Enter Your Name'
+              />
+            </div>
+            <div className='form_input'>
+              <label htmlFor='vanueName'>Vanue Name</label>
+              <input
+                type='text'
+                onChange={setVal}
+                value={inpval.vanueName}
+                name='vanueName'
+                id='vanueName'
+                placeholder='Enter Your Vanue Name'
               />
             </div>
             <div className='form_input'>
@@ -216,7 +277,6 @@ const Register = () => {
                 placeholder='Enter Your Mobile Number'
               />
             </div>
-
             <div className='form_input'>
               <label htmlFor='address'>Location Address</label>
               <input
@@ -245,8 +305,7 @@ const Register = () => {
               Sign Up
             </button>
             <p>
-              Already have an account?{' '}
-              <NavLink to='/organiser/login'>Log In</NavLink>
+              Already have an account? <NavLink to='/login'>Log In</NavLink>
             </p>
           </form>
           <ToastContainer />

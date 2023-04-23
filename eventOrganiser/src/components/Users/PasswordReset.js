@@ -40,7 +40,7 @@ const PasswordReset = ({ data }) => {
           'pasword reset link send Succsfully in Your Email, Please Check!!',
           {
             position: 'top-center',
-            autoClose: 1000,
+            autoClose: 3000,
           }
         );
         // setMessage(true);

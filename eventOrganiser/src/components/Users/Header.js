@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import logo from '../../assets/img/cover2.png';
+import SideBar from '../SideBar.tsx';
 
 const AdminHeader = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -65,12 +66,12 @@ const AdminHeader = () => {
       <header>
         <nav>
           <div className='flex justify-between p-5 border shadow-md items-center'>
-            <NavLink to='/organiser'>
-              <div className='flex flex-col items-center'>
+            <div className='flex flex-col items-center'>
+              <NavLink to='/organiser'>
                 <img className='h-20' src={logo} />
-                <h1>Event Organisers</h1>
-              </div>
-            </NavLink>
+              </NavLink>{' '}
+              <SideBar />
+            </div>
             <div className='avtar cursor-pointer'>
               {logindata.ValidUserOne ? (
                 <Avatar

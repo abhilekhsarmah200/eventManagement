@@ -5,6 +5,7 @@ var bcrypt = require('bcryptjs');
 const authenticate = require('../middleware/authenticate');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -18,54 +19,87 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Image Upload
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '_' + file.originalname);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = [
+    'image/jpeg',
+    'image/jpg',
+    'Image/png',
+    'Image/webp',
+  ];
+  if (allowedFileTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+let upload = multer({ storage, fileFilter });
+
 // for user registration
 
-router.post('/organiserregister', async (req, res) => {
-  const { fname, email, password, cpassword, phone, address, pinCode } =
-    req.body;
-
-  if (
-    !fname ||
-    !email ||
-    !password ||
-    !cpassword ||
-    !phone ||
-    !address ||
-    !pinCode
-  ) {
-    res.status(422).json({ error: 'fill all the details' });
+router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
+  let photo = req.file ? req.file.filename : null;
+  let {
+    fname,
+    vanueName,
+    email,
+    password,
+    cpassword,
+    phone,
+    address,
+    pinCode,
+  } = req.body;
+  let preuser = await userdb.findOne({ email: email });
+  if (preuser) {
+    res.status(422).json({ error: 'This Email is Already Exist' });
+  } else if (password !== cpassword) {
+    res.status(422).json({ error: 'Password and Confirm Password Not Match' });
   }
+  let data = new userdb({
+    fname,
+    vanueName,
+    email,
+    password,
+    cpassword,
+    phone,
+    address,
+    pinCode,
+    photo,
+  });
 
+  let response = await data.save();
+  res.status(200).json({ message: 'User Added SuccessFully' });
   try {
-    const preuser = await userdb.findOne({ email: email });
+    const userfind = await userdb.findOne({ email: email });
 
-    if (preuser) {
-      res.status(422).json({ error: 'This Email is Already Exist' });
-    } else if (password !== cpassword) {
-      res
-        .status(422)
-        .json({ error: 'Password and Confirm Password Not Match' });
-    } else {
-      const finalUser = new userdb({
-        fname,
-        email,
-        password,
-        cpassword,
-        phone,
-        address,
-        pinCode,
-      });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: 'Sign Up successfull',
+      text: `You are now partner with Event Partners!! Please wait to confirm your registration by our administration...`,
+      html: 'You are now partner with Event Partners!! Please wait to confirm your registration by our administration...',
+    };
 
-      // here password hasing
-
-      const storeData = await finalUser.save();
-
-      // console.log(storeData);
-      res.status(201).json({ status: 201, storeData });
-    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('error', error);
+        res.status(401).json({ status: 401, message: 'email not send' });
+      } else {
+        console.log('Email sent', info.response);
+        res.status(201).json({ status: 201, message: 'Email sent Succsfully' });
+      }
+    });
   } catch (error) {
-    res.status(422).json(error);
-    console.log('catch block error');
+    res.status(401).json({ status: 401, message: 'invalid user' });
   }
 });
 
@@ -165,12 +199,25 @@ router.post('/organisersendpasswordlink', async (req, res) => {
       { new: true }
     );
 
+    // let url = [
+    //   {
+    //     forgetLink: [
+    //       <a
+    //         href={`http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}`}
+    //       >
+    //         hello
+    //       </a>,
+    //     ],
+    //   },
+    // ];
+
     if (setusertoken) {
       const mailOptions = {
         from: process.env.EMAIL,
         to: email,
         subject: 'Sending Email For password Reset',
-        text: `This Link Valid For 2 MINUTES http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}`,
+        text: `This Link is Valid For only 2 MINUTES http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}`,
+        html: `This Link is Valid For only 2 MINUTES <button><a href="http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}"><b>Click Here</b><a/></button>`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {

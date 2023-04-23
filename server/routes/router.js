@@ -69,6 +69,28 @@ router.post('/register', upload.single('myFile'), async (req, res) => {
   });
   let response = await data.save();
   res.status(200).json({ message: 'User Added SuccessFully' });
+  try {
+    const userfind = await userdb.findOne({ email: email });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: 'Sign Up successfull',
+      text: `You are now successfully signup with Event Partners!!`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('error', error);
+        res.status(401).json({ status: 401, message: 'email not send' });
+      } else {
+        console.log('Email sent', info.response);
+        res.status(201).json({ status: 201, message: 'Email sent Succsfully' });
+      }
+    });
+  } catch (error) {
+    res.status(401).json({ status: 401, message: 'invalid user' });
+  }
 });
 
 // user Login

@@ -10,7 +10,7 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
@@ -41,23 +41,23 @@ export default function SideBar() {
   const itemList = [
     {
       text: 'Add Vanue',
-      icon: <AccountCircleIcon style={{ fill: 'white' }} />,
-      to: '/create',
+      icon: <AddBusinessIcon style={{ fill: 'grey' }} />,
+      to: '/organiser/add_vanue',
     },
     {
       text: 'View Bookings',
-      // icon: <AddBoxTwoToneIcon style={{ fill: 'white' }} />,
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
       to: '/add-todo',
     },
     {
       text: 'View Artist',
-      // icon: <AddBoxTwoToneIcon style={{ fill: 'white' }} />,
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
       to: '/add-todo',
     },
     {
       text: 'Profile',
-      icon: <AccountCircleIcon style={{ fill: 'white' }} />,
-      to: '/add-todo',
+      icon: <AccountCircleIcon style={{ fill: 'grey' }} />,
+      to: '/organiser/profile',
     },
   ];
 
@@ -72,8 +72,8 @@ export default function SideBar() {
         {itemList.map((text, index) => (
           <ListItem key={index} disablePadding>
             <ListItemButton>
-              <ListItemIcon>{text.icon}</ListItemIcon>
-              <a href={text.to}>
+              <a className='flex items-center w-full' href={text.to}>
+                <ListItemIcon>{text.icon}</ListItemIcon>
                 <ListItemText primary={text.text} />
               </a>
             </ListItemButton>
@@ -88,15 +88,7 @@ export default function SideBar() {
       {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
           <Button onClick={toggleDrawer(anchor, true)}>
-            {
-              <MenuOpenIcon
-                style={{
-                  fontSize: '2.5rem',
-                  color: 'black',
-                  borderRadius: '25px',
-                }}
-              />
-            }
+            Event Organisers' Menu
           </Button>
           <SwipeableDrawer
             anchor={anchor}
