@@ -44,6 +44,10 @@ const organisersSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
+  validUser: {
+    type: Boolean,
+    default: false,
+  },
   tokens: [
     {
       token: {

@@ -30,7 +30,7 @@ export default function BasicTable(props) {
         toast.success('User deleted successfully');
         window.location = '/admin/view-users';
       } else {
-        toast.error("User can't be deleted");
+        toast.error('User not deleted');
         return;
       }
     } catch (err) {
@@ -40,7 +40,9 @@ export default function BasicTable(props) {
   };
   return (
     <TableContainer component={Paper}>
-      {!props?.users.length === 0 ? (
+      {props?.users?.length === 0 ? (
+        <div>Data not Available...</div>
+      ) : (
         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
           <TableHead>
             <TableRow>
@@ -127,8 +129,6 @@ export default function BasicTable(props) {
             ))}
           </TableBody>
         </Table>
-      ) : (
-        <div>Data not Available...</div>
       )}
     </TableContainer>
   );

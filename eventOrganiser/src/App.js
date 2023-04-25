@@ -26,7 +26,7 @@ function App() {
   const DashboardValid = async () => {
     let token = localStorage.getItem('organisersdatatoken');
 
-    const res = await fetch('/validorganiser', {
+    const res = await fetch('/organiservalid', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

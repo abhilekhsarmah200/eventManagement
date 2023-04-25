@@ -115,7 +115,7 @@ router.post('/organiserlogin', async (req, res) => {
   }
 
   try {
-    const userValid = await userdb.findOne({ email: email });
+    const userValid = await userdb.findOne({ email: email, validUser: true });
 
     if (userValid) {
       const isMatch = await bcrypt.compare(password, userValid.password);

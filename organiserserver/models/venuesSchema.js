@@ -7,18 +7,11 @@ const jwt = require('jsonwebtoken');
 const keysecret = process.env.SECRET_KEY;
 
 const venuesSchema = new mongoose.Schema({
-  vanuePhotos: [
-    {
-      photo: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-
+  photo: {
+    type: String,
+  },
   userId: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
+    type: String,
   },
   vanueName: {
     type: String,
@@ -37,8 +30,8 @@ const venuesSchema = new mongoose.Schema({
 });
 
 // createing model
-const userdb = new mongoose.model('organisers', venuesSchema);
+const vanuedb = new mongoose.model('vanues', venuesSchema);
 
-module.exports = userdb;
+module.exports = vanuedb;
 
 // if (this.isModified("password")) {    }

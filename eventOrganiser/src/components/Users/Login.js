@@ -68,9 +68,13 @@ const Login = () => {
         history('/organiser/profile');
         setInpval({ ...inpval, email: '', password: '' });
       } else {
-        toast.error('Email/Password is wrong', {
-          position: 'top-center',
-        });
+        toast.error(
+          'Email/Password is wrong or You are not verified by the Administration!!',
+          {
+            position: 'top-center',
+            autoClose: 5000,
+          }
+        );
       }
     }
   };
