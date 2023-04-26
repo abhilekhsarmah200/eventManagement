@@ -85,8 +85,8 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
       from: process.env.EMAIL,
       to: email,
       subject: 'Sign Up successfull',
-      text: `You are now partner with Event Partners!! Please wait to confirm your registration by our administration...`,
-      html: 'You are now partner with Event Partners!! Please wait to confirm your registration by our administration...',
+      text: `Your registration is successfully done!! Please wait to confirm your registration by our administration...`,
+      html: 'Your registration is successfully done!! Please wait to confirm your registration by our administration...',
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -103,6 +103,16 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
   }
 });
 
+router.post('/updateorganiser/:id', async (req, res) => {
+  try {
+    const user = await userdb.findOne({ _id: req.params.id });
+    if (!user) return res.status(400).json({ message: 'Invalid link' });
+    await userdb.updateMany({ _id: user._id, validUser: true });
+    res.status(200).json({ message: 'Organiser Verified SuccessFully' });
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
 // user Login
 
 router.post('/organiserlogin', async (req, res) => {

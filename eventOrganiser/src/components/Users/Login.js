@@ -69,7 +69,7 @@ const Login = () => {
         setInpval({ ...inpval, email: '', password: '' });
       } else {
         toast.error(
-          'Email/Password is wrong or You are not verified by the Administration!!',
+          'Email/Password is wrong!! or You are not verified by the Administration!! Please contact with us',
           {
             position: 'top-center',
             autoClose: 5000,

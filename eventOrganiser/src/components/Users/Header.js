@@ -43,7 +43,7 @@ const AdminHeader = () => {
       console.log('organiser logout');
       localStorage.removeItem('organiserdatatoken');
       setLoginData(false);
-      history('/organiser');
+      window.location = '/organiser/profile';
     } else {
       console.log('error');
     }

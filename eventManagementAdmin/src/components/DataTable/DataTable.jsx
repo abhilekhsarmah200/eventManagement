@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,7 +10,9 @@ import { Avatar, Button } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { toast } from 'react-toastify';
+import Tooltip from '@mui/material/Tooltip';
 
 export default function BasicTable(props) {
   const handleDelete = async (id) => {
@@ -31,6 +33,46 @@ export default function BasicTable(props) {
         window.location = '/admin/view-users';
       } else {
         toast.error('User not deleted');
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+    }
+  };
+  const [inpval, setInpval] = useState({
+    validUser: false,
+  });
+
+  const setVal = (e) => {
+    // console.log(e.target.value);
+
+    setInpval({ ...inpval, [e.target.name]: e.target.value });
+  };
+  const handleVerified = async (id) => {
+    let token = localStorage.getItem('admindatatoken');
+    let res = [];
+    try {
+      const text = 'Are you want to verify this Organiser?';
+
+      if (window.confirm(text) == true) {
+        res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        });
+
+        setInpval({
+          ...inpval,
+          validUser: true,
+        });
+
+        toast.success('User Verified Successfully');
+        window.location = '/admin/view-users';
+      } else {
+        toast.warn('User not verified');
         return;
       }
     } catch (err) {
@@ -103,27 +145,54 @@ export default function BasicTable(props) {
                 <TableCell align='center'>{row?.address}</TableCell>
                 <TableCell align='center'>{row?.pinCode}</TableCell>
                 <TableCell align='center'>
-                  <div className='flex'>
-                    <Button
-                      startIcon={<PreviewIcon />}
-                      variant='outlined'
-                      className='cursor-pointer'
-                      color='error'
-                      onClick={() => handleDelete(row._id)}
-                    >
-                      View
-                    </Button>
-                    <div className='text-4xl px-1'>/</div>
-                    <Button
-                      startIcon={<DeleteIcon />}
-                      variant='outlined'
-                      className='cursor-pointer'
-                      color='error'
-                      onClick={() => handleDelete(row._id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                  {row?.validUser === false ? (
+                    <div className='flex'>
+                      <Tooltip title='verify user'>
+                        <Button
+                          startIcon={<CheckCircleOutlineIcon />}
+                          variant='contained'
+                          className='cursor-pointer'
+                          color='info'
+                          onChange={setVal}
+                          onClick={() => handleVerified(row._id)}
+                        >
+                          Verify
+                        </Button>
+                      </Tooltip>
+                      <div className='text-4xl px-1'>/</div>
+                      <Button
+                        startIcon={<DeleteIcon />}
+                        variant='outlined'
+                        className='cursor-pointer'
+                        color='error'
+                        onClick={() => handleDelete(row._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className='flex'>
+                      <Button
+                        startIcon={<PreviewIcon />}
+                        variant='outlined'
+                        className='cursor-pointer'
+                        color='error'
+                        onClick={() => handleDelete(row._id)}
+                      >
+                        View
+                      </Button>
+                      <div className='text-4xl px-1'>/</div>
+                      <Button
+                        startIcon={<DeleteIcon />}
+                        variant='outlined'
+                        className='cursor-pointer'
+                        color='error'
+                        onClick={() => handleDelete(row._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

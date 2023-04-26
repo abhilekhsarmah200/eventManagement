@@ -144,6 +144,8 @@ const Register = () => {
     }
   };
 
+  const path = 'http://localhost:8080/public/images/';
+
   return (
     <>
       <section>
