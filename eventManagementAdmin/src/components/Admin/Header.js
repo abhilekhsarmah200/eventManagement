@@ -6,6 +6,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { Box, CircularProgress } from '@mui/material';
+import ImageIcon from '@mui/icons-material/Image';
 
 const AdminHeader = ({ loading }) => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -68,29 +70,41 @@ const AdminHeader = ({ loading }) => {
               <h1 style={{ color: '#2d3748' }}>Admin Dashboard</h1>
             </NavLink>
             <div className='avtar cursor-pointer'>
-              <>
-                {logindata.ValidUserOne ? (
-                  <Avatar
-                    style={{
-                      background: 'salmon',
-                      fontWeight: 'bold',
-                      textTransform: 'capitalize',
-                    }}
-                    onClick={handleClick}
-                  >
-                    {logindata.ValidUserOne.fname[0].toUpperCase()}
-                  </Avatar>
-                ) : (
-                  <>
+              {logindata ? (
+                <>
+                  {logindata.ValidUserOne ? (
+                    <Avatar
+                      style={{
+                        background: 'salmon',
+                        fontWeight: 'bold',
+                        textTransform: 'capitalize',
+                      }}
+                      onClick={handleClick}
+                    >
+                      {logindata.ValidUserOne.fname[0].toUpperCase()}
+                    </Avatar>
+                  ) : (
                     <>
-                      <Avatar
-                        style={{ background: 'blue' }}
-                        onClick={handleClick}
-                      />
+                      <>
+                        <Avatar
+                          style={{ background: 'blue' }}
+                          onClick={handleClick}
+                        />
+                      </>
                     </>
-                  </>
-                )}
-              </>
+                  )}
+                </>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  loading...
+                </Box>
+              )}
             </div>
 
             <Menu

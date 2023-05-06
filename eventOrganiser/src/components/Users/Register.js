@@ -68,6 +68,7 @@ const Register = () => {
       pinCode,
       photo,
     } = inpval;
+    let regx = /[a-zA-Z]/g;
 
     if (fname === '') {
       toast.warning('fname is required!', {
@@ -111,6 +112,10 @@ const Register = () => {
       });
     } else if (phone.length < 10) {
       toast.error('please provide a valid number', {
+        position: 'top-center',
+      });
+    } else if (phone.length > 10) {
+      toast.error('please provide 10 digit valid number', {
         position: 'top-center',
       });
     } else if (address === '') {
@@ -270,12 +275,11 @@ const Register = () => {
             <div className='form_input'>
               <label htmlFor='phone'>Mobile Number</label>
               <input
-                type='tel'
+                type='text'
                 onChange={setVal}
                 value={inpval.phone}
                 name='phone'
                 id='phone'
-                pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
                 placeholder='Enter Your Mobile Number'
               />
             </div>

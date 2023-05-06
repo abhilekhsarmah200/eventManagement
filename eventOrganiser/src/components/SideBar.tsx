@@ -3,14 +3,12 @@ import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import PreviewIcon from '@mui/icons-material/Preview';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AddBusinessIcon from '@mui/icons-material/AddBusiness';
-import MenuIcon from '@mui/icons-material/Menu';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
@@ -40,8 +38,8 @@ export default function SideBar() {
 
   const itemList = [
     {
-      text: 'Add Vanue',
-      icon: <AddBusinessIcon style={{ fill: 'grey' }} />,
+      text: 'Add Vanue Photos',
+      icon: <AddPhotoAlternateIcon style={{ fill: 'grey' }} />,
       to: '/organiser/add_vanue',
     },
     {

@@ -3,6 +3,7 @@ import { useNavigate, useParams, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { LoginContext } from '../ContextProvider/Context';
 import DataTable from '../DataTable/DataTable';
+import { Box, CircularProgress } from '@mui/material';
 export default function ViewUsers({ datas }) {
   const [users, setUsers] = useState(null);
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -105,9 +106,22 @@ export default function ViewUsers({ datas }) {
     <>
       <div className='p-5 flex justify-center flex-col'>
         <div>
-          <div className='py-1'>
-            <DataTable users={users} path={path} />
-          </div>
+          {logindata ? (
+            <div className='py-1'>
+              <DataTable users={users} path={path} />
+            </div>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              Loading... &nbsp;
+              <CircularProgress />
+            </Box>
+          )}
         </div>
 
         <ToastContainer autoClose={2000} />

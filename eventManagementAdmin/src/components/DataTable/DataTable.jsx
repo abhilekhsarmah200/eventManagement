@@ -13,10 +13,14 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { toast } from 'react-toastify';
 import Tooltip from '@mui/material/Tooltip';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 export default function BasicTable(props) {
+  const history = useNavigate();
+
   const handleDelete = async (id) => {
     let token = localStorage.getItem('admindatatoken');
+
     let res = [];
     try {
       const text = 'Are you want to delete?';
@@ -68,9 +72,12 @@ export default function BasicTable(props) {
           ...inpval,
           validUser: true,
         });
-
-        toast.success('User Verified Successfully');
-        window.location = '/admin/view-users';
+        if (res.status == 401 || res.status == 404) {
+          toast.error('User not Verified Successfully');
+        } else {
+          toast.success('User Verified Successfully');
+          window.location = '/admin/view-users';
+        }
       } else {
         toast.warn('User not verified');
         return;
@@ -154,7 +161,7 @@ export default function BasicTable(props) {
                           className='cursor-pointer'
                           color='info'
                           onChange={setVal}
-                          onClick={() => handleVerified(row._id)}
+                          onClick={() => handleVerified(row.id)}
                         >
                           Verify
                         </Button>

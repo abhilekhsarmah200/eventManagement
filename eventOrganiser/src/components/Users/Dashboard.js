@@ -11,6 +11,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
 import HomeIcon from '@mui/icons-material/Home';
+import pIcon from '../../assets/img/man.png';
 
 const Dashboard = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -51,14 +52,18 @@ const Dashboard = () => {
     }, 2000);
   }, []);
   console.log({ logindata });
+  const path = 'http://localhost:8080/public/images/';
+
   return (
     <>
       {data ? (
         <div className='flex flex-col justify-center items-center p-5 gap-4'>
           <div>
             <img
-              src='./man.png'
-              className='h-40 rounded-full shadow-md'
+              src={
+                logindata ? `${path}${logindata?.ValidUserOne?.photo}` : pIcon
+              }
+              className='h-40 rounded-md shadow-md'
               alt=''
             />
           </div>

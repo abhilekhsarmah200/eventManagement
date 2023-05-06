@@ -105,9 +105,9 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
 
 router.post('/updateorganiser/:id', async (req, res) => {
   try {
-    const user = await userdb.findOne({ _id: req.params.id });
+    const user = await userdb.findOne({ id: req.params.id });
     if (!user) return res.status(400).json({ message: 'Invalid link' });
-    await userdb.updateMany({ _id: user._id, validUser: true });
+    await userdb.updateMany({ id: user.id, validUser: true });
     res.status(200).json({ message: 'Organiser Verified SuccessFully' });
   } catch (error) {
     res.status(404).json({ message: error.stack });

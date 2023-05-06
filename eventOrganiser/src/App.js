@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './components/Users/mix.css';
 import SideBar from './components/SideBar.tsx';
 import AddVenue from './components/Users/AddVenue';
+import AddVanuePhotos from './components/Users/AddVanuePhotos';
 
 function App() {
   const [data, setData] = useState(false);
@@ -45,10 +46,10 @@ function App() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      DashboardValid();
-      setData(true);
-    }, 2000);
+    // setTimeout(() => {
+    DashboardValid();
+    setData(true);
+    // }, 2000);
   }, []);
 
   return (
@@ -74,7 +75,7 @@ function App() {
               element={<ForgotPassword />}
             />
             <Route path='*' element={<Error />} />
-            <Route path='/organiser/add_vanue' element={<AddVenue />} />
+            <Route path='/organiser/add_vanue' element={<AddVanuePhotos />} />
           </Routes>
         </>
       ) : (

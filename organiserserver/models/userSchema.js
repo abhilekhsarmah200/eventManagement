@@ -10,9 +10,11 @@ const organisersSchema = new mongoose.Schema({
   photo: {
     type: String,
   },
-  userId: {
+  id: {
     type: mongoose.Types.ObjectId,
-    ref: 'User',
+    index: true,
+    required: true,
+    auto: true,
   },
   fname: {
     type: String,
