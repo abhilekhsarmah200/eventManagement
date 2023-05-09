@@ -6,23 +6,30 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Avatar, Button } from '@mui/material';
+import { Avatar, Box, Button, CircularProgress } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { toast } from 'react-toastify';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate, NavLink } from 'react-router-dom';
+import ViewDetailedOrganisers from '../Admin/ViewDetailedOrganisers';
+import CustomizedDialogs from '../DialogBox/DialogBox.tsx';
 
 export default function BasicTable(props) {
   const history = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [organisersData, setOrganisersData] = useState('');
 
   const handleDelete = async (id) => {
     let token = localStorage.getItem('admindatatoken');
 
     let res = [];
     try {
+      setLoading(true);
       const text = 'Are you want to delete?';
 
       if (window.confirm(text) == true) {
@@ -34,16 +41,34 @@ export default function BasicTable(props) {
           },
         });
         toast.success('User deleted successfully');
-        window.location = '/admin/view-users';
+        setTimeout(function () {
+          window.location = '/admin/view-users';
+        }, 2000);
       } else {
         toast.error('User not deleted');
-        return;
+        // setLoading(false);
+        // setTimeout(function () {
+        //   return;
+        // }, 2000);
       }
     } catch (err) {
       console.log(err);
-    } finally {
     }
+    // } finally {
+    //   setLoading(false);
+    //   setTimeout(function () {
+    //     window.location = '/admin/view-users';
+    //   }, 2000);
+    // }
   };
+
+  const getUserById = async (id) => {
+    // let token = localStorage.getItem('admindatatoken');
+
+    history(`/admin/view-users/${id}`);
+  };
+
+  console.log({ organisersData });
   const [inpval, setInpval] = useState({
     validUser: false,
   });
@@ -57,6 +82,8 @@ export default function BasicTable(props) {
     let token = localStorage.getItem('admindatatoken');
     let res = [];
     try {
+      setLoading(true);
+
       const text = 'Are you want to verify this Organiser?';
 
       if (window.confirm(text) == true) {
@@ -85,127 +112,137 @@ export default function BasicTable(props) {
     } catch (err) {
       console.log(err);
     } finally {
+      setLoading(false);
+      window.location = '/admin/view-users';
     }
   };
+
   return (
-    <TableContainer component={Paper}>
-      {props?.users?.length === 0 ? (
-        <div>Data not Available...</div>
-      ) : (
-        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-          <TableHead>
-            <TableRow>
-              <TableCell width='10%' align='center'>
-                <b>Image</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>Vanue Name</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>Manager Name</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>Email</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>Mobile</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>Address</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>PIN Code</b>
-              </TableCell>
-              <TableCell width='10%' align='center'>
-                <b>Action</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {props?.users?.map((row, index) => (
-              <TableRow
-                key={row?.fname}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component='th' scope='row'>
-                  {row?.photo ? (
-                    <div className='flex justify-center'>
-                      <img
-                        className='rounded-md h-20'
-                        src={`${props.path}${row?.photo}`}
-                      />
-                    </div>
-                  ) : (
-                    <div className='flex justify-center'>
-                      <ImageIcon style={{ fontSize: '3rem', color: 'grey' }} />
-                    </div>
-                  )}
+    <div>
+      <TableContainer component={Paper}>
+        {props?.users?.length === 0 ? (
+          <div>Data not Available...</div>
+        ) : (
+          <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+            <TableHead>
+              <TableRow>
+                <TableCell width='10%' align='center'>
+                  <b>Image</b>
                 </TableCell>
-                <TableCell align='center'>{row?.vanueName}</TableCell>
-                <TableCell align='center'>{row?.fname}</TableCell>
-                <TableCell align='center'>
-                  <div className='w-[50%] break-words mx-auto'>
-                    {row?.email}
-                  </div>
+                <TableCell width='10%' align='center'>
+                  <b>Vanue Name</b>
                 </TableCell>
-                <TableCell align='center'>{row?.phone}</TableCell>
-                <TableCell align='center'>{row?.address}</TableCell>
-                <TableCell align='center'>{row?.pinCode}</TableCell>
-                <TableCell align='center'>
-                  {row?.validUser === false ? (
-                    <div className='flex'>
-                      <Tooltip title='verify user'>
-                        <Button
-                          startIcon={<CheckCircleOutlineIcon />}
-                          variant='contained'
-                          className='cursor-pointer'
-                          color='info'
-                          onChange={setVal}
-                          onClick={() => handleVerified(row.id)}
-                        >
-                          Verify
-                        </Button>
-                      </Tooltip>
-                      <div className='text-4xl px-1'>/</div>
-                      <Button
-                        startIcon={<DeleteIcon />}
-                        variant='outlined'
-                        className='cursor-pointer'
-                        color='error'
-                        onClick={() => handleDelete(row._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className='flex'>
-                      <Button
-                        startIcon={<PreviewIcon />}
-                        variant='outlined'
-                        className='cursor-pointer'
-                        color='error'
-                        onClick={() => handleDelete(row._id)}
-                      >
-                        View
-                      </Button>
-                      <div className='text-4xl px-1'>/</div>
-                      <Button
-                        startIcon={<DeleteIcon />}
-                        variant='outlined'
-                        className='cursor-pointer'
-                        color='error'
-                        onClick={() => handleDelete(row._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  )}
+                <TableCell width='10%' align='center'>
+                  <b>Manager Name</b>
+                </TableCell>
+                <TableCell width='10%' align='center'>
+                  <b>Email</b>
+                </TableCell>
+                <TableCell width='10%' align='center'>
+                  <b>Mobile</b>
+                </TableCell>
+                <TableCell width='10%' align='center'>
+                  <b>Address</b>
+                </TableCell>
+                <TableCell width='10%' align='center'>
+                  <b>PIN Code</b>
+                </TableCell>
+                <TableCell width='10%' align='center'>
+                  <b>Action</b>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </TableContainer>
+            </TableHead>
+            <TableBody>
+              {props?.users?.map((row, index) => (
+                <TableRow
+                  key={row?.fname}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component='th' scope='row'>
+                    {row?.photo ? (
+                      <div className='flex justify-center'>
+                        <CustomizedDialogs img={row?.photo} path={props.path} />
+                      </div>
+                    ) : (
+                      <div className='flex justify-center'>
+                        <ImageIcon
+                          style={{ fontSize: '3rem', color: 'grey' }}
+                        />
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell align='center'>{row?.vanueName}</TableCell>
+                  <TableCell align='center'>{row?.fname}</TableCell>
+                  <TableCell align='center'>
+                    <div className='w-[50%] break-words mx-auto'>
+                      {row?.email}
+                    </div>
+                  </TableCell>
+                  <TableCell align='center'>{row?.phone}</TableCell>
+                  <TableCell align='center'>{row?.address}</TableCell>
+                  <TableCell align='center'>{row?.pinCode}</TableCell>
+                  <TableCell align='center'>
+                    <div className='flex'>
+                      {row?.validUser === false ? (
+                        <div className='flex'>
+                          <Tooltip title='verify user'>
+                            {loading ? (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                Loading... &nbsp;
+                                <CircularProgress />
+                              </Box>
+                            ) : (
+                              <Button
+                                variant='contained'
+                                className='cursor-pointer'
+                                color='info'
+                                onChange={setVal}
+                                onClick={() => handleVerified(row.id)}
+                              >
+                                <CheckCircleOutlineIcon />
+                              </Button>
+                            )}
+                          </Tooltip>
+                        </div>
+                      ) : (
+                        <div className='flex'>
+                          <Tooltip title='view'>
+                            <Button
+                              variant='outlined'
+                              className='cursor-pointer'
+                              color='success'
+                              onClick={() => getUserById(row._id)}
+                            >
+                              <VisibilityIcon />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      )}
+                      <div className='text-4xl px-1'>/</div>
+                      <Tooltip title='Delete'>
+                        <Button
+                          variant='outlined'
+                          className='cursor-pointer'
+                          color='error'
+                          onClick={() => handleDelete(row._id)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </TableContainer>
+    </div>
   );
 }

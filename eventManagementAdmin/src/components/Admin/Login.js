@@ -75,7 +75,13 @@ const AdminLogin = () => {
 
       if (res.status === 201) {
         localStorage.setItem('admindatatoken', res.result.token);
-        history('/admin/dashboard');
+        toast.success('Login SuccessFully', {
+          position: 'top-center',
+        });
+        setTimeout(function () {
+          window.location.href = '/admin/dashboard'; //will redirect to your blog page (an ex: blog.html)
+        }, 2000);
+
         setInpval({ ...inpval, email: '', password: '' });
       } else {
         toast.error('Email/Password is wrong', {

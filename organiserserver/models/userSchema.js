@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// mongoose.Types.ObjectId.isValid('your id here');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -13,22 +12,18 @@ const organisersSchema = new mongoose.Schema({
   id: {
     type: mongoose.Types.ObjectId,
     index: true,
-    required: true,
     auto: true,
   },
   fname: {
     type: String,
-    required: true,
     trim: true,
   },
   vanueName: {
     type: String,
-    required: true,
     trim: true,
   },
   email: {
     type: String,
-    required: true,
     unique: true,
     validate(value) {
       if (!validator.isEmail(value)) {
@@ -36,14 +31,15 @@ const organisersSchema = new mongoose.Schema({
       }
     },
   },
+  imgCollection: {
+    type: Array,
+  },
   password: {
     type: String,
-    required: true,
     minlength: 6,
   },
   cpassword: {
     type: String,
-    required: true,
     minlength: 6,
   },
   validUser: {
@@ -54,7 +50,6 @@ const organisersSchema = new mongoose.Schema({
     {
       token: {
         type: String,
-        required: true,
       },
     },
   ],
@@ -98,8 +93,8 @@ organisersSchema.methods.generateAuthtoken = async function () {
 };
 
 // createing model
-const userdb = new mongoose.model('organisers', organisersSchema);
+const organiserdb = new mongoose.model('organisers', organisersSchema);
 
-module.exports = userdb;
+module.exports = organiserdb;
 
 // if (this.isModified("password")) {    }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = new express.Router();
-const userdb = require('../models/userSchema');
+const organiserdb = require('../models/userSchema');
 var bcrypt = require('bcryptjs');
 const authenticate = require('../middleware/authenticate');
 const nodemailer = require('nodemailer');
@@ -58,13 +58,13 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
     address,
     pinCode,
   } = req.body;
-  let preuser = await userdb.findOne({ email: email });
+  let preuser = await organiserdb.findOne({ email: email });
   if (preuser) {
     res.status(422).json({ error: 'This Email is Already Exist' });
   } else if (password !== cpassword) {
     res.status(422).json({ error: 'Password and Confirm Password Not Match' });
   }
-  let data = new userdb({
+  let data = new organiserdb({
     fname,
     vanueName,
     email,
@@ -79,7 +79,7 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
   let response = await data.save();
   res.status(200).json({ message: 'User Added SuccessFully' });
   try {
-    const userfind = await userdb.findOne({ email: email });
+    const userfind = await organiserdb.findOne({ email: email });
 
     const mailOptions = {
       from: process.env.EMAIL,
@@ -105,9 +105,9 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
 
 router.post('/updateorganiser/:id', async (req, res) => {
   try {
-    const user = await userdb.findOne({ id: req.params.id });
+    const user = await organiserdb.findOne({ id: req.params.id });
     if (!user) return res.status(400).json({ message: 'Invalid link' });
-    await userdb.updateMany({ id: user.id, validUser: true });
+    await organiserdb.updateMany({ id: user.id, validUser: true });
     res.status(200).json({ message: 'Organiser Verified SuccessFully' });
   } catch (error) {
     res.status(404).json({ message: error.stack });
@@ -125,7 +125,10 @@ router.post('/organiserlogin', async (req, res) => {
   }
 
   try {
-    const userValid = await userdb.findOne({ email: email, validUser: true });
+    const userValid = await organiserdb.findOne({
+      email: email,
+      validUser: true,
+    });
 
     if (userValid) {
       const isMatch = await bcrypt.compare(password, userValid.password);
@@ -160,7 +163,7 @@ router.post('/organiserlogin', async (req, res) => {
 // user valid
 router.get('/organiservalid', authenticate, async (req, res) => {
   try {
-    const ValidUserOne = await userdb.findOne({ _id: req.userId });
+    const ValidUserOne = await organiserdb.findOne({ _id: req.userId });
     res.status(201).json({ status: 201, ValidUserOne });
   } catch (error) {
     res.status(401).json({ status: 401, error });
@@ -196,30 +199,21 @@ router.post('/organisersendpasswordlink', async (req, res) => {
   }
 
   try {
-    const userfind = await userdb.findOne({ email: email });
+    const userfind = await organiserdb.findOne({
+      email: email,
+      validUser: true,
+    });
 
     // token generate for reset password
     const token = jwt.sign({ _id: userfind._id }, keysecret, {
       expiresIn: '120s',
     });
 
-    const setusertoken = await userdb.findByIdAndUpdate(
+    const setusertoken = await organiserdb.findByIdAndUpdate(
       { _id: userfind._id },
       { verifytoken: token },
       { new: true }
     );
-
-    // let url = [
-    //   {
-    //     forgetLink: [
-    //       <a
-    //         href={`http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}`}
-    //       >
-    //         hello
-    //       </a>,
-    //     ],
-    //   },
-    // ];
 
     if (setusertoken) {
       const mailOptions = {
@@ -227,7 +221,7 @@ router.post('/organisersendpasswordlink', async (req, res) => {
         to: email,
         subject: 'Sending Email For password Reset',
         text: `This Link is Valid For only 2 MINUTES http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}`,
-        html: `This Link is Valid For only 2 MINUTES <button><a href="http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}"><b>Click Here</b><a/></button>`,
+        html: `This Link is Valid For only 2 MINUTES <button style="background-color:#1B355C; color:white; border-radius:5px; text-align:center;padding:0.5rem"><a style="text-decoration:none; color:white;text-align:center;" href="http://localhost:3003/organiserforgotpassword/${userfind.id}/${setusertoken.verifytoken}"><b>Click Here</b><a/></button>`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -248,18 +242,23 @@ router.post('/organisersendpasswordlink', async (req, res) => {
 });
 
 // verify user for forgot password time
+
 router.get('/organiserforgotpassword/:id/:token', async (req, res) => {
   const { id, token } = req.params;
 
   try {
-    const validuser = await userdb.findOne({ _id: id, verifytoken: token });
+    const validusers = await organiserdb.findOne({
+      _id: id,
+      verifytoken: token,
+      validUser: true,
+    });
 
     const verifyToken = jwt.verify(token, keysecret);
 
     console.log(verifyToken);
 
-    if (validuser && verifyToken._id) {
-      res.status(201).json({ status: 201, validuser });
+    if (validusers && verifyToken._id) {
+      res.status(201).json({ status: 201, validusers });
     } else {
       res.status(401).json({ status: 401, message: 'user not exist' });
     }
@@ -276,14 +275,18 @@ router.post('/:id/:token', async (req, res) => {
   const { password } = req.body;
 
   try {
-    const validuser = await userdb.findOne({ _id: id, verifytoken: token });
+    const validuser = await organiserdb.findOne({
+      _id: id,
+      verifytoken: token,
+      validUser: true,
+    });
 
     const verifyToken = jwt.verify(token, keysecret);
 
     if (validuser && verifyToken._id) {
       const newpassword = await bcrypt.hash(password, 12);
 
-      const setnewuserpass = await userdb.findByIdAndUpdate(
+      const setnewuserpass = await organiserdb.findByIdAndUpdate(
         { _id: id },
         { password: newpassword }
       );
@@ -300,7 +303,18 @@ router.post('/:id/:token', async (req, res) => {
 //Get all organisers
 router.get('/getallorganisers', async (req, res) => {
   try {
-    const users = await userdb.find({});
+    const users = await organiserdb.find({});
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
+router.get('/getOrganiserById/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const users = await organiserdb.findById({ _id: id });
     res.status(200).send(users);
   } catch (error) {
     res.status(404).json({ message: error.stack });
@@ -312,7 +326,7 @@ router.delete('/deleteorganiser/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    await userdb.findByIdAndRemove({ _id: id });
+    await organiserdb.findByIdAndRemove({ _id: id });
     res.status(200).send('User Deleted successfully');
   } catch (error) {
     res.status(404).json({ message: error.stack });

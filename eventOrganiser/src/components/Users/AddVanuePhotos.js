@@ -9,7 +9,7 @@ export default function AddVanuePhotos() {
 
   const { logindata, setLoginData } = useContext(LoginContext);
 
-  const [photosData, setPhotosData] = useState('');
+  const [organisersIds, setOrganisersIds] = useState([]);
 
   const history = useNavigate();
 
@@ -40,49 +40,22 @@ export default function AddVanuePhotos() {
 
   localStorage.setItem('organiserId', logindata?.ValidUserOne?._id);
 
-  const vanuePhotosValid = async () => {
-    const res = await fetch('/vanuephotos', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const data = await res.json();
-
-    if (data.status == 401 || !data) {
-      toast.error('No Photos available', {
-        position: 'top-center',
-      });
-    } else {
-      console.log('photos available');
-      setPhotosData(data);
-      //   history('/organiser');
-    }
-  };
-
   let compaireOrganiserId = localStorage.getItem('organiserId');
-
-  let organiserId = photosData?.users?.map((item, index) => item?.userId);
-
-  console.log({ organiserId });
-  console.log({ photosData });
 
   useEffect(() => {
     // setTimeout(() => {
     DashboardValid();
-    vanuePhotosValid();
     setData(true);
     // }, 2000);
   }, []);
   return (
     <div>
       <>
-        {photosData?.users?.length > 0 ? (
+        {logindata?.ValidUserOne?.length > 0 ? (
           <>
             <div> Uploaded Photos:</div>
             <div className='flex justify-center gap-6 flex-wrap'>
-              {photosData?.users?.map((item, index) => (
+              {logindata?.ValidUserOne?.map((item, index) => (
                 <>
                   {item.imgCollection?.map((imgs, ind) => (
                     <img

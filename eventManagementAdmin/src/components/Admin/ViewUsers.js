@@ -68,38 +68,11 @@ export default function ViewUsers({ datas }) {
   };
   const ids = users?.map((element, index) => element?._id);
 
-  const handleDelete = async (id) => {
-    let token = localStorage.getItem('admindatatoken');
-    let res = [];
-    try {
-      const text = 'Are you want to delete?';
-
-      if (window.confirm(text) == true) {
-        res = await fetch(`http://localhost:8080/deleteorganiser/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
-      } else {
-        return;
-      }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      toast.success('User deleted successfully');
-      window.location = '/admin/view-users';
-    }
-  };
-
   console.log({ users });
 
   useEffect(() => {
-    setTimeout(() => {
-      DashboardValid();
-      UsersList();
-    }, 2000);
+    DashboardValid();
+    UsersList();
   }, []);
   const path = 'http://localhost:8080/public/images/';
   return (

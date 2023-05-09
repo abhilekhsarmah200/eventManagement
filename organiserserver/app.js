@@ -4,6 +4,7 @@ const app = express();
 require('./db/conn');
 const router = require('./routes/router');
 const vanuerouter = require('./routes/vanuesrouter');
+const artistsRouter = require('./routes/artistsRouter');
 const cors = require('cors');
 const cookiParser = require('cookie-parser');
 const port = 8080;
@@ -17,6 +18,7 @@ app.use(cookiParser());
 app.use(cors());
 app.use(vanuerouter);
 app.use(router);
+app.use(artistsRouter);
 
 app.listen(port, () => {
   console.log(`server start at port no : ${port}`);

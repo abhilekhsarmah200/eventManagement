@@ -1,15 +1,18 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../ContextProvider/Context';
 import { ToastContainer, toast } from 'react-toastify';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Tooltip from '@mui/material/Tooltip';
+import { Avatar, Box, Button, CircularProgress } from '@mui/material';
 
 export default function Home() {
   const { logindata, setLoginData } = useContext(LoginContext);
 
   const [data, setData] = useState(false);
+  const [users, setUsers] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const history = useNavigate();
 
@@ -38,11 +41,59 @@ export default function Home() {
     }
   };
 
+  const UsersList = async () => {
+    let token = localStorage.getItem('admindatatoken');
+    let res = [];
+    try {
+      setLoading(true);
+      res = await fetch('http://localhost:8080/getallorganisers', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+        // body: JSON.stringify({ users }),
+      });
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      const data = await res.json();
+      setUsers(data);
+      setLoading(false);
+    }
+  };
+
+  const getVanuePhotosById = async (id) => {
+    // let token = localStorage.getItem('admindatatoken');
+
+    history(`/organiser/view_vanuePhotos/${id}`);
+  };
+
   useEffect(() => {
     setTimeout(() => {
       HomeValid();
+      UsersList();
       setData(true);
     }, 2000);
   }, []);
-  return <div></div>;
+  return (
+    <div>
+      <div>
+        {users?.map((row, index) => (
+          <div className='flex'>
+            <Tooltip title='view'>
+              <Button
+                variant='outlined'
+                className='cursor-pointer'
+                color='success'
+                onClick={() => getVanuePhotosById(row._id)}
+              >
+                <VisibilityIcon />
+              </Button>
+            </Tooltip>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

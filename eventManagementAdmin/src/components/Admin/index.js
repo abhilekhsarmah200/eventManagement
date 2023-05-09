@@ -37,10 +37,8 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      DashboardValid();
-      setData(true);
-    }, 2000);
+    DashboardValid();
+    setData(true);
   }, []);
   console.log({ logindata });
   return (

@@ -16,6 +16,7 @@ import './components/Users/mix.css';
 import SideBar from './components/SideBar.tsx';
 import AddVenue from './components/Users/AddVenue';
 import AddVanuePhotos from './components/Users/AddVanuePhotos';
+import ViewVanuePhotos from './components/Users/ViewVanuePhotos';
 
 function App() {
   const [data, setData] = useState(false);
@@ -46,10 +47,10 @@ function App() {
   };
 
   useEffect(() => {
-    // setTimeout(() => {
-    DashboardValid();
-    setData(true);
-    // }, 2000);
+    setTimeout(() => {
+      DashboardValid();
+      setData(true);
+    }, 2000);
   }, []);
 
   return (
@@ -62,13 +63,10 @@ function App() {
             <Route path='/organiser' exact element={<Home />} />
             <Route path='/organiser/login' element={<Login />} />
             <Route path='/organiser/register' element={<Register />} />
-            <Route
-              path='/organiser/profile'
-              element={data ? <Dashboard data={data} /> : <Login />}
-            />
+            <Route path='/organiser/profile' element={<Dashboard />} />
             <Route
               path='/organiser/password-reset'
-              element={<PasswordReset data={data} />}
+              element={<PasswordReset />}
             />
             <Route
               path='/organiserforgotpassword/:id/:token'
@@ -76,6 +74,10 @@ function App() {
             />
             <Route path='*' element={<Error />} />
             <Route path='/organiser/add_vanue' element={<AddVanuePhotos />} />
+            <Route
+              path='/organiser/view_vanuePhotos/:id'
+              element={<ViewVanuePhotos />}
+            />
           </Routes>
         </>
       ) : (

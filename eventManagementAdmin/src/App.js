@@ -11,6 +11,7 @@ import AdminRegister from './components/Admin/Register';
 import AdminHeader from './components/Admin/Header';
 import AdminError from './components/Admin/Error';
 import ViewUsers from './components/Admin/ViewUsers';
+import ViewDetailedOrganisers from './components/Admin/ViewDetailedOrganisers';
 
 function App() {
   const [data, setData] = useState(false);
@@ -62,7 +63,7 @@ function App() {
     <>
       {data ? (
         <>
-          <AdminHeader loading={loading} />
+          {data && <AdminHeader loading={loading} />}
           <>
             <Routes>
               <Route
@@ -76,6 +77,10 @@ function App() {
                 element={<ViewUsers datas={data} />}
               />
               <Route path='/admin/login' element={<AdminLogin />} />
+              <Route
+                path='/admin/view-users/:id'
+                element={<ViewDetailedOrganisers />}
+              />
               <Route path='*' element={<AdminError />} />
             </Routes>
           </>

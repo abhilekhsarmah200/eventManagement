@@ -7,7 +7,8 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { Box, CircularProgress } from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
+import logo from '../../assests/img/cover2.png';
+import SideBar from '../SideBar.tsx';
 
 const AdminHeader = ({ loading }) => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -66,9 +67,12 @@ const AdminHeader = ({ loading }) => {
       <header>
         <nav>
           <div className='flex justify-between p-5 border shadow-md items-center'>
-            <NavLink to='/admin/dashboard'>
-              <h1 style={{ color: '#2d3748' }}>Admin Dashboard</h1>
-            </NavLink>
+            <div className='flex flex-col items-center'>
+              <NavLink to='/admin/dashboard'>
+                <img className='h-20' src={logo} />
+              </NavLink>{' '}
+              <SideBar />
+            </div>
             <div className='avtar cursor-pointer'>
               {logindata ? (
                 <>
