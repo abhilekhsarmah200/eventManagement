@@ -50,7 +50,7 @@ export default function AddVanuePhotos() {
   }, []);
   return (
     <div>
-      <>
+      <div>
         {logindata?.ValidUserOne?.length > 0 ? (
           <>
             <div> Uploaded Photos:</div>
@@ -70,7 +70,7 @@ export default function AddVanuePhotos() {
         ) : (
           <div> Upload Vanue Photos:</div>
         )}
-      </>
+      </div>
 
       <FilesUploadComponent id={logindata?.ValidUserOne?._id} />
     </div>
