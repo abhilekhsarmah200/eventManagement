@@ -30,7 +30,7 @@ var upload = multer({
     }
   },
 });
-let organiserdb = require('../models/userSchema');
+
 // User model
 let vanuedb = require('../models/venuesSchema');
 vanuerouter.post(
@@ -38,13 +38,13 @@ vanuerouter.post(
   upload.array('imgCollection', 6),
   (req, res, next) => {
     const reqFiles = [];
-    let { userId } = req.body;
     const url = req.protocol + '://' + req.get('host');
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + '/public/imagesOfVanues/' + req.files[i].filename);
     }
-    const user = new organiserdb({
+    const user = new vanuedb({
       imgCollection: reqFiles,
+      organiser_Id: req.body.organiser_Id,
     });
     user
       .save()
@@ -53,6 +53,7 @@ vanuerouter.post(
           message: 'Done upload!',
           userCreated: {
             imgCollection: result.imgCollection,
+            organiser_Id: result.organiser_Id,
           },
         });
       })
@@ -65,70 +66,24 @@ vanuerouter.post(
   }
 );
 
-// vanuerouter.get('/vanuephotos', authenticate, async (req, res) => {
-//   try {
-//     const users = await vanuedb.findOne({userId:req.userId});
-//     const ValidUserOne = await userdb.findOne({ _id: req.userId });
-//     if(ValidUserOne==users)
-//     res.status(201).json({
-//       status: 201,
-//       message: 'User list retrieved successfully!',
-//       users: users,
-//     });
-//   } catch (error) {
-//     res.status(401).json({ status: 401, error });
-//   }
-// });
+vanuerouter.delete('/deleteVanuesPhotosByOrganiserId/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await vanuedb.findByIdAndRemove({ _id: id });
+    res.status(200).send('VanuePhotos Deleted successfully');
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
 
-// vanuerouter.get('/vanuephotos/:id', async (req, res, next) => {
-//   try {
-//     const { _id, userId } = req.body;
-//     const ValidUserOne = await userdb.findOne({ id: _id });
-//     const ValidVanueUserId = await vanuedb.findOne({ userId: userId });
-//     const isMatch = await compare(ValidUserOne, ValidVanueUserId);
-//     if (isMatch) {
-//       vanuedb.find().then((data) => {
-//         res.status(200).json({
-//           message: 'vanue Photos retrieved successfully!',
-//           users: data,
-//         });
-//       });
-//     }
-//   } catch (error) {
-//     res.status(401).json({ status: 401, error });
-//   }
-// });
-
-// vanuerouter.get('/vanuephotos/:id', async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//     const users = await vanuedb.findById(id);
-//     res.status(200).send(users);
-//   } catch (error) {
-//     res.status(404).json({ message: error.stack });
-//   }
-// });
-
-// vanuerouter.get('/:id', function (req, res) {
-//   Events.find({ organizer: req.params.id })
-//     .populate({
-//       path: 'attendees',
-//       populate: { path: 'attendees' },
-//     })
-//     .exec(function (err, events) {
-//       if (err) console.log(err);
-//       res.json(events);
-//     });
-// });
-
-vanuerouter.get('/vanuephotos', (req, res, next) => {
-  organiserdb.find().then((data) => {
-    res.status(200).json({
-      message: 'User list retrieved successfully!',
-      users: data,
+vanuerouter.get('/viewAllDetails/:id', async (req, res) => {
+  const organisersData = await vanuedb
+    .find({ organiser_Id: req.params.id })
+    .populate('organiser_Id')
+    .exec(function (err, organisersData) {
+      if (err) console.log(err);
+      res.json(organisersData);
     });
-  });
 });
 
 module.exports = vanuerouter;

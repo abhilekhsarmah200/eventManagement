@@ -13,6 +13,10 @@ import { useEffect, useContext, useState } from 'react';
 import { LoginContext } from './components/ContextProvider/Context';
 import 'react-toastify/dist/ReactToastify.css';
 import './components/Users/mix.css';
+import ViewDetailedOrganisers from './components/CustomComponents/ViewDetailedOrganisers';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 function App() {
   const [data, setData] = useState(false);
@@ -64,6 +68,10 @@ function App() {
             <Route
               path='/forgotpassword/:id/:token'
               element={<ForgotPassword />}
+            />
+            <Route
+              path='/view-users/:id'
+              element={<ViewDetailedOrganisers />}
             />
             <Route path='*' element={<Error />} />
           </Routes>

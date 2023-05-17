@@ -14,6 +14,7 @@ import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ViewOrganisersRelatedphotos from '../CustomComponents/ViewOrganisersRelatedphotos';
 
 export default function ViewDetailedOrganisers() {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -93,7 +94,7 @@ export default function ViewDetailedOrganisers() {
           <div className='flex gap-4 items-center flex-col'>
             <div>
               <img
-                className='h-[50vh] rounded-lg shadow-xl border'
+                className='h-52 w-52 rounded-full shadow-xl border'
                 src={`${path}${organisersData?.photo}`}
               />
             </div>
@@ -189,6 +190,9 @@ export default function ViewDetailedOrganisers() {
           <CircularProgress />
         </Box>
       )}
+      <div>
+        <ViewOrganisersRelatedphotos />
+      </div>
     </div>
   );
 }

@@ -8,9 +8,13 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import logo from '../../assets/img/cover2.png';
 import SideBar from '../SideBar.tsx';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const AdminHeader = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
+
+  const [images, setImages] = useState([]);
 
   const history = useNavigate();
 
@@ -42,12 +46,37 @@ const AdminHeader = () => {
     if (data.status == 201) {
       console.log('organiser logout');
       localStorage.removeItem('organiserdatatoken');
+      localStorage.removeItem('organiserdata');
       setLoginData(false);
       window.location = '/organiser/profile';
     } else {
       console.log('error');
     }
   };
+
+  let organiserId = JSON.parse(localStorage.getItem('organiserdata'));
+
+  console.log({ organiserId });
+
+  const viewDetails = async () => {
+    const res = await fetch(
+      `http://localhost:8080/viewAllDetails/${organiserId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const data = await res.json();
+    console.log({ images });
+    setImages(data);
+  };
+
+  useEffect(() => {
+    viewDetails();
+  }, []);
 
   const goProfile = () => {
     history('/organiser/profile');
@@ -61,6 +90,8 @@ const AdminHeader = () => {
     history('/organiser/login');
   };
 
+  const data = images.map((item, index) => item);
+
   return (
     <>
       <header>
@@ -70,7 +101,7 @@ const AdminHeader = () => {
               <NavLink to='/organiser'>
                 <img className='h-20' src={logo} />
               </NavLink>{' '}
-              <SideBar />
+              <SideBar images={data} />
             </div>
             <div className='avtar cursor-pointer'>
               {logindata.ValidUserOne ? (

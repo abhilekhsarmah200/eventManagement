@@ -119,3 +119,7 @@ form .btn:hover {
 .deletebtn .css-180lf2n-MuiButtonBase-root-MuiButton-root {
   min-width: 0rem !important;
 }
+
+.p-rating .p-rating-item.p-rating-item-active .p-rating-icon {
+  color: #472967 !important;
+}

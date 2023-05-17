@@ -45,6 +45,7 @@ export default function AddVanuePhotos() {
   useEffect(() => {
     // setTimeout(() => {
     DashboardValid();
+
     setData(true);
     // }, 2000);
   }, []);

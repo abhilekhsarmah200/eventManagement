@@ -61,9 +61,12 @@ export default function CustomizedDialogs(props) {
 
   return (
     <div>
-      <Tooltip title='view image big'>
+      <Tooltip title='view big image'>
         <div className='cursor-pointer' onClick={handleClickOpen}>
-          <img className='rounded-md h-20' src={`${props.path}${props?.img}`} />
+          <img
+            className='h-20 w-20 rounded-full shadow-2xl'
+            src={`${props.path}${props?.img}`}
+          />
         </div>
       </Tooltip>
       <BootstrapDialog

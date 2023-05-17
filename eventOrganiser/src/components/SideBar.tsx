@@ -13,13 +13,15 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
-export default function SideBar() {
+export default function SideBar({ images }) {
   const [state, setState] = React.useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
   });
+
+  let organiserId = localStorage.getItem('organiserId');
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -38,9 +40,12 @@ export default function SideBar() {
 
   const itemList = [
     {
-      text: 'Add Vanue Photos',
+      text: images?.length === 0 ? 'Add Vanue Photos' : 'View Vanue Photos',
       icon: <AddPhotoAlternateIcon style={{ fill: 'grey' }} />,
-      to: '/organiser/add_vanue',
+      to:
+        images?.length === 0
+          ? `/organiser/add_vanue`
+          : `/organiser/view_vanuePhotos/${organiserId}`,
     },
     {
       text: 'View Bookings',

@@ -17,6 +17,7 @@ import SideBar from './components/SideBar.tsx';
 import AddVenue from './components/Users/AddVenue';
 import AddVanuePhotos from './components/Users/AddVanuePhotos';
 import ViewVanuePhotos from './components/Users/ViewVanuePhotos';
+import ViewVanueImages from './components/Users/ViewVanueImages';
 
 function App() {
   const [data, setData] = useState(false);
@@ -28,7 +29,7 @@ function App() {
   const DashboardValid = async () => {
     let token = localStorage.getItem('organisersdatatoken');
 
-    const res = await fetch('/organiservalid', {
+    const res = await fetch('http://localhost:8080/organiservalid', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -72,11 +73,11 @@ function App() {
               path='/organiserforgotpassword/:id/:token'
               element={<ForgotPassword />}
             />
-            <Route path='*' element={<Error />} />
             <Route path='/organiser/add_vanue' element={<AddVanuePhotos />} />
+            <Route path='*' element={<Error />} />
             <Route
               path='/organiser/view_vanuePhotos/:id'
-              element={<ViewVanuePhotos />}
+              element={<ViewVanueImages />}
             />
           </Routes>
         </>

@@ -241,6 +241,44 @@ router.post('/organisersendpasswordlink', async (req, res) => {
   }
 });
 
+// router.post(
+//   '/uploadVanueImages/:id',
+//   upload.array('imgCollection', 6),
+//   (req, res) => {
+//     try {
+//       const reqFiles = [];
+//       const url = req.protocol + '://' + req.get('host');
+//       for (var i = 0; i < req.files.length; i++) {
+//         reqFiles.push(url + '/public/imagesOfVanues/' + req.files[i].filename);
+//       }
+
+//       let user = new organiserdb({
+//         imgCollection: reqFiles,
+//       });
+//       user
+//         .save()
+//         .then((result) => {
+//           res.status(201).json({
+//             message: 'Done upload!',
+//             userCreated: {
+//               imgCollection: result.imgCollection,
+//             },
+//           });
+//         })
+//         .catch((err) => {
+//           console.log(err),
+//             res.status(500).json({
+//               error: err,
+//             });
+//         });
+//       // organiserdb.findByIdAndUpdate({ id: user.id, imgCollection: reqFiles });
+//       res.status(200).json({ message: 'Vanue Photos Added SuccessFully!!' });
+//     } catch (error) {
+//       res.status(404).json({ message: error.stack });
+//     }
+//   }
+// );
+
 // verify user for forgot password time
 
 router.get('/organiserforgotpassword/:id/:token', async (req, res) => {

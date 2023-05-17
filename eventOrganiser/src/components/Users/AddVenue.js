@@ -13,20 +13,22 @@ export default class FilesUploadComponent extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.state = {
       imgCollection: '',
-      userId: '',
+      organiser_Id: '',
     };
   }
 
   onFileChange(e) {
     this.setState({ imgCollection: e.target.files });
   }
+
   onSubmit(e) {
     e.preventDefault();
     var formData = new FormData();
     for (const key of Object.keys(this.state.imgCollection)) {
       formData.append('imgCollection', this.state.imgCollection[key]);
     }
-    formData.append('userId', localStorage.getItem('organiserId'));
+    formData.append('organiser_Id', this.props.id);
+    let organiserId = JSON.parse(localStorage.getItem('organiserdata'));
 
     axios
       .post('http://localhost:8080/uploadVanueImages', formData, {})
@@ -37,19 +39,19 @@ export default class FilesUploadComponent extends Component {
             position: 'top-center',
           });
           setTimeout(function () {
-            window.location.href = '/organiser/add_vanue'; //will redirect to your blog page (an ex: blog.html)
+            window.location.href = `/organiser/view_vanuePhotos/${organiserId}`; //will redirect to your blog page (an ex: blog.html)
           }, 2000);
         }
       });
     console.log(this.props.id);
   }
 
-  getEmail(e) {
-    e.preventDefault();
-    axios.get('http://localhost:8080/organiservalid', {}).then((res) => {
-      console.log(res.data);
-    });
-  }
+  // getEmail(e) {
+  //   e.preventDefault();
+  //   axios.get('http://localhost:8080/organiservalid', {}).then((res) => {
+  //     console.log(res.data);
+  //   });
+  // }
 
   render() {
     return (

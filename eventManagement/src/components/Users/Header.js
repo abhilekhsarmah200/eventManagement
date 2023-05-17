@@ -6,7 +6,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import logo from '../../assets/img/cover2.png';
+import logo from '../../assets/img/cover.png';
 
 const AdminHeader = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -64,11 +64,11 @@ const AdminHeader = () => {
   return (
     <>
       <header>
-        <nav>
+        <nav style={{ background: '#472967' }}>
           <div className='flex justify-between p-5 border shadow-md items-center'>
             <NavLink to='/'>
               <img className='h-20' src={logo} />
-              <h1>Event Partners</h1>
+              <h1 className='text-white'>Event Partners</h1>
             </NavLink>
             <div className='avtar'>
               {logindata ? (

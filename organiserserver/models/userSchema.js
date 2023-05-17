@@ -9,7 +9,7 @@ const organisersSchema = new mongoose.Schema({
   photo: {
     type: String,
   },
-  id: {
+  organiser_Id: {
     type: mongoose.Types.ObjectId,
     index: true,
     auto: true,

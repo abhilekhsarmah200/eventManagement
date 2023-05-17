@@ -65,6 +65,13 @@ const Login = () => {
 
       if (res.status === 201) {
         localStorage.setItem('organiserdatatoken', res.result.token);
+        parseInt(
+          localStorage.setItem(
+            'organiserdata',
+            JSON.stringify(res.result.userValid._id)
+          )
+        );
+
         history('/organiser/profile');
         setInpval({ ...inpval, email: '', password: '' });
       } else {
