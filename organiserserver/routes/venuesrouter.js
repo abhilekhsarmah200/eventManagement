@@ -2,8 +2,8 @@ let express = require('express'),
   multer = require('multer'),
   mongoose = require('mongoose'),
   uuidv4 = require('uuid/v4'),
-  vanuerouter = express.Router();
-const DIR = './public/imagesOfVanues/';
+  venuerouter = express.Router();
+const DIR = './public/imagesOfVenues/';
 const authenticate = require('../middleware/authenticate');
 
 const storage = multer.diskStorage({
@@ -32,17 +32,17 @@ var upload = multer({
 });
 
 // User model
-let vanuedb = require('../models/venuesSchema');
-vanuerouter.post(
-  '/uploadVanueImages',
+let venuedb = require('../models/venuesSchema');
+venuerouter.post(
+  '/uploadVenueImages',
   upload.array('imgCollection', 6),
   (req, res, next) => {
     const reqFiles = [];
     const url = req.protocol + '://' + req.get('host');
     for (var i = 0; i < req.files.length; i++) {
-      reqFiles.push(url + '/public/imagesOfVanues/' + req.files[i].filename);
+      reqFiles.push(url + '/public/imagesOfVenues/' + req.files[i].filename);
     }
-    const user = new vanuedb({
+    const user = new venuedb({
       imgCollection: reqFiles,
       organiser_Id: req.body.organiser_Id,
     });
@@ -66,18 +66,18 @@ vanuerouter.post(
   }
 );
 
-vanuerouter.delete('/deleteVanuesPhotosByOrganiserId/:id', async (req, res) => {
+venuerouter.delete('/deleteVenuesPhotosByOrganiserId/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await vanuedb.findByIdAndRemove({ _id: id });
-    res.status(200).send('VanuePhotos Deleted successfully');
+    await venuedb.findByIdAndRemove({ _id: id });
+    res.status(200).send('VenuePhotos Deleted successfully');
   } catch (error) {
     res.status(404).json({ message: error.stack });
   }
 });
 
-vanuerouter.get('/viewAllDetails/:id', async (req, res) => {
-  const organisersData = await vanuedb
+venuerouter.get('/viewAllDetails/:id', async (req, res) => {
+  const organisersData = await venuedb
     .find({ organiser_Id: req.params.id })
     .populate('organiser_Id')
     .exec(function (err, organisersData) {
@@ -86,4 +86,4 @@ vanuerouter.get('/viewAllDetails/:id', async (req, res) => {
     });
 });
 
-module.exports = vanuerouter;
+module.exports = venuerouter;

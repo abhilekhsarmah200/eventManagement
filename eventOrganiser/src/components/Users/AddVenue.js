@@ -28,10 +28,10 @@ export default class FilesUploadComponent extends Component {
       formData.append('imgCollection', this.state.imgCollection[key]);
     }
     formData.append('organiser_Id', this.props.id);
-    let organiserId = JSON.parse(localStorage.getItem('organiserdata'));
+    let organiserId = this.props.id;
 
     axios
-      .post('http://localhost:8080/uploadVanueImages', formData, {})
+      .post('http://localhost:8080/uploadVenueImages', formData, {})
       .then((res) => {
         console.log(res.data);
         if (res.status == 201) {
@@ -39,19 +39,12 @@ export default class FilesUploadComponent extends Component {
             position: 'top-center',
           });
           setTimeout(function () {
-            window.location.href = `/organiser/view_vanuePhotos/${organiserId}`; //will redirect to your blog page (an ex: blog.html)
+            window.location.href = `/organiser/view_venuePhotos/${organiserId}`; //will redirect to your blog page (an ex: blog.html)
           }, 2000);
         }
       });
     console.log(this.props.id);
   }
-
-  // getEmail(e) {
-  //   e.preventDefault();
-  //   axios.get('http://localhost:8080/organiservalid', {}).then((res) => {
-  //     console.log(res.data);
-  //   });
-  // }
 
   render() {
     return (

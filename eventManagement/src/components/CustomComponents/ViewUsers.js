@@ -56,7 +56,7 @@ export default function ViewUsers({ datas }) {
 
   const UsersList = async () => {
     let temp = [...users];
-    const res = await axios('http://localhost:8080/getallorganisers', {
+    const res = await axios('http://localhost:8010/getallorganisers', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export default function ViewUsers({ datas }) {
     })
       .then((res) => {
         temp = res.data;
-        console.log(temp);
+        console.log({ temp });
 
         setUsers(temp);
         setCopyOfUsers(temp);
@@ -81,7 +81,13 @@ export default function ViewUsers({ datas }) {
     if (searchKey === '') {
       setUsers(copyOfUsers);
     } else if (searchKey !== '') {
-      let searchProps = ['address', 'vanueName'];
+      let searchProps = [
+        'address',
+        'venueName',
+        'fname',
+        'totalRating',
+        'venueCategory',
+      ];
       let result = searchOrganisersDetails(copyOfUsers, searchProps, searchKey);
       setUsers(result);
       // console.log({ search, searchKey, result });
@@ -107,7 +113,7 @@ export default function ViewUsers({ datas }) {
             onChange={(e) => {
               setSearchKey(e.target.value);
             }}
-            placeholder='Search by Vanue Name and Address'
+            placeholder='Search by Venue Name and Address'
           ></SearchBox>
         </div>
       </div>

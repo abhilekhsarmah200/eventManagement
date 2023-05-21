@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import { Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -59,6 +60,14 @@ export default function CustomizedDialogs(props) {
     setOpen(false);
   };
 
+  const history = useNavigate();
+
+  const viewDetails = async (id) => {
+    // let token = localStorage.getItem('usersdatatoken');
+
+    history(`/bookvenue/${id}`);
+  };
+
   return (
     <div>
       <Tooltip title='view image big'>
@@ -75,7 +84,7 @@ export default function CustomizedDialogs(props) {
           id='customized-dialog-title'
           onClose={handleClose}
         >
-          <div className='text-center font-semibold'>Vanue Profile Image</div>
+          <div className='text-center font-semibold'>Venue Profile Image</div>
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>
@@ -83,6 +92,9 @@ export default function CustomizedDialogs(props) {
           </Typography>
         </DialogContent>
         <DialogActions>
+          <Button autoFocus onClick={() => viewDetails(props.id)}>
+            View Details
+          </Button>
           <Button autoFocus onClick={handleClose}>
             Close
           </Button>

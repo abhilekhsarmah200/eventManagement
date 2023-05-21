@@ -78,7 +78,7 @@ export default function CustomizedDialogs(props) {
           id='customized-dialog-title'
           onClose={handleClose}
         >
-          <div className='text-center font-semibold'>Vanue Profile Image</div>
+          <div className='text-center font-semibold'>Venue Profile Image</div>
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>

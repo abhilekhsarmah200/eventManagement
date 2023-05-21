@@ -65,6 +65,9 @@ const Login = () => {
 
       if (res.status === 201) {
         localStorage.setItem('usersdatatoken', res.result.token);
+
+        localStorage.setItem('userId', res.result.userValid._id);
+
         window.location = '/';
         setInpval({ ...inpval, email: '', password: '' });
       } else {

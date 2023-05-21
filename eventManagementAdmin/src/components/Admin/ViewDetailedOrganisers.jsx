@@ -101,7 +101,7 @@ export default function ViewDetailedOrganisers() {
             <div className='flex md:flex-row flex-col mt-5 md:w-[40rem] w-full gap-4'>
               <TextField
                 id='input-with-icon-textfield'
-                value={organisersData?.vanueName}
+                value={organisersData?.venueName}
                 style={{ width: '100%' }}
                 InputProps={{
                   startAdornment: (

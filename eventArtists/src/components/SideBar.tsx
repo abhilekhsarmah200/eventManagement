@@ -39,9 +39,9 @@ export default function SideBar() {
 
   const itemList = [
     {
-      text: 'Join with Vanues',
+      text: 'Join with Venues',
       icon: <AddBusinessIcon style={{ fill: 'grey' }} />,
-      to: '/artists/join_vanue',
+      to: '/artists/join_venue',
     },
     {
       text: 'View Bookings',

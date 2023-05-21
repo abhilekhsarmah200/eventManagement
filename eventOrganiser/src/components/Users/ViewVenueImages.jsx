@@ -7,7 +7,7 @@ import { Button } from '@mui/material';
 import SwipeableTextMobileStepper from '../Carousel/Carousel.tsx';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function ViewVanueImages() {
+export default function ViewVenueImages() {
   const { logindata, setLoginData } = useContext(LoginContext);
 
   const [images, setImages] = useState([]);
@@ -57,7 +57,7 @@ export default function ViewVanueImages() {
     } else {
       console.log('user verify');
       setLoginData(data);
-      history(`/organiser/view_vanuePhotos/${organiserId}`);
+      history(`/organiser/view_venuePhotos/${organiserId}`);
     }
   };
 
@@ -69,7 +69,7 @@ export default function ViewVanueImages() {
 
       if (window.confirm(text) == true) {
         res = await fetch(
-          `http://localhost:8080/deleteVanuesPhotosByOrganiserId/${id}`,
+          `http://localhost:8080/deleteVenuesPhotosByOrganiserId/${id}`,
           {
             method: 'DELETE',
             headers: {
@@ -78,13 +78,13 @@ export default function ViewVanueImages() {
           }
         );
         if (res.status === 200) {
-          toast.success('VanuePhotos deleted successfully');
+          toast.success('VenuePhotos deleted successfully');
           setTimeout(function () {
-            window.location = '/organiser/add_vanue';
+            window.location = '/organiser/add_venue';
           }, 2000);
         }
       } else {
-        toast.error('VanuePhotos not deleted');
+        toast.error('VenuePhotos not deleted');
       }
     } catch (err) {
       console.log(err);
@@ -111,7 +111,7 @@ export default function ViewVanueImages() {
               onClick={() => handleDelete(data._id)}
             >
               <DeleteIcon />
-              Delete Vanues Photos
+              Delete Venues Photos
             </Button>
           </div>
           <ToastContainer />

@@ -15,7 +15,7 @@ import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-export default function ViewVanuePhotos() {
+export default function ViewVenuePhotos() {
   const { logindata, setLoginData } = useContext(LoginContext);
 
   const [organisersData, setOrganisersData] = useState([]);
@@ -28,7 +28,7 @@ export default function ViewVanuePhotos() {
 
   const organiserById = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/vanuephotos/${id}`, {
+      const res = await fetch(`http://localhost:8080/venuephotos/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export default function ViewVanuePhotos() {
     } else {
       console.log('organiser verify');
       setLoginData(data);
-      history(`/organiser/view_vanuePhotos/${id}`);
+      history(`/organiser/view_venuePhotos/${id}`);
     }
   };
 
@@ -100,7 +100,7 @@ export default function ViewVanuePhotos() {
             <div className='flex md:flex-row flex-col mt-5 md:w-[40rem] w-full gap-4'>
               <TextField
                 id='input-with-icon-textfield'
-                value={organisersData?.vanueName}
+                value={organisersData?.venueName}
                 style={{ width: '100%' }}
                 InputProps={{
                   startAdornment: (

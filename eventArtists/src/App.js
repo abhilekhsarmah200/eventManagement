@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './components/Users/mix.css';
 import SideBar from './components/SideBar.tsx';
 import AddVenue from './components/Users/AddVenue';
-import AddWithVanues from './components/Users/AddWithVanues';
+import AddWithVenues from './components/Users/AddWithVenues';
 import './style/custom.css';
 
 function App() {
@@ -68,7 +68,7 @@ function App() {
               element={<ForgotPassword />}
             /> */}
             <Route path='*' element={<Error />} />
-            <Route path='/artists/join_vanue' element={<AddWithVanues />} />
+            <Route path='/artists/join_venue' element={<AddWithVenues />} />
           </Routes>
         </>
       ) : (

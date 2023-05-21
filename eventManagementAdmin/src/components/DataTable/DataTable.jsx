@@ -103,7 +103,9 @@ export default function BasicTable(props) {
           toast.error('User not Verified Successfully');
         } else {
           toast.success('User Verified Successfully');
-          window.location = '/admin/view-users';
+          setTimeout(function () {
+            window.location = '/admin/view-users';
+          }, 2000);
         }
       } else {
         toast.warn('User not verified');
@@ -111,9 +113,6 @@ export default function BasicTable(props) {
       }
     } catch (err) {
       console.log(err);
-    } finally {
-      setLoading(false);
-      window.location = '/admin/view-users';
     }
   };
 
@@ -130,7 +129,7 @@ export default function BasicTable(props) {
                   <b>Image</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
-                  <b>Vanue Name</b>
+                  <b>Venue Name</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
                   <b>Manager Name</b>
@@ -171,7 +170,7 @@ export default function BasicTable(props) {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell align='center'>{row?.vanueName}</TableCell>
+                  <TableCell align='center'>{row?.venueName}</TableCell>
                   <TableCell align='center'>{row?.fname}</TableCell>
                   <TableCell align='center'>
                     <div className='w-[50%] break-words mx-auto'>

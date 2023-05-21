@@ -17,6 +17,9 @@ import ViewDetailedOrganisers from './components/CustomComponents/ViewDetailedOr
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import Booking from './components/CustomComponents/Booking';
+import BookingDetails from './components/CustomComponents/Booking/BookingDetails';
+import ViewBookingDetails from './components/CustomComponents/Booking/ViewBookingDetails';
 
 function App() {
   const [data, setData] = useState(false);
@@ -72,6 +75,12 @@ function App() {
             <Route
               path='/view-users/:id'
               element={<ViewDetailedOrganisers />}
+            />
+            <Route path='/bookvenue/:id' element={<Booking />} />
+            <Route path='/view_bookings/:id' element={<BookingDetails />} />
+            <Route
+              path='/viewBookingDetails/:id'
+              element={<ViewBookingDetails />}
             />
             <Route path='*' element={<Error />} />
           </Routes>

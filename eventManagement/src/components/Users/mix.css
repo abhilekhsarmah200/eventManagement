@@ -1,7 +1,5 @@
 section {
   width: 100%;
-  padding: 10px;
-  min-height: calc(100vh - 80px);
 }
 
 section .form_data {
@@ -122,4 +120,10 @@ form .btn:hover {
 
 .p-rating .p-rating-item.p-rating-item-active .p-rating-icon {
   color: #472967 !important;
+}
+
+.p-calendar {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
 }

@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Stack from '@mui/material/Stack';
+import { Dropdown } from 'primereact/dropdown';
 
 const Register = () => {
   const [passShow, setPassShow] = useState(false);
@@ -13,9 +14,12 @@ const Register = () => {
   const [profileImage, setProfileImage] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [selectedVenueCategory, setSelectedVenueCategory] = useState(null);
+  const venueCategory = [{ name: 'Marriage Hall' }, { name: 'Banquet Halls' }];
+
   const [inpval, setInpval] = useState({
     fname: '',
-    vanueName: '',
+    venueName: '',
     email: '',
     password: '',
     cpassword: '',
@@ -23,6 +27,10 @@ const Register = () => {
     address: '',
     pinCode: '',
     photo: '',
+    venueCategory: selectedVenueCategory || '',
+    city: '',
+    state: '',
+    country: '',
   });
 
   const setVal = (e) => {
@@ -51,22 +59,30 @@ const Register = () => {
     formdata.append('myFile', inpval.photo, inpval.photo.name);
     formdata.append('email', inpval.email);
     formdata.append('fname', inpval.fname);
-    formdata.append('vanueName', inpval.vanueName);
+    formdata.append('venueName', inpval.venueName);
     formdata.append('password', inpval.password);
     formdata.append('cpassword', inpval.cpassword);
     formdata.append('phone', inpval.phone);
     formdata.append('address', inpval.address);
+    formdata.append('venueCategory', JSON.stringify(selectedVenueCategory));
     formdata.append('pinCode', inpval.pinCode);
+    formdata.append('city', inpval.city);
+    formdata.append('state', inpval.state);
+    formdata.append('country', inpval.country);
     const {
       fname,
-      vanueName,
+      venueName,
       email,
       password,
       cpassword,
       phone,
       address,
+      venueCategory,
       pinCode,
       photo,
+      city,
+      state,
+      country,
     } = inpval;
     let regx = /[a-zA-Z]/g;
 
@@ -78,8 +94,8 @@ const Register = () => {
       toast.error('email is required!', {
         position: 'top-center',
       });
-    } else if (vanueName === '') {
-      toast.error('Vanue Name is required!', {
+    } else if (venueName === '') {
+      toast.error('Venue Name is required!', {
         position: 'top-center',
       });
     } else if (!email.includes('@')) {
@@ -120,6 +136,18 @@ const Register = () => {
       });
     } else if (address === '') {
       toast.error('Address required', {
+        position: 'top-center',
+      });
+    } else if (city === '') {
+      toast.error('city required', {
+        position: 'top-center',
+      });
+    } else if (state === '') {
+      toast.error('state required', {
+        position: 'top-center',
+      });
+    } else if (country === '') {
+      toast.error('country required', {
         position: 'top-center',
       });
     } else if (pinCode === '') {
@@ -211,14 +239,14 @@ const Register = () => {
               />
             </div>
             <div className='form_input'>
-              <label htmlFor='vanueName'>Vanue Name</label>
+              <label htmlFor='venueName'>Venue Name</label>
               <input
                 type='text'
                 onChange={setVal}
-                value={inpval.vanueName}
-                name='vanueName'
-                id='vanueName'
-                placeholder='Enter Your Vanue Name'
+                value={inpval.venueName}
+                name='venueName'
+                id='venueName'
+                placeholder='Enter Your Venue Name'
               />
             </div>
             <div className='form_input'>
@@ -271,8 +299,22 @@ const Register = () => {
                 </div>
               </div>
             </div>
-
             <div className='form_input'>
+              <label htmlFor='Venue'>Venue Category</label>
+
+              <Dropdown
+                value={selectedVenueCategory}
+                onChange={(e) => {
+                  setSelectedVenueCategory(e.value);
+                }}
+                options={venueCategory}
+                optionLabel='name'
+                placeholder='Select Venue Category'
+                className='w-full md:w-14rem'
+              />
+            </div>
+
+            <div className='form_input mt-4'>
               <label htmlFor='phone'>Mobile Number</label>
               <input
                 type='text'
@@ -284,7 +326,7 @@ const Register = () => {
               />
             </div>
             <div className='form_input'>
-              <label htmlFor='address'>Location Address</label>
+              <label htmlFor='address'>Address</label>
               <input
                 type='text'
                 onChange={setVal}
@@ -293,6 +335,42 @@ const Register = () => {
                 id='address'
                 placeholder='Enter Your location Address'
               />
+            </div>
+
+            <div className='flex gap-2'>
+              <div className='form_input'>
+                <label htmlFor='city'>city</label>
+                <input
+                  type='text'
+                  onChange={setVal}
+                  value={inpval.city}
+                  name='city'
+                  id='city'
+                  placeholder='Enter Your city'
+                />
+              </div>
+              <div className='form_input'>
+                <label htmlFor='state'>state</label>
+                <input
+                  type='text'
+                  onChange={setVal}
+                  value={inpval.state}
+                  name='state'
+                  id='state'
+                  placeholder='Enter Your state'
+                />
+              </div>
+              <div className='form_input'>
+                <label htmlFor='country'>country</label>
+                <input
+                  type='text'
+                  onChange={setVal}
+                  value={inpval.country}
+                  name='country'
+                  id='country'
+                  placeholder='Enter Your country'
+                />
+              </div>
             </div>
 
             <div className='form_input'>

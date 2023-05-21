@@ -4,7 +4,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FilesUploadComponent from './AddVenue';
 
-export default function AddVanuePhotos() {
+export default function AddVenuePhotos() {
   const [data, setData] = useState(false);
 
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -34,7 +34,7 @@ export default function AddVanuePhotos() {
     } else {
       console.log('user verify');
       setLoginData(data);
-      history('/organiser/add_vanue');
+      history('/organiser/add_venue');
     }
   };
 
@@ -69,7 +69,7 @@ export default function AddVanuePhotos() {
             </div>
           </>
         ) : (
-          <div> Upload Vanue Photos:</div>
+          <div> Upload Venue Photos:</div>
         )}
       </div>
 

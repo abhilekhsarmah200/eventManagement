@@ -29,7 +29,7 @@ export default class FilesUploadComponent extends Component {
     formData.append('userId', localStorage.getItem('organiserId'));
 
     axios
-      .post('http://localhost:8080/uploadVanueImages', formData, {})
+      .post('http://localhost:8080/uploadVenueImages', formData, {})
       .then((res) => {
         console.log(res.data);
         if (res.status == 201) {
@@ -37,7 +37,7 @@ export default class FilesUploadComponent extends Component {
             position: 'top-center',
           });
           setTimeout(function () {
-            window.location.href = '/organiser/add_vanue'; //will redirect to your blog page (an ex: blog.html)
+            window.location.href = '/organiser/add_venue'; //will redirect to your blog page (an ex: blog.html)
           }, 2000);
         }
       });
@@ -89,7 +89,7 @@ export default class FilesUploadComponent extends Component {
               <div className='form-group'>
                 <Button variant='outlined' type='submit'>
                   {' '}
-                  Add Vanues Photos
+                  Add Venues Photos
                 </Button>
               </div>
             </div>

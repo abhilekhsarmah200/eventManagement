@@ -5,67 +5,96 @@ const jwt = require('jsonwebtoken');
 
 const keysecret = process.env.SECRET_KEY;
 
-const organisersSchema = new mongoose.Schema({
-  photo: {
-    type: String,
-  },
-  organiser_Id: {
-    type: mongoose.Types.ObjectId,
-    index: true,
-    auto: true,
-  },
-  fname: {
-    type: String,
-    trim: true,
-  },
-  vanueName: {
-    type: String,
-    trim: true,
-  },
-  email: {
-    type: String,
-    unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('not valid email');
-      }
+const organisersSchema = new mongoose.Schema(
+  {
+    photo: {
+      type: String,
     },
-  },
-  imgCollection: {
-    type: Array,
-  },
-  password: {
-    type: String,
-    minlength: 6,
-  },
-  cpassword: {
-    type: String,
-    minlength: 6,
-  },
-  validUser: {
-    type: Boolean,
-    default: false,
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
+    organiser_Id: {
+      type: mongoose.Types.ObjectId,
+      index: true,
+      auto: true,
+    },
+    fname: {
+      type: String,
+      trim: true,
+    },
+    venueName: {
+      type: String,
+      trim: true,
+    },
+    venueCategory: {
+      type: String,
+      trim: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('not valid email');
+        }
       },
     },
-  ],
-  verifytoken: {
-    type: String,
+    password: {
+      type: String,
+      minlength: 6,
+    },
+    cpassword: {
+      type: String,
+      minlength: 6,
+    },
+    validUser: {
+      type: Boolean,
+      default: false,
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+        },
+      },
+    ],
+    verifytoken: {
+      type: String,
+    },
+    phone: {
+      type: Number,
+    },
+    address: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    ratings: [
+      {
+        star: Number,
+        comments: String,
+        postedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'users',
+        },
+      },
+    ],
+    totalRating: {
+      type: String,
+      default: 0,
+    },
+    pinCode: {
+      type: Number,
+    },
   },
-  phone: {
-    type: Number,
-  },
-  address: {
-    type: String,
-  },
-  pinCode: {
-    type: Number,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 // hash password
 

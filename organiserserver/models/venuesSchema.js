@@ -12,7 +12,7 @@ const userSchema = new Schema(
   },
   { timestamps: true },
   {
-    collection: 'vanues',
+    collection: 'venues',
   }
 );
-module.exports = mongoose.model('vanues', userSchema);
+module.exports = mongoose.model('venues', userSchema);

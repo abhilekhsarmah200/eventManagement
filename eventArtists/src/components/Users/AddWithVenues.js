@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import DataTable from '../DataTable/DataTable';
 import { Box, CircularProgress } from '@mui/material';
 
-export default function AddWithVanues() {
+export default function AddWithVenues() {
   const [data, setData] = useState(false);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ export default function AddWithVanues() {
     } else {
       console.log('user verify');
       setLoginData(data);
-      history('/artists/join_vanue');
+      history('/artists/join_venue');
     }
   };
 
@@ -121,7 +121,7 @@ export default function AddWithVanues() {
             </div>
           </>
         ) : (
-          <div> Upload Vanue Photos:</div>
+          <div> Upload Venue Photos:</div>
         )}
       </>
 

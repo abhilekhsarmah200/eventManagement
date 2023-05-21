@@ -5,64 +5,109 @@ const jwt = require('jsonwebtoken');
 
 const keysecret = process.env.SECRET_KEY;
 
-const organiserSchema = new mongoose.Schema({
-  role: {
-    type: String,
-    required: true,
-  },
-  fname: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('not valid email');
-      }
+const organisersSchema = new mongoose.Schema(
+  {
+    photo: {
+      type: String,
     },
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6,
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    organiser_Id: {
+      type: mongoose.Types.ObjectId,
+      index: true,
+      auto: true,
+    },
+    fname: {
+      type: String,
+      trim: true,
+    },
+    venueName: {
+      type: String,
+      trim: true,
+    },
+    venueCategory: {
+      type: String,
+      trim: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('not valid email');
+        }
       },
     },
-  ],
-  verifytoken: {
-    type: String,
+    password: {
+      type: String,
+      minlength: 6,
+    },
+    cpassword: {
+      type: String,
+      minlength: 6,
+    },
+    validUser: {
+      type: Boolean,
+      default: false,
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+        },
+      },
+    ],
+    verifytoken: {
+      type: String,
+    },
+    phone: {
+      type: Number,
+    },
+    address: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    ratings: [
+      {
+        star: Number,
+        comments: String,
+        postedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'users',
+        },
+      },
+    ],
+    totalRating: {
+      type: String,
+      default: 0,
+    },
+    pinCode: {
+      type: Number,
+    },
   },
-  phone: {
-    type: Number,
-  },
-  address: {
-    type: Number,
-  },
-  pinCode: {
-    type: Number,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 // hash password
 
-organiserSchema.pre('save', async function (next) {
+organisersSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
+    this.cpassword = await bcrypt.hash(this.cpassword, 12);
   }
   next();
 });
 
 // token generate
-organiserSchema.methods.generateAuthtoken = async function () {
+organisersSchema.methods.generateAuthtoken = async function () {
   try {
     let token23 = jwt.sign({ _id: this._id }, keysecret, {
       expiresIn: '1d',
@@ -77,8 +122,8 @@ organiserSchema.methods.generateAuthtoken = async function () {
 };
 
 // createing model
-const userdb = new mongoose.model('organisers', organiserSchema);
+const organiserdb = new mongoose.model('organisers', organisersSchema);
 
-module.exports = userdb;
+module.exports = organiserdb;
 
 // if (this.isModified("password")) {    }

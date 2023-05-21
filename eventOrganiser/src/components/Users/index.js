@@ -64,10 +64,10 @@ export default function Home() {
     }
   };
 
-  const getVanuePhotosById = async (id) => {
+  const getVenuePhotosById = async (id) => {
     // let token = localStorage.getItem('admindatatoken');
 
-    history(`/organiser/view_vanuePhotos/${id}`);
+    history(`/organiser/view_venuePhotos/${id}`);
   };
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function Home() {
                 variant='outlined'
                 className='cursor-pointer'
                 color='success'
-                onClick={() => getVanuePhotosById(row._id)}
+                onClick={() => getVenuePhotosById(row._id)}
               >
                 <VisibilityIcon />
               </Button>

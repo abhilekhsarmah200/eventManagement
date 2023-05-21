@@ -15,9 +15,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import './components/Users/mix.css';
 import SideBar from './components/SideBar.tsx';
 import AddVenue from './components/Users/AddVenue';
-import AddVanuePhotos from './components/Users/AddVanuePhotos';
-import ViewVanuePhotos from './components/Users/ViewVanuePhotos';
-import ViewVanueImages from './components/Users/ViewVanueImages';
+import AddVenuePhotos from './components/Users/AddVenuePhotos';
+import ViewVenuePhotos from './components/Users/ViewVenuePhotos';
+import ViewVenueImages from './components/Users/ViewVenueImages';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 function App() {
   const [data, setData] = useState(false);
@@ -73,11 +76,11 @@ function App() {
               path='/organiserforgotpassword/:id/:token'
               element={<ForgotPassword />}
             />
-            <Route path='/organiser/add_vanue' element={<AddVanuePhotos />} />
+            <Route path='/organiser/add_venue' element={<AddVenuePhotos />} />
             <Route path='*' element={<Error />} />
             <Route
-              path='/organiser/view_vanuePhotos/:id'
-              element={<ViewVanueImages />}
+              path='/organiser/view_venuePhotos/:id'
+              element={<ViewVenueImages />}
             />
           </Routes>
         </>

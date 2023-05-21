@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
-const vanuedb = require('../models/venuesSchema');
+const venuedb = require('../models/venuesSchema');
 const keysecret = process.env.SECRET_KEY;
 
-const vanueAuthentication = async (req, res, next) => {
+const venueAuthentication = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
 
     const verifytoken = jwt.verify(token, keysecret);
 
-    const rootUser = await vanuedb.findOne({ _id: verifytoken._id });
+    const rootUser = await venuedb.findOne({ _id: verifytoken._id });
 
     if (!rootUser) {
       throw new Error('user not found');
@@ -26,4 +26,4 @@ const vanueAuthentication = async (req, res, next) => {
   }
 };
 
-module.exports = vanueAuthentication;
+module.exports = venueAuthentication;

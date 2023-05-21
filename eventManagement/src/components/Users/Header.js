@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import logo from '../../assets/img/cover.png';
+import SideBar from '../CustomComponents/SideBar.tsx';
 
 const AdminHeader = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -41,6 +42,7 @@ const AdminHeader = () => {
     if (data.status == 201) {
       console.log('use logout');
       localStorage.removeItem('usersdatatoken');
+      localStorage.removeItem('userId');
       setLoginData(false);
       history('/');
     } else {
@@ -66,10 +68,12 @@ const AdminHeader = () => {
       <header>
         <nav style={{ background: '#472967' }}>
           <div className='flex justify-between p-5 border shadow-md items-center'>
-            <NavLink to='/'>
-              <img className='h-20' src={logo} />
-              <h1 className='text-white'>Event Partners</h1>
-            </NavLink>
+            <div className='flex flex-col items-center'>
+              <NavLink to='/'>
+                <img className='h-20' src={logo} />
+              </NavLink>{' '}
+              <SideBar />
+            </div>
             <div className='avtar'>
               {logindata ? (
                 <div className='cursor-pointer' onClick={handleClick}>

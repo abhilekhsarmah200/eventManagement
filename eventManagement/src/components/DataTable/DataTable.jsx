@@ -6,17 +6,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Avatar, Box, Button, CircularProgress } from '@mui/material';
+import { Button } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PreviewIcon from '@mui/icons-material/Preview';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { toast } from 'react-toastify';
 import Tooltip from '@mui/material/Tooltip';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CustomizedDialogs from '../CustomComponents/DialogBox/DialogBox.tsx';
-import { Rating } from 'primereact/rating';
+import Rating from '@mui/material/Rating';
+import StarIcon from '@mui/icons-material/Star';
 
 export default function BasicTable(props) {
   const history = useNavigate();
@@ -24,48 +21,10 @@ export default function BasicTable(props) {
   const [loading, setLoading] = useState(false);
   const [organisersData, setOrganisersData] = useState('');
 
-  const handleDelete = async (id) => {
-    let token = localStorage.getItem('usersdatatoken');
-
-    let res = [];
-    try {
-      setLoading(true);
-      const text = 'Are you want to delete?';
-
-      if (window.confirm(text) == true) {
-        res = await fetch(`http://localhost:8080/deleteorganiser/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
-        toast.success('User deleted successfully');
-        setTimeout(function () {
-          window.location = '/';
-        }, 2000);
-      } else {
-        toast.error('User not deleted');
-        // setLoading(false);
-        // setTimeout(function () {
-        //   return;
-        // }, 2000);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    // } finally {
-    //   setLoading(false);
-    //   setTimeout(function () {
-    //     window.location = '/';
-    //   }, 2000);
-    // }
-  };
-
   const getUserById = async (id) => {
     // let token = localStorage.getItem('usersdatatoken');
 
-    history(`/view-users/${id}`);
+    history(`/bookvenue/${id}`);
   };
 
   console.log({ organisersData });
@@ -86,7 +45,7 @@ export default function BasicTable(props) {
 
       const text = 'Are you want to verify this Organiser?';
 
-      if (window.confirm(text) == true) {
+      if (window.confirm(text) === true) {
         res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
           method: 'POST',
           headers: {
@@ -99,7 +58,7 @@ export default function BasicTable(props) {
           ...inpval,
           validUser: true,
         });
-        if (res.status == 401 || res.status == 404) {
+        if (res.status === 401 || res.status === 404) {
           toast.error('User not Verified Successfully');
         } else {
           toast.success('User Verified Successfully');
@@ -130,16 +89,10 @@ export default function BasicTable(props) {
                   <b>Image</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
-                  <b>Vanue Name</b>
+                  <b>Venue Name</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
                   <b>Manager Name</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Email</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Mobile</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
                   <b>Address</b>
@@ -151,7 +104,7 @@ export default function BasicTable(props) {
                   <b>Rating</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
-                  <b>Book</b>
+                  <b>Book Your Venue</b>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -164,7 +117,11 @@ export default function BasicTable(props) {
                   <TableCell component='th' scope='row'>
                     {row?.photo ? (
                       <div className='flex justify-center'>
-                        <CustomizedDialogs img={row?.photo} path={props.path} />
+                        <CustomizedDialogs
+                          img={row?.photo}
+                          id={row?._id}
+                          path={props.path}
+                        />
                       </div>
                     ) : (
                       <div className='flex justify-center'>
@@ -174,35 +131,54 @@ export default function BasicTable(props) {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell align='center'>{row?.vanueName}</TableCell>
+                  <TableCell align='center'>{row?.venueName}</TableCell>
                   <TableCell align='center'>{row?.fname}</TableCell>
-                  <TableCell align='center'>
-                    <div className='w-[50%] break-words mx-auto'>
-                      {row?.email}
-                    </div>
-                  </TableCell>
-                  <TableCell align='center'>{row?.phone}</TableCell>
                   <TableCell align='center'>{row?.address}</TableCell>
                   <TableCell align='center'>{row?.pinCode}</TableCell>
                   <TableCell align='center'>
-                    {row?.rating ? (
-                      <Rating cancel={false} value={row?.rating} readOnly />
-                    ) : (
-                      <>
-                        <Rating
-                          tooltip='0 ⭐'
-                          cancel={false}
-                          readOnly
-                          style={{ color: '#472967' }}
-                          value={0}
-                        />
-                      </>
-                    )}
+                    <Tooltip title={`${row?.totalRating} ⭐`}>
+                      <div className='flex justify-center items-center gap-2'>
+                        <div>
+                          <Rating
+                            name='text-feedback'
+                            value={row?.totalRating}
+                            readOnly
+                            precision={0.5}
+                            style={{ color: '#472967' }}
+                            emptyIcon={
+                              <StarIcon
+                                style={{ opacity: 0.55 }}
+                                fontSize='inherit'
+                              />
+                            }
+                          />
+                        </div>
+                        <div
+                          className='cursor-pointer'
+                          onClick={() => getUserById(row._id)}
+                        >
+                          ({row?.ratings?.length})ratings
+                        </div>
+                      </div>
+                    </Tooltip>
                   </TableCell>
                   <TableCell align='center'>
                     <div>
-                      <Button variant='contained'>Book</Button>
+                      <Button
+                        onClick={() => getUserById(row._id)}
+                        variant='contained'
+                      >
+                        Book
+                      </Button>
                     </div>
+                    {/* <div>
+                      <Button
+                        variant='contained'
+                        onClick={() => getUserById(row._id)}
+                      >
+                        View Users
+                      </Button>
+                    </div> */}
                   </TableCell>
                 </TableRow>
               ))}

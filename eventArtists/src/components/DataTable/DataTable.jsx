@@ -22,7 +22,7 @@ export default function BasicTable(props) {
   const [loading, setLoading] = useState(false);
   const [organisersData, setOrganisersData] = useState('');
 
-  const handleJoinedVanue = async (id) => {
+  const handleJoinedVenue = async (id) => {
     let token = localStorage.getItem('artistsdatatoken');
 
     let res = [];
@@ -128,7 +128,7 @@ export default function BasicTable(props) {
                   <b>Image</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
-                  <b>Vanue Name</b>
+                  <b>Venue Name</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
                   <b>Manager Name</b>
@@ -169,7 +169,7 @@ export default function BasicTable(props) {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell align='center'>{row?.vanueName}</TableCell>
+                  <TableCell align='center'>{row?.venueName}</TableCell>
                   <TableCell align='center'>{row?.fname}</TableCell>
                   <TableCell align='center'>
                     <div className='w-[50%] break-words mx-auto'>
@@ -180,12 +180,12 @@ export default function BasicTable(props) {
                   <TableCell align='center'>{row?.address}</TableCell>
                   <TableCell align='center'>{row?.pinCode}</TableCell>
                   <TableCell align='center'>
-                    <Tooltip title='Join Vanue'>
+                    <Tooltip title='Join Venue'>
                       <Button
                         variant='outlined'
                         className='cursor-pointer'
                         color='info'
-                        onClick={() => handleJoinedVanue(row._id)}
+                        onClick={() => handleJoinedVenue(row._id)}
                       >
                         <AddBusinessIcon />
                       </Button>

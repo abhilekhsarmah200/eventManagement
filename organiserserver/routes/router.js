@@ -6,6 +6,7 @@ const authenticate = require('../middleware/authenticate');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const bookingdb = require('../models/Booking');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -50,13 +51,17 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
   let photo = req.file ? req.file.filename : null;
   let {
     fname,
-    vanueName,
+    venueName,
     email,
     password,
     cpassword,
     phone,
     address,
     pinCode,
+    venueCategory,
+    city,
+    state,
+    country,
   } = req.body;
   let preuser = await organiserdb.findOne({ email: email });
   if (preuser) {
@@ -66,7 +71,7 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
   }
   let data = new organiserdb({
     fname,
-    vanueName,
+    venueName,
     email,
     password,
     cpassword,
@@ -74,6 +79,10 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
     address,
     pinCode,
     photo,
+    venueCategory,
+    city,
+    state,
+    country,
   });
 
   let response = await data.save();
@@ -242,14 +251,14 @@ router.post('/organisersendpasswordlink', async (req, res) => {
 });
 
 // router.post(
-//   '/uploadVanueImages/:id',
+//   '/uploadVenueImages/:id',
 //   upload.array('imgCollection', 6),
 //   (req, res) => {
 //     try {
 //       const reqFiles = [];
 //       const url = req.protocol + '://' + req.get('host');
 //       for (var i = 0; i < req.files.length; i++) {
-//         reqFiles.push(url + '/public/imagesOfVanues/' + req.files[i].filename);
+//         reqFiles.push(url + '/public/imagesOfVenues/' + req.files[i].filename);
 //       }
 
 //       let user = new organiserdb({
@@ -272,7 +281,7 @@ router.post('/organisersendpasswordlink', async (req, res) => {
 //             });
 //         });
 //       // organiserdb.findByIdAndUpdate({ id: user.id, imgCollection: reqFiles });
-//       res.status(200).json({ message: 'Vanue Photos Added SuccessFully!!' });
+//       res.status(200).json({ message: 'Venue Photos Added SuccessFully!!' });
 //     } catch (error) {
 //       res.status(404).json({ message: error.stack });
 //     }
@@ -357,6 +366,18 @@ router.get('/getOrganiserById/:id', async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.stack });
   }
+});
+
+//get organiser by bookingId
+
+router.get('/getOrganiserByBookingId/:id', async (req, res) => {
+  const organisersData = await bookingdb
+    .find({ organiser_Id: req.params.id })
+    .populate('organiser_Id')
+    .exec(function (err, organisersData) {
+      if (err) console.log(err);
+      res.json(organisersData);
+    });
 });
 
 //Delete Organiser

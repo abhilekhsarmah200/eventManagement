@@ -40,12 +40,12 @@ export default function SideBar({ images }) {
 
   const itemList = [
     {
-      text: images?.length === 0 ? 'Add Vanue Photos' : 'View Vanue Photos',
+      text: images?.length === 0 ? 'Add Venue Photos' : 'View Venue Photos',
       icon: <AddPhotoAlternateIcon style={{ fill: 'grey' }} />,
       to:
         images?.length === 0
-          ? `/organiser/add_vanue`
-          : `/organiser/view_vanuePhotos/${organiserId}`,
+          ? `/organiser/add_venue`
+          : `/organiser/view_venuePhotos/${organiserId}`,
     },
     {
       text: 'View Bookings',

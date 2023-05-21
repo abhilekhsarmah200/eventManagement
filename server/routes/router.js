@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const organiserdb = require('../models/OrganiserSchema');
+const bookingdb = require('../models/Booking');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -35,8 +37,8 @@ const fileFilter = (req, file, cb) => {
   const allowedFileTypes = [
     'image/jpeg',
     'image/jpg',
-    'Image/png',
-    'Image/webp',
+    'image/png',
+    'image/webp',
   ];
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -165,6 +167,131 @@ router.get('/logout', authenticate, async (req, res) => {
   }
 });
 
+//Get all organisers
+router.get('/getallorganisers', async (req, res) => {
+  try {
+    const users = await organiserdb.find({ validUser: true });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
+//Give rating to Organisers
+router.put('/rating', authenticate, async (req, res) => {
+  const { _id } = req.userId;
+  const { star, comments, organiserId } = req.body;
+  try {
+    const organiser = await organiserdb.findById(organiserId);
+    let alreadyRated = organiser.ratings.find(
+      (userId) => userId.postedBy.toString() === _id.toString()
+    );
+    if (alreadyRated) {
+      const updateRating = await organiserdb.updateOne(
+        {
+          ratings: { $elemMatch: alreadyRated },
+        },
+        {
+          $set: { 'ratings.$.star': star, 'ratings.$.comments': comments },
+        },
+        {
+          new: true,
+        }
+      );
+    } else {
+      const rateOrganiser = await organiserdb.findByIdAndUpdate(
+        organiserId,
+        {
+          $push: {
+            ratings: {
+              star: star,
+              comments: comments,
+              postedBy: _id,
+            },
+          },
+        },
+        {
+          new: true,
+        }
+      );
+    }
+    const getAllRatings = await organiserdb.findById(organiserId);
+    let totalRating = getAllRatings.ratings.length;
+    let ratingSum = getAllRatings.ratings
+      .map((item) => item.star)
+      .reduce((prev, curr) => prev + curr, 0);
+    let actualRating = (ratingSum / totalRating).toFixed(1);
+    let finalRating = await organiserdb.findByIdAndUpdate(
+      organiserId,
+      {
+        totalRating: actualRating,
+      },
+      {
+        new: true,
+      }
+    );
+    res.json(finalRating);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/bookEvents', authenticate, async (req, res) => {
+  const { _id } = req.userId;
+
+  let {
+    userName,
+    bookingDate,
+    eventName,
+    requiredArtist,
+    foodList,
+    totalPrice,
+    guest,
+    organiser_Id,
+    venueName,
+  } = req.body;
+
+  let data = new bookingdb({
+    userName,
+    bookingDate,
+    eventName,
+    requiredArtist,
+    foodList,
+    totalPrice,
+    guest,
+    organiser_Id: _id,
+    venueName,
+    bookedBy: _id,
+  });
+
+  let response = await data.save();
+
+  res.status(200).json({ message: 'Booking SuccessFully Done!!' });
+});
+
+router.get('/delete/:id', authenticate, (req, res) => {
+  id = req.params.id;
+  user = req.user;
+  organiserdb.update({}, { $pull: { organiser_Id: id } });
+  organiser_Ids = user.bookings;
+  res.render('bookings/all', {
+    bookings: organiser_Ids,
+  });
+});
+
+//Get Booking Details by Id
+
+router.get('/getBookingDetails/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const booking = await bookingdb.findById({ _id: id });
+    res.status(200).send(booking);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
 // send email Link For reset Password
 router.post('/sendpasswordlink', async (req, res) => {
   console.log(req.body);
@@ -212,6 +339,28 @@ router.post('/sendpasswordlink', async (req, res) => {
   } catch (error) {
     res.status(401).json({ status: 401, message: 'invalid user' });
   }
+});
+
+//get all booking details by userId
+router.get('/viewBookingsByUserId/:id', async (req, res) => {
+  const organisersData = await bookingdb
+    .find({ bookedBy: req.params.id })
+    .populate('bookedBy')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(bookingData);
+    });
+});
+
+//get all booking details by organiserId
+router.post('/viewBookingsByOrganiserId/', async (req, res) => {
+  const organisersData = await bookingdb
+    .find({ organiser_Id: req.body })
+    .populate('organiser_Id')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(organisersData);
+    });
 });
 
 // verify user for forgot password time

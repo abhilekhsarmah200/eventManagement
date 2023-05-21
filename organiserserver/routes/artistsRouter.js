@@ -53,7 +53,7 @@ artistsRouter.post(
     let photo = req.file ? req.file.filename : null;
     let {
       fname,
-      vanueName,
+      venueName,
       email,
       password,
       cpassword,
@@ -72,7 +72,7 @@ artistsRouter.post(
     }
     let data = new artistsdb({
       fname,
-      vanueName,
+      venueName,
       email,
       password,
       cpassword,
