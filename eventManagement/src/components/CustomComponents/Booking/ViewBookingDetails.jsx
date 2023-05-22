@@ -135,7 +135,7 @@ export default function ViewBookingDetails() {
               {userData?.is_canceled === false && (
                 <div className='flex justify-end h-10'>
                   {remainingDate === 1 ? (
-                    <Tooltip title="You cann't Cancel your Booking before 1 day">
+                    <Tooltip title="You cann't Cancel your Booking you have to pay 50% amount">
                       <div className='cursor-pointer'>
                         <Button
                           disabled
