@@ -79,40 +79,24 @@ export default function BasicTable(props) {
     setInpval({ ...inpval, [e.target.name]: e.target.value });
   };
   const handleVerified = async (id) => {
-    let token = localStorage.getItem('admindatatoken');
-    let res = [];
-    try {
-      setLoading(true);
+    const res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        validUser: true,
+      }),
+    });
 
-      const text = 'Are you want to verify this Organiser?';
-
-      if (window.confirm(text) == true) {
-        res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
-
-        setInpval({
-          ...inpval,
-          validUser: true,
-        });
-        if (res.status == 401 || res.status == 404) {
-          toast.error('User not Verified Successfully');
-        } else {
-          toast.success('User Verified Successfully');
-          setTimeout(function () {
-            window.location = '/admin/view-users';
-          }, 2000);
-        }
-      } else {
-        toast.warn('User not verified');
-        return;
-      }
-    } catch (err) {
-      console.log(err);
+    const data = await res.json();
+    if (res.status === 200) {
+      toast.success(`Organiser Verified Successfully`, {
+        position: 'top-center',
+      });
+      setTimeout(function () {
+        window.location = `/admin/view-users`;
+      }, 2000);
     }
   };
 
@@ -202,7 +186,7 @@ export default function BasicTable(props) {
                                 className='cursor-pointer'
                                 color='info'
                                 onChange={setVal}
-                                onClick={() => handleVerified(row.id)}
+                                onClick={() => handleVerified(row._id)}
                               >
                                 <CheckCircleOutlineIcon />
                               </Button>

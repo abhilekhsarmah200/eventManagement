@@ -112,14 +112,29 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
   }
 });
 
-router.post('/updateorganiser/:id', async (req, res) => {
+//Update organiserValidation
+
+// router.post('/updateorganiser/:id', async (req, res) => {
+//   try {
+//     const user = await organiserdb.findOne({ id: req.params.id });
+//     if (!user) return res.status(400).json({ message: 'Invalid link' });
+//     await organiserdb.updateMany({ id: user.id, validUser: true });
+//     res.status(200).json({ message: 'Organiser Verified SuccessFully' });
+//   } catch (error) {
+//     res.status(404).json({ message: error.stack });
+//   }
+// });
+
+router.patch(`/updateorganiser/:id`, async (req, res) => {
   try {
-    const user = await organiserdb.findOne({ id: req.params.id });
-    if (!user) return res.status(400).json({ message: 'Invalid link' });
-    await organiserdb.updateMany({ id: user.id, validUser: true });
-    res.status(200).json({ message: 'Organiser Verified SuccessFully' });
+    const { id } = req.params;
+    const user = await organiserdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Organiser Validate SuccessFully' });
+    // res.status(200).json(bookingData);
   } catch (error) {
-    res.status(404).json({ message: error.stack });
+    res.status(500).json({ msg: error.message });
   }
 });
 // user Login

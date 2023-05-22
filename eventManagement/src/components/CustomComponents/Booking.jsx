@@ -52,8 +52,10 @@ export default function Booking() {
     Name: '',
     bookingDate: datetime12h || '',
     eventName: '',
-    requiredArtist: selectedArtists || '',
-    foodList: selectedCities || '',
+    requiredArtist: selectedArtists?.name || '',
+    requiredArtistPrice: selectedArtists?.price || '',
+    foodList: selectedCities?.code || '',
+    foodDishPrice: selectedCities?.name || '',
     totalPrice: '',
     guest: '',
     venueName: organisersData?.venueName || '',
@@ -78,8 +80,10 @@ export default function Booking() {
     formdata.append('Name', inpval.Name);
     formdata.append('bookingDate', datetime12h);
     formdata.append('eventName', inpval.eventName);
-    formdata.append('requiredArtist', JSON.stringify(selectedArtists));
-    formdata.append('foodList', JSON.stringify(selectedCities));
+    formdata.append('requiredArtist', selectedArtists?.name);
+    formdata.append('requiredArtistPrice', selectedArtists?.price);
+    formdata.append('foodList', selectedCities.code);
+    formdata.append('foodDishPrice', selectedCities.name);
     formdata.append('totalPrice', totalPrice);
     formdata.append('guest', inpval.guest);
     formdata.append('venueName', organisersData.venueName);

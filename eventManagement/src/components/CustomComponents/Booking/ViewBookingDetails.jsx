@@ -2,7 +2,7 @@ import { Box, Button, CircularProgress } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LoginContext } from '../../ContextProvider/Context';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import Moment from 'react-moment';
 
 export default function ViewBookingDetails() {
@@ -57,6 +57,28 @@ export default function ViewBookingDetails() {
     console.log({ data });
   };
 
+  const cancelBooking = async () => {
+    const res = await fetch(`http://localhost:8010/cancelBookingById/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        is_canceled: true,
+      }),
+    });
+
+    const data = await res.json();
+    if (res.status === 200) {
+      toast.success(`booking canceled`, {
+        position: 'top-center',
+      });
+      setTimeout(function () {
+        window.location = `/viewBookingDetails/${id}`;
+      }, 2000);
+    }
+  };
+
   // const viewOrganiserDetails = async () => {
   //   const res = await fetch(
   //     `http://localhost:8080/getOrganiserById/${organiser_Id}`,
@@ -73,14 +95,8 @@ export default function ViewBookingDetails() {
   //   console.log({ data });
   // };
 
-  const foodList = userData?.foodList?.toString();
-
-  const final = foodList?.replace(
-    /{"name":"|","code":"Premium"}|","code":"Normal"}|","code":"Luxury"}|","code":"Delux"}/gi,
-    ''
-  );
   const path = 'http://localhost:8080/public/images/';
-  console.log({ final });
+
   useEffect(() => {
     viewDetails();
     setData(true);
@@ -102,9 +118,13 @@ export default function ViewBookingDetails() {
                   <Moment format='D MMM YYYY'>{userData?.createdAt}</Moment>
                 </div>
               </div>
-              <div className='flex justify-end h-10'>
-                <Button variant='outlined'>Cancel Request</Button>
-              </div>
+              {userData?.is_canceled === false && (
+                <div className='flex justify-end h-10'>
+                  <Button onClick={cancelBooking} variant='outlined'>
+                    Cancel Request
+                  </Button>
+                </div>
+              )}
             </div>
           </nav>
           <div>
@@ -113,16 +133,33 @@ export default function ViewBookingDetails() {
                 <div className='sm:my-10 my-4 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-5 items-center border border-t-0 border-x-0 border-b-black'>
                     <div>
-                      <i
-                        className='pi pi-check-circle rounded-full p-1'
-                        style={{
-                          fontSize: '1rem',
-                          color: 'white',
-                          background: 'green',
-                        }}
-                      ></i>
+                      {userData?.is_canceled === false ? (
+                        <i
+                          className='pi pi-check-circle rounded-full p-1'
+                          style={{
+                            fontSize: '1rem',
+                            color: 'white',
+                            background: 'green',
+                          }}
+                        ></i>
+                      ) : (
+                        <i
+                          className='pi pi-exclamation-circle rounded-full p-1'
+                          style={{
+                            fontSize: '1rem',
+                            color: 'white',
+                            background: 'red',
+                          }}
+                        ></i>
+                      )}
                     </div>
-                    <div>Booking Confirmed</div>
+                    {userData?.is_canceled === false ? (
+                      <div>Booking Confirmed</div>
+                    ) : (
+                      <div className='text-red-600'>
+                        You Canceled Your Booking
+                      </div>
+                    )}
                   </div>
                   <div className='flex p-4 gap-2 items-center border-b-1 border border-t-0 border-x-0 border-b-black'>
                     <div className='shadow-xl rounded-xl'>
@@ -138,59 +175,101 @@ export default function ViewBookingDetails() {
                       <span className='font-bold' style={{ color: '#482967' }}>
                         {userData?.venueName}
                       </span>{' '}
-                      Confirmed{' '}
-                      <b>(Please Contact with Event manager before 1 day)</b>{' '}
-                      <span>
-                        <a href={`tel:+91 ${userData?.organiserPhone}`}>
-                          <i className='pi pi-phone text-black'></i>
-                        </a>
-                      </span>
+                      {userData?.is_canceled === false ? (
+                        <span>
+                          "Confirmed "
+                          <b>
+                            (Please Contact with Event manager before 1 day)
+                            <span>
+                              <a href={`tel:+91 ${userData?.organiserPhone}`}>
+                                <i className='pi pi-phone text-black'></i>
+                              </a>
+                            </span>
+                          </b>
+                        </span>
+                      ) : (
+                        'Canceled'
+                      )}
                     </div>
                   </div>
                   <div className='flex p-4 gap-2 items-end'>
-                    <div className=''>
-                      Your Event Date is <br />
-                      <div>
-                        <Moment format='D MMM YYYY'>
-                          {userData?.bookingDate}
-                        </Moment>{' '}
-                        at{' '}
-                        <span
-                          className='font-bold'
-                          style={{ color: '#482967' }}
-                        >
-                          {userData?.venueName}
-                        </span>
+                    {userData?.is_canceled === false ? (
+                      <div className=''>
+                        Your Event Date is <br />
+                        <div>
+                          <Moment format='D MMM YYYY'>
+                            {userData?.bookingDate}
+                          </Moment>{' '}
+                          at{' '}
+                          <span
+                            className='font-bold'
+                            style={{ color: '#482967' }}
+                          >
+                            {userData?.venueName}
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className=''>
+                        Your Event Date was <br />
+                        <div>
+                          <Moment format='D MMM YYYY'>
+                            {userData?.bookingDate}
+                          </Moment>{' '}
+                          at{' '}
+                          <span
+                            className='font-bold'
+                            style={{ color: '#482967' }}
+                          >
+                            {userData?.venueName}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className='sm:my-6 my-2 relative lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-2 items-center'>
-                    <div>
-                      <b>Service Checklist</b>
-                      <div className='flex flex-row  justify-around w-full items-end'>
-                        <div className='text-gray-400 text-xs'>
-                          Check what's Services we will give you
-                        </div>
-                        <div className='absolute right-0 bottom-0 mb-5 mr-5'>
-                          <i className='pi pi-arrow-right'></i>
+                    {userData?.is_canceled === false ? (
+                      <div>
+                        <b>Service Checklist</b>
+                        <div className='flex flex-row  justify-around w-full items-end'>
+                          <div className='text-gray-400 text-xs'>
+                            Check what's Services we will give you
+                          </div>
+                          <div className='absolute right-0 bottom-0 mb-5 mr-5'>
+                            <i className='pi pi-arrow-right'></i>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className='opacity-25'>
+                        <b>Service Checklist</b>
+                        <div className='flex flex-row  justify-around w-full items-end'>
+                          <div className='text-gray-400 text-xs'>
+                            Check what's Services we will give you
+                          </div>
+                          <div className='absolute right-0 bottom-0 mb-5 mr-5'>
+                            <i className='pi pi-arrow-right'></i>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className='sm:my-6 my-2 relative lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                <div className='sm:my-6 my-2 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-2 items-center'>
                     <div>
                       <b>Need Our Help?</b>
-                      <div className='flex flex-row  justify-around w-full items-end'>
+                      <div className='flex flex-row  justify-around w-full items-start'>
                         <div className='text-gray-400 text-xs'>
                           Call us in case you face any issue in Our service.
                         </div>
-                        <div className='flex gap-2 items-center absolute p-2 border border-1 rounded-md hover:bg-[#482967] hover:text-white cursor-pointer right-0 bottom-0 mb-5 mr-5'>
+                        <div className='flex gap-2 items-center p-2 border border-1 rounded-md hover:bg-[#482967] hover:text-white cursor-pointer'>
                           <i className='pi pi-phone text-black'></i>
-                          <a href='tel:+91 1232433221'>+91 1232433221</a>
+                          <a className='text-xs' href='tel:+91 1232433221'>
+                            +91 1232433221
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -208,14 +287,26 @@ export default function ViewBookingDetails() {
                         <div>
                           <div className='flex flex-col gap-2 border border-b-1 border-r-0 border-l-0 border-t-0 border-black'>
                             <div className='grid grid-cols-2'>
-                              <div>Plate Price/guest:</div>
-                              <div className='flex justify-end'>{final}</div>
+                              <div>
+                                Plate Price:{' '}
+                                <span className='text-xs'>
+                                  ({userData?.foodList})
+                                </span>
+                              </div>
+                              <div className='flex justify-end'>
+                                {userData?.foodDishPrice}
+                              </div>
                             </div>
                             {userData?.requiredArtist && (
                               <div className='grid grid-cols-2'>
-                                <div>Artists:</div>
+                                <div>
+                                  Required Artists:{' '}
+                                  <span className='text-xs'>
+                                    ({userData?.requiredArtist})
+                                  </span>
+                                </div>
                                 <div className='flex justify-end'>
-                                  {userData?.requiredArtist}
+                                  {userData?.requiredArtistPrice}/-
                                 </div>
                               </div>
                             )}
@@ -229,7 +320,10 @@ export default function ViewBookingDetails() {
                           <div className='grid grid-cols-2 mt-2'>
                             <div>Grand Total:</div>
                             <div className='flex justify-end'>
-                              {userData?.totalPrice}/-
+                              ₹{userData?.totalPrice}/-
+                              <span className='text-xs mt-1'>
+                                (GST inclusive)
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -237,7 +331,12 @@ export default function ViewBookingDetails() {
 
                       <div className='flex justify-end mt-4'>
                         <div>
-                          <Button variant='outlined'>Pay Advance</Button>
+                          <Button
+                            disabled={userData?.is_canceled === true}
+                            variant='outlined'
+                          >
+                            Pay Advance
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -250,6 +349,7 @@ export default function ViewBookingDetails() {
           </div>
         </>
       ) : null}
+      <ToastContainer />
     </div>
   );
 }

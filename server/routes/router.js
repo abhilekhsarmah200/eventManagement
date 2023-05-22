@@ -244,7 +244,9 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     bookingDate,
     eventName,
     requiredArtist,
+    requiredArtistPrice,
     foodList,
+    foodDishPrice,
     totalPrice,
     guest,
     organiser_Id,
@@ -258,7 +260,9 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     bookingDate,
     eventName,
     requiredArtist,
+    requiredArtistPrice,
     foodList,
+    foodDishPrice,
     totalPrice,
     guest,
     organiser_Id,
@@ -271,6 +275,23 @@ router.post('/bookEvents', authenticate, async (req, res) => {
   let response = await data.save();
 
   res.status(200).json({ message: 'Booking SuccessFully Done!!' });
+});
+
+router.patch(`/cancelBookingById/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bookingData = await bookingdb.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.status(200).json({ message: 'User Added SuccessFully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
 });
 
 router.get('/delete/:id', authenticate, (req, res) => {
