@@ -16,7 +16,7 @@ const bookingSchema = new mongoose.Schema(
     totalPrice: { type: Number },
     organiserPhoto: { type: Number },
     venueName: { type: String },
-    // totalPrice: { type: Number },
+    organiserPhone: { type: Number },
     organiser_Id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'organisers',

@@ -48,6 +48,7 @@ export default function Booking() {
   console.log(organisersData?.venueName);
 
   const [inpval, setInpval] = useState({
+    organiser_Id: id || '',
     Name: '',
     bookingDate: datetime12h || '',
     eventName: '',
@@ -56,6 +57,7 @@ export default function Booking() {
     totalPrice: '',
     guest: '',
     venueName: organisersData?.venueName || '',
+    organiserPhone: organisersData?.phone || '',
   });
 
   const setVal = (e) => {
@@ -71,6 +73,7 @@ export default function Booking() {
 
     const formdata = new FormData();
 
+    formdata.append('organiser_Id', id);
     formdata.append('Name', inpval.Name);
     formdata.append('bookingDate', datetime12h);
     formdata.append('eventName', inpval.eventName);
@@ -79,6 +82,7 @@ export default function Booking() {
     formdata.append('totalPrice', totalPrice);
     formdata.append('guest', inpval.guest);
     formdata.append('venueName', organisersData.venueName);
+    formdata.append('organiserPhone', organisersData.phone);
 
     let res;
     try {
