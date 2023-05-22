@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress, Tooltip } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LoginContext } from '../../ContextProvider/Context';
@@ -15,6 +15,20 @@ export default function ViewBookingDetails() {
   const { id } = useParams();
 
   const [data, setData] = useState(false);
+
+  const date = new Date();
+  let currentDay = String(date.getDate()).padStart(2, '0');
+  let currentDate = `${currentDay}`;
+  console.log(currentDate);
+
+  //Booking Date
+  const bookingDate = new Date(`${userData?.bookingDate}`);
+  let bookingCurrentDay = String(bookingDate.getDate()).padStart(2, '0');
+  let bookingCurrentDate = `${bookingCurrentDay}`;
+  console.log(bookingCurrentDate);
+
+  const remainingDate = bookingCurrentDate - currentDate;
+  console.log(remainingDate);
 
   const DashboardValid = async () => {
     let token = localStorage.getItem('usersdatatoken');
@@ -120,9 +134,23 @@ export default function ViewBookingDetails() {
               </div>
               {userData?.is_canceled === false && (
                 <div className='flex justify-end h-10'>
-                  <Button onClick={cancelBooking} variant='outlined'>
-                    Cancel Request
-                  </Button>
+                  {remainingDate === 1 ? (
+                    <Tooltip title="You cann't Cancel your Booking before 1 day">
+                      <div className='cursor-pointer'>
+                        <Button
+                          disabled
+                          onClick={cancelBooking}
+                          variant='outlined'
+                        >
+                          Cancel Request
+                        </Button>
+                      </div>
+                    </Tooltip>
+                  ) : (
+                    <Button onClick={cancelBooking} variant='outlined'>
+                      Cancel Request
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
