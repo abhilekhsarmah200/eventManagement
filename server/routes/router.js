@@ -248,6 +248,7 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     totalPrice,
     guest,
     organiser_Id,
+    organiserPhoto,
     organiserPhone,
     venueName,
   } = req.body;
@@ -261,6 +262,7 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     totalPrice,
     guest,
     organiser_Id,
+    organiserPhoto,
     venueName,
     organiserPhone,
     bookedBy: _id,

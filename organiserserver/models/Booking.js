@@ -17,6 +17,7 @@ const bookingSchema = new mongoose.Schema(
     organiserPhoto: { type: Number },
     venueName: { type: String },
     organiserPhone: { type: Number },
+    organiserPhoto: { type: String },
     organiser_Id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'organisers',

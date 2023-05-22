@@ -58,6 +58,7 @@ export default function Booking() {
     guest: '',
     venueName: organisersData?.venueName || '',
     organiserPhone: organisersData?.phone || '',
+    organiserPhoto: organisersData?.photo || '',
   });
 
   const setVal = (e) => {
@@ -83,6 +84,7 @@ export default function Booking() {
     formdata.append('guest', inpval.guest);
     formdata.append('venueName', organisersData.venueName);
     formdata.append('organiserPhone', organisersData.phone);
+    formdata.append('organiserPhoto', organisersData.photo);
 
     let res;
     try {

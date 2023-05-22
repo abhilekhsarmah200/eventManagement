@@ -42,7 +42,7 @@ export default function ViewBookingDetails() {
   };
 
   const organiser_Id = userData.organiser_Id;
-  console.log(organiser_Id);
+  console.log({ userData });
 
   const viewDetails = async () => {
     const res = await fetch(`http://localhost:8010/getBookingDetails/${id}`, {
@@ -79,7 +79,7 @@ export default function ViewBookingDetails() {
     /{"name":"|","code":"Premium"}|","code":"Normal"}|","code":"Luxury"}|","code":"Delux"}/gi,
     ''
   );
-
+  const path = 'http://localhost:8080/public/images/';
   console.log({ final });
   useEffect(() => {
     viewDetails();
@@ -124,13 +124,13 @@ export default function ViewBookingDetails() {
                     </div>
                     <div>Booking Confirmed</div>
                   </div>
-                  <div className='flex p-4 gap-2 items-end border-b-1 border border-t-0 border-x-0 border-b-black'>
-                    <div>
+                  <div className='flex p-4 gap-2 items-center border-b-1 border border-t-0 border-x-0 border-b-black'>
+                    <div className='shadow-xl rounded-xl'>
                       <img
-                        src='https://cdn-icons-png.flaticon.com/512/3378/3378693.png'
+                        src={`${path}${userData?.organiserPhoto}`}
                         alt=''
                         srcset=''
-                        className='w-8 h-8'
+                        className='h-20 rounded-xl'
                       />
                     </div>
                     <div className=''>
@@ -171,7 +171,7 @@ export default function ViewBookingDetails() {
                       <b>Service Checklist</b>
                       <div className='flex flex-row  justify-around w-full items-end'>
                         <div className='text-gray-400 text-xs'>
-                          Check what's are your Events Requirements
+                          Check what's Services we will give you
                         </div>
                         <div className='absolute right-0 bottom-0 mb-5 mr-5'>
                           <i className='pi pi-arrow-right'></i>
@@ -211,12 +211,14 @@ export default function ViewBookingDetails() {
                               <div>Plate Price/guest:</div>
                               <div className='flex justify-end'>{final}</div>
                             </div>
-                            <div className='grid grid-cols-2'>
-                              <div>Artists:</div>
-                              <div className='flex justify-end'>
-                                {userData?.requiredArtist}
+                            {userData?.requiredArtist && (
+                              <div className='grid grid-cols-2'>
+                                <div>Artists:</div>
+                                <div className='flex justify-end'>
+                                  {userData?.requiredArtist}
+                                </div>
                               </div>
-                            </div>
+                            )}
                             <div className='grid grid-cols-2'>
                               <div>Guests:</div>
                               <div className='flex justify-end'>
