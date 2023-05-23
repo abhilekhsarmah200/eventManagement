@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../ContextProvider/Context';
@@ -45,10 +45,9 @@ export default function Admin() {
     <div>
       {data ? (
         <>
-          <div>Hellow Guys</div>
-          <div>
+          <Button variant='outlined'>
             <a href='/admin/view-users'>View Users</a>
-          </div>
+          </Button>
         </>
       ) : (
         <>

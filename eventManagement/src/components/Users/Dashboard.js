@@ -42,6 +42,7 @@ const Dashboard = () => {
       toast.error(toastLogin, {
         position: 'top-center',
       });
+      history('/login');
     } else {
       console.log('user verify');
       setLoginData(data);
@@ -50,10 +51,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      DashboardValid();
-      setData(true);
-    }, 2000);
+    DashboardValid();
+    setData(true);
   }, []);
   console.log({ logindata });
 

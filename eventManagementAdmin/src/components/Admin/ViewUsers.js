@@ -80,9 +80,12 @@ export default function ViewUsers({ datas }) {
       <div className='p-5 flex justify-center flex-col'>
         <div>
           {logindata ? (
-            <div className='py-1'>
-              <DataTable users={users} path={path} />
-            </div>
+            <>
+              <div className='lg:block hidden py-1'>
+                <DataTable users={users} path={path} />
+              </div>
+              <div></div>
+            </>
           ) : (
             <Box
               sx={{

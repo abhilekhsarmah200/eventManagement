@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import PreviewIcon from '@mui/icons-material/Preview';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 
@@ -38,6 +38,11 @@ export default function SideBar() {
     };
 
   const itemList = [
+    {
+      text: 'Home',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: '/artists',
+    },
     {
       text: 'Join with Venues',
       icon: <AddBusinessIcon style={{ fill: 'grey' }} />,
@@ -86,8 +91,8 @@ export default function SideBar() {
     <div className='m-5'>
       {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>
-            Event Artists' Menu
+          <Button variant='outlined' onClick={toggleDrawer(anchor, true)}>
+            <div className='text-white'>Event Artists' Menu</div>
           </Button>
           <SwipeableDrawer
             anchor={anchor}

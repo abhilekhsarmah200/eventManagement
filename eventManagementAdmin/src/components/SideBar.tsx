@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import PreviewIcon from '@mui/icons-material/Preview';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
@@ -37,6 +37,11 @@ export default function SideBar() {
     };
 
   const itemList = [
+    {
+      text: 'Home',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: '/admin/dashboard',
+    },
     {
       text: 'View Bookings',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
@@ -85,7 +90,9 @@ export default function SideBar() {
     <div className='m-5'>
       {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>Event Admin Menu</Button>
+          <Button variant='outlined' onClick={toggleDrawer(anchor, true)}>
+            <div className='text-white'>Event Admin Menu</div>
+          </Button>
           <SwipeableDrawer
             anchor={anchor}
             open={state[anchor]}

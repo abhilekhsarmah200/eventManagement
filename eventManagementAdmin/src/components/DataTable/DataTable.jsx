@@ -17,50 +17,12 @@ import Tooltip from '@mui/material/Tooltip';
 import { useNavigate, NavLink } from 'react-router-dom';
 import ViewDetailedOrganisers from '../Admin/ViewDetailedOrganisers';
 import CustomizedDialogs from '../DialogBox/DialogBox.tsx';
+import DraggableDialog from '../CustomComponents/ConfirmPopup/ConfirmPopup.tsx';
 
 export default function BasicTable(props) {
   const history = useNavigate();
-
   const [loading, setLoading] = useState(false);
   const [organisersData, setOrganisersData] = useState('');
-
-  const handleDelete = async (id) => {
-    let token = localStorage.getItem('admindatatoken');
-
-    let res = [];
-    try {
-      setLoading(true);
-      const text = 'Are you want to delete?';
-
-      if (window.confirm(text) == true) {
-        res = await fetch(`http://localhost:8080/deleteorganiser/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
-        toast.success('User deleted successfully');
-        setTimeout(function () {
-          window.location = '/admin/view-users';
-        }, 2000);
-      } else {
-        toast.error('User not deleted');
-        // setLoading(false);
-        // setTimeout(function () {
-        //   return;
-        // }, 2000);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    // } finally {
-    //   setLoading(false);
-    //   setTimeout(function () {
-    //     window.location = '/admin/view-users';
-    //   }, 2000);
-    // }
-  };
 
   const getUserById = async (id) => {
     // let token = localStorage.getItem('admindatatoken');
@@ -162,7 +124,9 @@ export default function BasicTable(props) {
                     </div>
                   </TableCell>
                   <TableCell align='center'>{row?.phone}</TableCell>
-                  <TableCell align='center'>{row?.address}</TableCell>
+                  <TableCell align='center'>
+                    {row?.address}, {row?.city} ({row?.state})
+                  </TableCell>
                   <TableCell align='center'>{row?.pinCode}</TableCell>
                   <TableCell align='center'>
                     <div className='flex'>
@@ -208,16 +172,7 @@ export default function BasicTable(props) {
                         </div>
                       )}
                       <div className='text-4xl px-1'>/</div>
-                      <Tooltip title='Delete'>
-                        <Button
-                          variant='outlined'
-                          className='cursor-pointer'
-                          color='error'
-                          onClick={() => handleDelete(row._id)}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </Tooltip>
+                      <DraggableDialog id={row._id} />
                     </div>
                   </TableCell>
                 </TableRow>

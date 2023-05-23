@@ -87,6 +87,8 @@ export default function ViewUsers({ datas }) {
         'fname',
         'totalRating',
         'venueCategory',
+        'city',
+        'state',
       ];
       let result = searchOrganisersDetails(copyOfUsers, searchProps, searchKey);
       setUsers(result);

@@ -131,7 +131,9 @@ const Register = () => {
           toast.success('Registration Successfully done 😃!', {
             position: 'top-center',
           });
-          window.location = '/';
+          setTimeout(function () {
+            window.location = '/';
+          }, 2000);
         }
       } catch (error) {}
     }

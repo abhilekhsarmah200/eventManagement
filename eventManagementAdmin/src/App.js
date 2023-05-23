@@ -52,11 +52,8 @@ function App() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      // DashboardValid();
-      DashboardAdminValid();
-      setData(true);
-    }, 2000);
+    DashboardAdminValid();
+    setData(true);
   }, []);
 
   return (

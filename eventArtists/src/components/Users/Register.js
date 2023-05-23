@@ -166,7 +166,9 @@ const Register = () => {
           toast.success('Registration Successfully done 😃!', {
             position: 'top-center',
           });
-          window.location = '/artists';
+          setTimeout(function () {
+            window.location = '/artists/login';
+          }, 1000);
         }
       }
     }

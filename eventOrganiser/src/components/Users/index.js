@@ -71,11 +71,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      HomeValid();
-      UsersList();
-      setData(true);
-    }, 2000);
+    HomeValid();
+    UsersList();
+    setData(true);
   }, []);
   return (
     <div>

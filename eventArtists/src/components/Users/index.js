@@ -30,7 +30,9 @@ export default function Home() {
       toast.error('login first!!', {
         position: 'top-center',
       });
-      window.location = '/artists/login';
+      setTimeout(function () {
+        window.location = '/artists/login';
+      }, 1000);
     } else {
       console.log('user verify');
       setLoginData(data);
@@ -39,10 +41,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      HomeValid();
-      setData(true);
-    }, 2000);
+    HomeValid();
+    setData(true);
   }, []);
-  return <div></div>;
+  return (
+    <div>
+      <ToastContainer />
+    </div>
+  );
 }

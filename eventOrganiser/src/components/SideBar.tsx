@@ -90,8 +90,8 @@ export default function SideBar({ images }) {
     <div className='m-5'>
       {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>
-            Event Organisers' Menu
+          <Button variant='outlined' onClick={toggleDrawer(anchor, true)}>
+            <div className='text-white'>Event Organisers' Menu</div>
           </Button>
           <SwipeableDrawer
             anchor={anchor}

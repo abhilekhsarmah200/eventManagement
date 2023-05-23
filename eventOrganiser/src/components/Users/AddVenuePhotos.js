@@ -43,11 +43,8 @@ export default function AddVenuePhotos() {
   let compaireOrganiserId = localStorage.getItem('organiserId');
 
   useEffect(() => {
-    // setTimeout(() => {
     DashboardValid();
-
     setData(true);
-    // }, 2000);
   }, []);
   return (
     <div>

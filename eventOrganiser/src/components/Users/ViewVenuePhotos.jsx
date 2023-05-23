@@ -69,7 +69,6 @@ export default function ViewVenuePhotos() {
 
   useEffect(() => {
     DashboardValid();
-    //   getUserById();
     organiserById();
     setData(true);
   }, []);

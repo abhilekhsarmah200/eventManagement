@@ -6,7 +6,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import logo from '../../assets/img/cover2.png';
+import logo from '../../assets/img/cover.png';
 import SideBar from '../SideBar.tsx';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -95,7 +95,7 @@ const AdminHeader = () => {
   return (
     <>
       <header>
-        <nav>
+        <nav style={{ background: '#472967' }}>
           <div className='flex justify-between p-5 border shadow-md items-center'>
             <div className='flex flex-col items-center'>
               <NavLink to='/organiser'>

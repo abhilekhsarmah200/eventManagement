@@ -133,7 +133,9 @@ export default function BasicTable(props) {
                   </TableCell>
                   <TableCell align='center'>{row?.venueName}</TableCell>
                   <TableCell align='center'>{row?.fname}</TableCell>
-                  <TableCell align='center'>{row?.address}</TableCell>
+                  <TableCell align='center'>
+                    {row?.address}, {row?.city} ({row?.state})
+                  </TableCell>
                   <TableCell align='center'>{row?.pinCode}</TableCell>
                   <TableCell align='center'>
                     <Tooltip title={`${row?.totalRating} ⭐`}>

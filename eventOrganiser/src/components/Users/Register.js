@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import Button from '@mui/material/Button';
@@ -13,6 +14,8 @@ const Register = () => {
   const [cpassShow, setCPassShow] = useState(false);
   const [profileImage, setProfileImage] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const history = useNavigate();
 
   const [selectedVenueCategory, setSelectedVenueCategory] = useState(null);
   const venueCategory = [{ name: 'Marriage Hall' }, { name: 'Banquet Halls' }];
@@ -171,7 +174,9 @@ const Register = () => {
           toast.success('Registration Successfully done 😃!', {
             position: 'top-center',
           });
-          window.location = '/organiser';
+          setTimeout(function () {
+            history('/organiser/login');
+          }, 2000);
         }
       } catch (error) {}
     }

@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { Box, CircularProgress } from '@mui/material';
-import logo from '../../assests/img/cover2.png';
+import logo from '../../assests/img/cover.png';
 import SideBar from '../SideBar.tsx';
 
 const AdminHeader = ({ loading }) => {
@@ -44,7 +44,7 @@ const AdminHeader = ({ loading }) => {
       console.log('admin logout');
       localStorage.removeItem('admindatatoken');
       setLoginData(false);
-      history('/admin/dashboard');
+      history('/admin/login');
     } else {
       console.log('error');
     }
@@ -65,7 +65,7 @@ const AdminHeader = ({ loading }) => {
   return (
     <>
       <header>
-        <nav>
+        <nav style={{ background: '#472967' }}>
           <div className='flex justify-between p-5 border shadow-md items-center'>
             <div className='flex flex-col items-center'>
               <NavLink to='/admin/dashboard'>
@@ -74,40 +74,26 @@ const AdminHeader = ({ loading }) => {
               <SideBar />
             </div>
             <div className='avtar cursor-pointer'>
-              {logindata ? (
-                <>
-                  {logindata.ValidUserOne ? (
-                    <Avatar
-                      style={{
-                        background: 'salmon',
-                        fontWeight: 'bold',
-                        textTransform: 'capitalize',
-                      }}
-                      onClick={handleClick}
-                    >
-                      {logindata.ValidUserOne.fname[0].toUpperCase()}
-                    </Avatar>
-                  ) : (
-                    <>
-                      <>
-                        <Avatar
-                          style={{ background: 'blue' }}
-                          onClick={handleClick}
-                        />
-                      </>
-                    </>
-                  )}
-                </>
-              ) : (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+              {logindata.ValidUserOne ? (
+                <Avatar
+                  style={{
+                    background: 'salmon',
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize',
                   }}
+                  onClick={handleClick}
                 >
-                  loading...
-                </Box>
+                  {logindata.ValidUserOne.fname[0].toUpperCase()}
+                </Avatar>
+              ) : (
+                <>
+                  <>
+                    <Avatar
+                      style={{ background: 'blue' }}
+                      onClick={handleClick}
+                    />
+                  </>
+                </>
               )}
             </div>
 

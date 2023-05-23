@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import PreviewIcon from '@mui/icons-material/Preview';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
@@ -40,24 +40,19 @@ export default function SideBar() {
 
   const itemList = [
     {
+      text: 'Home',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: `/`,
+    },
+    {
       text: 'View Bookings',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
       to: `/view_bookings/${userId}`,
     },
     {
-      text: 'View Artist',
-      icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
-    },
-    {
-      text: 'View Organisers',
-      icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/admin/view-users',
-    },
-    {
       text: 'Profile',
       icon: <AccountCircleIcon style={{ fill: 'grey' }} />,
-      to: '/admin/profile',
+      to: '/profile',
     },
   ];
 

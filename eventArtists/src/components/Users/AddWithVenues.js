@@ -57,7 +57,9 @@ export default function AddWithVenues() {
       toast.error('login first!!', {
         position: 'top-center',
       });
-      window.location = '/artists/login';
+      setTimeout(function () {
+        window.location = '/artists/login';
+      }, 1000);
     } else {
       console.log('user verify');
       setLoginData(data);
