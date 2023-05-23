@@ -18,6 +18,7 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import ViewDetailedOrganisers from '../Admin/ViewDetailedOrganisers';
 import CustomizedDialogs from '../DialogBox/DialogBox.tsx';
 import DraggableDialog from '../CustomComponents/ConfirmPopup/ConfirmPopup.tsx';
+import DraggableDialogVerified from '../CustomComponents/ConfirmPopup/ConfirmPopupVerified/ConfirmPopupForValidation.tsx';
 
 export default function BasicTable(props) {
   const history = useNavigate();
@@ -39,27 +40,6 @@ export default function BasicTable(props) {
     // console.log(e.target.value);
 
     setInpval({ ...inpval, [e.target.name]: e.target.value });
-  };
-  const handleVerified = async (id) => {
-    const res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        validUser: true,
-      }),
-    });
-
-    const data = await res.json();
-    if (res.status === 200) {
-      toast.success(`Organiser Verified Successfully`, {
-        position: 'top-center',
-      });
-      setTimeout(function () {
-        window.location = `/admin/view-users`;
-      }, 2000);
-    }
   };
 
   return (
@@ -145,15 +125,7 @@ export default function BasicTable(props) {
                                 <CircularProgress />
                               </Box>
                             ) : (
-                              <Button
-                                variant='contained'
-                                className='cursor-pointer'
-                                color='info'
-                                onChange={setVal}
-                                onClick={() => handleVerified(row._id)}
-                              >
-                                <CheckCircleOutlineIcon />
-                              </Button>
+                              <DraggableDialogVerified id={row._id} />
                             )}
                           </Tooltip>
                         </div>
