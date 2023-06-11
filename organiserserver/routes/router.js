@@ -112,19 +112,6 @@ router.post('/organiserregister', upload.single('myFile'), async (req, res) => {
   }
 });
 
-//Update organiserValidation
-
-// router.post('/updateorganiser/:id', async (req, res) => {
-//   try {
-//     const user = await organiserdb.findOne({ id: req.params.id });
-//     if (!user) return res.status(400).json({ message: 'Invalid link' });
-//     await organiserdb.updateMany({ id: user.id, validUser: true });
-//     res.status(200).json({ message: 'Organiser Verified SuccessFully' });
-//   } catch (error) {
-//     res.status(404).json({ message: error.stack });
-//   }
-// });
-
 router.patch(`/updateorganiser/:id`, async (req, res) => {
   try {
     const { id } = req.params;
@@ -137,6 +124,20 @@ router.patch(`/updateorganiser/:id`, async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 });
+
+// //Add Details
+// router.patch(`/updateorganiserDetails/:id`, async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const user = await organiserdb.findByIdAndUpdate({ _id: id }, req.body, {
+//       new: true,
+//     });
+//     res.status(200).json({ message: "Organiser's Details added SuccessFully" });
+//     // res.status(200).json(bookingData);
+//   } catch (error) {
+//     res.status(500).json({ msg: error.message });
+//   }
+// });
 // user Login
 
 router.post('/organiserlogin', async (req, res) => {
@@ -191,6 +192,21 @@ router.get('/organiservalid', authenticate, async (req, res) => {
     res.status(201).json({ status: 201, ValidUserOne });
   } catch (error) {
     res.status(401).json({ status: 401, error });
+  }
+});
+
+//Update Organisers
+
+router.patch(`/updateOrganiserDetails/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await organiserdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Organiser Validate SuccessFully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
   }
 });
 
@@ -382,6 +398,46 @@ router.get('/getOrganiserById/:id', async (req, res) => {
     res.status(404).json({ message: error.stack });
   }
 });
+
+router.get('/getOrganiserBypinCode/:keyword', async (req, res) => {
+  organiserdb.findOne({ pinCode: req.params.keyword }, async (err, user) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.status(200).send(user);
+    }
+  });
+});
+
+// router.post('/getOrganiserByCity', async (req, res) => {
+//   const { city } = req.body;
+
+//   try {
+//     const users = await organiserdb.findOne({ city: city });
+//     res.status(200).send(users);
+//   } catch (error) {
+//     res.status(404).json({ message: error.stack });
+//   }
+// });
+
+router.post('/getOrganiserByCity', async (req, res) => {
+  const organisersData = await organiserdb
+    .find({ city: req.body })
+    .populate('city')
+    .exec(function (err, organisersData) {
+      if (err) console.log(err);
+      res.json(organisersData);
+    });
+});
+
+// //Get Organisers by their city
+// router.post('/getOrganiserByCityName', (req, res) => {
+//   const newItem = new organiserdb({
+//     city: req.body.city,
+//   });
+
+//   newItem.save().then((item) => res.json(item));
+// });
 
 //get organiser by bookingId
 

@@ -12,6 +12,8 @@ import AdminHeader from './components/Admin/Header';
 import AdminError from './components/Admin/Error';
 import ViewUsers from './components/Admin/ViewUsers';
 import ViewDetailedOrganisers from './components/Admin/ViewDetailedOrganisers';
+import BookingDetails from './components/Booking/BookingDetails';
+import './components/Admin/mix.css';
 
 function App() {
   const [data, setData] = useState(false);
@@ -64,10 +66,13 @@ function App() {
           <>
             <Routes>
               <Route
-                path='/admin/dashboard'
-                element={data ? <Admin /> : <AdminLogin />}
+                path='/admin/view-bookings'
+                element={data && <BookingDetails />}
               />
-              <Route path='/admin/profile' element={<AdminProfile />} />
+              <Route
+                path='/admin/profile'
+                element={data ? <AdminProfile /> : <AdminLogin />}
+              />
               <Route path='/admin/register' element={<AdminRegister />} />
               <Route
                 path='/admin/view-users'

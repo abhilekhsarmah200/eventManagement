@@ -1,90 +1,117 @@
 import React, { useState } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { Avatar, Box, Button, CircularProgress } from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
+import { Avatar, Box, Button, CircularProgress, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PreviewIcon from '@mui/icons-material/Preview';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { toast } from 'react-toastify';
-import Tooltip from '@mui/material/Tooltip';
 import { useNavigate, NavLink } from 'react-router-dom';
-import ViewDetailedOrganisers from '../Admin/ViewDetailedOrganisers';
+import DraggableDialogVerified from '../CustomComponents/ConfirmPopup/ConfirmPopupVerified/ConfirmPopupForValidation.tsx';
+import DraggableDialog from '../CustomComponents/ConfirmPopup/ConfirmPopup.tsx';
 import CustomizedDialogs from '../DialogBox/DialogBox.tsx';
+import ImageIcon from '@mui/icons-material/Image';
 
-export default function SmallDevicesTable() {
-  const history = useNavigate();
-
-  const [loading, setLoading] = useState(false);
-  const [organisersData, setOrganisersData] = useState('');
-
-  const handleDelete = async (id) => {
-    let token = localStorage.getItem('admindatatoken');
-
-    let res = [];
-    try {
-      setLoading(true);
-      const text = 'Are you want to delete?';
-
-      if (window.confirm(text) == true) {
-        res = await fetch(`http://localhost:8080/deleteorganiser/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
-        toast.success('User deleted successfully');
-        setTimeout(function () {
-          window.location = '/admin/view-users';
-        }, 2000);
-      } else {
-        toast.error('User not deleted');
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const getUserById = async (id) => {
-    history(`/admin/view-users/${id}`);
-  };
-
-  console.log({ organisersData });
-  const [inpval, setInpval] = useState({
-    validUser: false,
-  });
-
-  const setVal = (e) => {
-    setInpval({ ...inpval, [e.target.name]: e.target.value });
-  };
-  const handleVerified = async (id) => {
-    const res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        validUser: true,
-      }),
-    });
-
-    const data = await res.json();
-    if (res.status === 200) {
-      toast.success(`Organiser Verified Successfully`, {
-        position: 'top-center',
-      });
-      setTimeout(function () {
-        window.location = `/admin/view-users`;
-      }, 2000);
-    }
-  };
-
-  return <div>SmallDevicesTable</div>;
+export default function SmallDevicesTable({
+  users,
+  path,
+  getUserById = () => {},
+  loading,
+}) {
+  return (
+    <div>
+      <div className='flex sm:w-[95vw] w-[95vw] lg:hidden border sm:p-4 p-1 shadow-xl flex-col gap-6'>
+        {users?.map((row, index) => (
+          <div className='flex flex-col gap-2 border-b-2 pb-2'>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>Image:</div>
+              <div className='text-sm sm:text-base'>
+                {row?.photo ? (
+                  <div className='flex justify-center'>
+                    <CustomizedDialogs img={row?.photo} path={path} />
+                  </div>
+                ) : (
+                  <div className='flex justify-center'>
+                    <ImageIcon style={{ fontSize: '3rem', color: 'grey' }} />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>
+                Venue Name:
+              </div>
+              <div className='uppercase text-sm sm:text-base'>
+                {row?.venueName}
+              </div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>
+                Manager Name:
+              </div>
+              <div className='uppercase text-sm sm:text-base'>{row?.fname}</div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>Email:</div>
+              <div className='text-sm sm:text-base'>{row?.email}</div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>Mobile:</div>
+              <div className='text-sm sm:text-base'>{row?.phone}</div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>Address:</div>
+              <div className='text-sm sm:text-base'>
+                {row?.address}, {row?.city} ({row?.state})
+              </div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>PIN Code:</div>
+              <div>{row?.pinCode}</div>
+            </div>
+            <div className='flex justify-start gap-x-10'>
+              <div className='w-28 sm:w-40 text-sm sm:text-base'>Actions:</div>
+              <div>
+                <div className='flex'>
+                  {row?.validUser === false ? (
+                    <div className='flex'>
+                      <Tooltip title='verify user'>
+                        {loading ? (
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            Loading... &nbsp;
+                            <CircularProgress />
+                          </Box>
+                        ) : (
+                          <DraggableDialogVerified id={row._id} />
+                        )}
+                      </Tooltip>
+                    </div>
+                  ) : (
+                    <div className='flex'>
+                      <Tooltip title='view'>
+                        <Button
+                          variant='outlined'
+                          className='cursor-pointer'
+                          color='success'
+                          onClick={() => getUserById(row._id)}
+                        >
+                          <VisibilityIcon />
+                        </Button>
+                      </Tooltip>
+                    </div>
+                  )}
+                  <div className='text-4xl px-1'>/</div>
+                  <DraggableDialog id={row._id} />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

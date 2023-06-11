@@ -10,9 +10,18 @@ import searchOrganisersDetails from '../../utils/searchOrganisersDetails.func';
 import axios from 'axios';
 
 export default function ViewUsers({ datas }) {
+  const initialSearchProps = [
+    { label: 'Address', name: 'address' },
+    { label: 'Venue Name', name: 'venueName' },
+    { label: 'Manager Name', name: 'fname' },
+    { label: 'Venue Category', name: 'venueCategory' },
+    { label: 'City', name: 'city' },
+    { label: 'State', name: 'state' },
+  ];
   const oldProducts = useRef([]);
   const [searchKey, setSearchKey] = useState('');
   const [search, setSearch] = useState(false);
+  const [searchProps, setSearchProps] = useState();
   const [users, setUsers] = useState([]);
   const [copyOfUsers, setCopyOfUsers] = useState([]);
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -81,20 +90,22 @@ export default function ViewUsers({ datas }) {
     if (searchKey === '') {
       setUsers(copyOfUsers);
     } else if (searchKey !== '') {
-      let searchProps = [
-        'address',
-        'venueName',
-        'fname',
-        'totalRating',
-        'venueCategory',
-        'city',
-        'state',
-      ];
-      let result = searchOrganisersDetails(copyOfUsers, searchProps, searchKey);
+      let _searchProps = [];
+      if (searchProps?.length > 0) {
+        _searchProps = searchProps;
+      } else {
+        _searchProps = initialSearchProps;
+      }
+      _searchProps = _searchProps.map((item) => item.name);
+      let result = searchOrganisersDetails(
+        copyOfUsers,
+        _searchProps,
+        searchKey
+      );
       setUsers(result);
       // console.log({ search, searchKey, result });
     }
-  }, [search]);
+  }, [search, searchProps]);
   const ids = users?.map((element, index) => element?._id);
 
   console.log({ users });
@@ -115,6 +126,10 @@ export default function ViewUsers({ datas }) {
             onChange={(e) => {
               setSearchKey(e.target.value);
             }}
+            search={true}
+            initialSearchProps={initialSearchProps}
+            searchProps={searchProps}
+            setSearchProps={setSearchProps}
             placeholder='Search by Venue Name and Address'
           ></SearchBox>
         </div>

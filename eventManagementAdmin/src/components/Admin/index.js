@@ -32,7 +32,7 @@ export default function Admin() {
     } else {
       console.log('user verify');
       setLoginData(data);
-      history('/admin/dashboard');
+      history('/admin/profile');
     }
   };
 

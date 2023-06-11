@@ -47,6 +47,7 @@ const AdminHeader = () => {
       console.log('organiser logout');
       localStorage.removeItem('organiserdatatoken');
       localStorage.removeItem('organiserdata');
+      localStorage.removeItem('photoavailable');
       setLoginData(false);
       window.location = '/organiser/profile';
     } else {

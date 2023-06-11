@@ -155,11 +155,10 @@ export default function BasicTable(props) {
                             }
                           />
                         </div>
-                        <div
-                          className='cursor-pointer'
-                          onClick={() => getUserById(row._id)}
-                        >
-                          ({row?.ratings?.length})ratings
+                        <div className='cursor-pointer'>
+                          <a href={`/bookvenue/${row._id}#ratings`}>
+                            ({row?.ratings?.length})ratings
+                          </a>
                         </div>
                       </div>
                     </Tooltip>

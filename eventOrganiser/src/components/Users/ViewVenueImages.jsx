@@ -6,12 +6,17 @@ import { ToastContainer, toast } from 'react-toastify';
 import { Button } from '@mui/material';
 import SwipeableTextMobileStepper from '../Carousel/Carousel.tsx';
 import DeleteIcon from '@mui/icons-material/Delete';
+import TextField from '@mui/material/TextField';
+import TextArea from '../CustomComponent/TextArea/TextArea';
 
 export default function ViewVenueImages() {
   const { logindata, setLoginData } = useContext(LoginContext);
+  const [edit, setEdit] = useState(false);
 
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [details, setDetails] = useState([]);
 
   const history = useNavigate();
 
@@ -61,6 +66,35 @@ export default function ViewVenueImages() {
     }
   };
 
+  const edited = (e) => {
+    setEdit(true);
+  };
+
+  const updateOrganiserDetails = async (id) => {
+    const res = await fetch(
+      `http://localhost:8080/updateorganiser/${organiserId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          details: details,
+        }),
+      }
+    );
+
+    const data = await res.json();
+    if (res.status === 200) {
+      toast.success(`Organiser Updated Successfully!!`, {
+        position: 'top-center',
+      });
+      setTimeout(function () {
+        window.location = `#`;
+      }, 2000);
+    }
+  };
+
   const handleDelete = async (id) => {
     let res = [];
     try {
@@ -79,6 +113,7 @@ export default function ViewVenueImages() {
         );
         if (res.status === 200) {
           toast.success('VenuePhotos deleted successfully');
+          localStorage.removeItem('photoavailable');
           setTimeout(function () {
             window.location = '/organiser/add_venue';
           }, 2000);
@@ -114,6 +149,43 @@ export default function ViewVenueImages() {
               Delete Venues Photos
             </Button>
           </div>
+
+          <div className='flex mb-4 md:mx-20 mx-16 gap-4 flex-col justify-start'>
+            <div>Add Your Details:</div>
+
+            <div className='w-full mx-auto'>
+              {data?.organiser_Id?.details?.map((item, index) => (
+                <TextArea
+                  placeholder='Section Description'
+                  value={item?.htmlValue || details}
+                  onTextChange={(e) => {
+                    setDetails(e);
+                  }}
+                />
+              ))}
+
+              {data?.organiser_Id?.details?.length === 0 && (
+                <TextArea
+                  placeholder='Section Description'
+                  value={details}
+                  onTextChange={(e) => {
+                    setDetails(e);
+                  }}
+                />
+              )}
+            </div>
+
+            <div className='flex justify-center'>
+              <Button
+                variant='outlined'
+                className='btn'
+                onClick={updateOrganiserDetails}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+
           <ToastContainer />
         </>
       ))}

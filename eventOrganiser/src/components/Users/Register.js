@@ -59,7 +59,7 @@ const Register = () => {
     const url = 'http://localhost:8080/organiserregister';
     const formdata = new FormData();
 
-    formdata.append('myFile', inpval.photo, inpval.photo.name);
+    formdata.append('myFile', inpval.photo);
     formdata.append('email', inpval.email);
     formdata.append('fname', inpval.fname);
     formdata.append('venueName', inpval.venueName);
@@ -157,7 +157,7 @@ const Register = () => {
       toast.error('PIN Code required', {
         position: 'top-center',
       });
-    } else if (photo === 0) {
+    } else if (profileImage.length === 0) {
       toast.error('Photo is required', {
         position: 'top-center',
       });

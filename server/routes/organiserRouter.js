@@ -5,6 +5,7 @@ var bcrypt = require('bcryptjs');
 const authenticate = require('../middleware/authenticateOrganiser');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const organiserdb = require('../models/OrganiserSchema');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -212,6 +213,15 @@ organiserRouter.get('/organiserforgotpassword/:id/:token', async (req, res) => {
     res.status(401).json({ status: 401, error });
   }
 });
+
+// //Get Organisers by their city
+// organiserRouter.post('/getOrganiserByCityName', authenticate, (req, res) => {
+//   const newItem = new organiserdb({
+//     city: req.body.city,
+//   });
+
+//   newItem.save().then((item) => res.json(item));
+// });
 
 // change password
 

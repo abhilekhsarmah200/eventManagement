@@ -83,7 +83,7 @@ export default function ViewDetailedOrganisers() {
       {organisersData ? (
         <>
           <div className='flex gap-2 bg-[#C36AC4] max-w-fit py-1 px-3 rounded-md'>
-            <a className='text-white underline' href='/admin/dashboard/'>
+            <a className='text-white underline' href='/admin/pro/'>
               Admin Dashboard
             </a>
             <ArrowForwardIosIcon style={{ color: 'white' }} />

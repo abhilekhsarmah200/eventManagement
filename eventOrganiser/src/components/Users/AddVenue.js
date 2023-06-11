@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Stack from '@mui/material/Stack';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default class FilesUploadComponent extends Component {
   constructor(props) {
@@ -14,11 +15,18 @@ export default class FilesUploadComponent extends Component {
     this.state = {
       imgCollection: '',
       organiser_Id: '',
+      profileImage: [],
     };
   }
 
   onFileChange(e) {
+    const setProfile = e.target.files;
+    const selectedFilesArray = Array.from(setProfile);
+    const imageArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
     this.setState({ imgCollection: e.target.files });
+    this.setState({ profileImage: imageArray });
   }
 
   onSubmit(e) {
@@ -38,6 +46,7 @@ export default class FilesUploadComponent extends Component {
           toast.success('Photos Added SuccessFully!!', {
             position: 'top-center',
           });
+          localStorage.setItem('photoavailable', true);
           setTimeout(function () {
             window.location.href = `/organiser/view_venuePhotos/${organiserId}`; //will redirect to your blog page (an ex: blog.html)
           }, 2000);
@@ -48,7 +57,36 @@ export default class FilesUploadComponent extends Component {
 
   render() {
     return (
-      <div className='container flex justify-center mt-5'>
+      <div className='container flex flex-col items-center justify-center mt-5'>
+        <div className='flex justify-center mb-4'>
+          {this.state?.profileImage && (
+            <div className='flex gap-4 flex-wrap'>
+              {this.state?.profileImage?.map((img, index) => {
+                return (
+                  <div className='relative'>
+                    <div>
+                      <img src={img} className='w-auto h-40 rounded-md' />
+                    </div>
+                    <div className='absolute top-0 right-0 z-99'>
+                      <div
+                        onClick={() =>
+                          this.setState({
+                            profileImage: this.state.profileImage.filter(
+                              (e) => e !== img
+                            ),
+                          })
+                        }
+                        className='text-red cursor-pointer'
+                      >
+                        <DeleteIcon style={{ color: 'red' }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
         <div className=''>
           <form onSubmit={this.onSubmit}>
             <div className='flex flex-col gap-4'>

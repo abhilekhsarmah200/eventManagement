@@ -127,3 +127,38 @@ form .btn:hover {
   display: inline-flex;
   width: 100%;
 }
+
+.p-radiobutton .p-radiobutton-box.p-highlight {
+  border-color: #482967 !important;
+  background: #482967 !important;
+}
+
+.p-multiselect {
+  background: #ffffff;
+  border: 1px solid #ced4da;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    box-shadow 0.2s;
+  border-radius: 5px !important;
+}
+.p-checkbox .p-checkbox-box.p-highlight {
+  border-color: #482967 !important;
+  background: #482967 !important;
+}
+
+.p-checkbox:not(.p-checkbox-disable) .p-checkbox-box.p-focus {
+  border-color: #482967 !important;
+  box-shadow: none !important;
+}
+
+.p-checkbox:not(.p-checkbox-disable) .p-checkbox-box.p-focus:hover {
+  border-color: #482967 !important;
+}
+.p-inputgroup-addon:first-child,
+.p-inputgroup button:first-child,
+.p-inputgroup input:first-child,
+.p-inputgroup > .p-inputwrapper:first-child,
+.p-inputgroup > .p-inputwrapper:first-child > .p-inputtext {
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
+  border-radius: 5px;
+}

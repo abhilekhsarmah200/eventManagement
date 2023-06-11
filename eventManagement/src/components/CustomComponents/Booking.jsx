@@ -10,14 +10,20 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import axios from 'axios';
+import { Dialog } from 'primereact/dialog';
+import PhotosCarousel from './Booking/PhotosCarousel.tsx';
+import RatingList from './RatingList';
+import RelatedVenues from '../RelatedVenues/RelatedVenues';
+import Rate from './Rate';
 
 export default function Booking() {
   const [selectedCities, setSelectedCities] = useState(null);
   const [guest, setGuest] = useState('');
-  const [date, setDate] = useState(null);
+  const [venueData, setVenueData] = useState([]);
   const [datetime12h, setDateTime12h] = useState(null);
   const [selectedArtists, setSelectedArtists] = useState(null);
   const [organisersData, setOrganisersData] = useState([]);
+  const [bookings, setBookings] = useState(null);
   const { id } = useParams();
   const { logindata, setLoginData } = useContext(LoginContext);
   console.log({ guest });
@@ -26,6 +32,7 @@ export default function Booking() {
   const [users, setUsers] = useState([]);
   const [copyOfUsers, setCopyOfUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   console.log({ selectedArtists });
 
@@ -45,7 +52,14 @@ export default function Booking() {
     { name: '1200/-', code: 'Delux' },
   ];
 
-  console.log(organisersData?.venueName);
+  const errorImages = [
+    {
+      imgCollection: [
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png',
+      ],
+    },
+  ];
 
   const [inpval, setInpval] = useState({
     organiser_Id: id || '',
@@ -77,7 +91,7 @@ export default function Booking() {
     const formdata = new FormData();
 
     formdata.append('organiser_Id', id);
-    formdata.append('Name', inpval.Name);
+    formdata.append('userName', inpval.Name);
     formdata.append('bookingDate', datetime12h);
     formdata.append('eventName', inpval.eventName);
     formdata.append('requiredArtist', selectedArtists?.name);
@@ -85,39 +99,34 @@ export default function Booking() {
     formdata.append('foodList', selectedCities.code);
     formdata.append('foodDishPrice', selectedCities.name);
     formdata.append('totalPrice', totalPrice);
+    formdata.append('balance', totalPrice);
     formdata.append('guest', inpval.guest);
+    formdata.append('paymentStatus', 'pending');
     formdata.append('venueName', organisersData.venueName);
     formdata.append('organiserPhone', organisersData.phone);
     formdata.append('organiserPhoto', organisersData.photo);
 
-    let res;
-    try {
-      res = await axios.post('http://localhost:8010/bookEvents', formdata, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-      });
-    } catch (error) {
-      toast.error('email is already taken', {
+    let res = await axios.post('http://localhost:8010/bookEvents', formdata, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+    });
+    if (res?.status === 422) {
+      // toast.error('email is already taken', {
+      //   position: 'top-center',
+      // });
+    } else if (res.status >= 200 && res.status <= 300) {
+      toast.success('Booking pending... Please Pay your Advance', {
         position: 'top-center',
       });
-    } finally {
-      if (res?.status === 422) {
-        toast.error('email is already taken', {
-          position: 'top-center',
-        });
-      } else {
-        toast.success('Booked Successfully done 😃!', {
-          position: 'top-center',
-        });
-        setTimeout(function () {
-          history(`/`);
-        }, 2000);
-      }
+      setBookings(res?.data);
+      setVisible(true);
+      console.log(res?.data);
+      window.onpopstate = (e) => {};
     }
   };
-
+  console.log({ bookings });
   const organiserById = async () => {
     try {
       const res = await fetch(`http://localhost:8080/getOrganiserById/${id}`, {
@@ -134,30 +143,42 @@ export default function Booking() {
     }
   };
 
-  const DashboardValid = async () => {
-    let token = localStorage.getItem('usersdatatoken');
-
-    const res = await fetch('http://localhost:8010/validuser', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-    });
-
-    const data = await res.json();
-
-    if (data.status == 401 || !data) {
-      toast.error(`please login first!`, {
-        position: 'top-center',
+  const VenueImagesById = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/viewAllDetails/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      history('/login');
-    } else {
-      console.log('user verify');
-      setLoginData(data);
-      history(`/bookvenue/${id}`);
+      const data = await res.json();
+      setVenueData(data);
+      console.log({ data });
+    } catch (error) {
+      console.log({ error });
     }
   };
+
+  console.log(organisersData?.pinCode);
+
+  // const getOrganiserByPinCode = async () => {
+  //   try {
+  //     const res = await fetch(
+  //       `http://localhost:8080/getOrganiserBypinCode/${organisersData?.pinCode}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       }
+  //     );
+  //     const data = await res.json();
+  //     // setVenueData(data);
+  //     console.log({ data });
+  //   } catch (error) {
+  //     console.log({ error });
+  //   }
+  // };
 
   const totalPrice = selectedArtists
     ? parseInt(selectedCities?.name) * parseInt(inpval?.guest) +
@@ -165,108 +186,203 @@ export default function Booking() {
     : parseInt(selectedCities?.name) * parseInt(inpval?.guest) || 0;
 
   useEffect(() => {
-    DashboardValid();
+    VenueImagesById();
     organiserById();
+    // getOrganiserByPinCode();
   }, []);
+
+  let bookingId = bookings?.res?._id;
+  console.log({ venueData });
   return (
     <>
-      <div className='flex md:flex-row flex-col flex-wrap'>
-        <div className='flex flex-col gap-4 mt-5 items-start px-5 md:w-[60%]'>
-          hello
-        </div>
-        <div className='flex flex-col gap-4 mt-5 items-end px-5 md:w-[40%]'>
-          <section>
-            <form>
-              <div className='flex flex-col gap-4 mt-5 items-end'>
-                <TextField
-                  className='w-full'
-                  value={inpval.Name}
-                  onChange={setVal}
-                  id='outlined-basic'
-                  label='Name'
-                  name='Name'
-                  variant='outlined'
-                />
-                <span className='p-float-label w-[100%]'>
-                  <Calendar
-                    inputId='booking_date'
-                    value={datetime12h}
-                    onChange={(e) => setDateTime12h(e.value)}
-                    showIcon
-                    name='bookingDate'
-                    yearNavigator={true}
-                    minDate={new Date()}
-                    dateFormat='dd/mm/yy'
-                    yearRange='2023:2050'
-                  />
-                  <label htmlFor='booking_date'>Booking Date</label>
-                </span>
-                <TextField
-                  className='w-full'
-                  value={inpval.eventName}
-                  onChange={setVal}
-                  id='outlined-basic'
-                  label='Event Name'
-                  name='eventName'
-                  variant='outlined'
-                />
-                <Dropdown
-                  value={selectedCities}
-                  onChange={(e) => setSelectedCities(e.value)}
-                  options={cities}
-                  optionLabel='name'
-                  placeholder='Select Dishes Price'
-                  className='w-full md:w-14rem'
-                />
-                <TextField
-                  className='w-full'
-                  id='outlined-basic'
-                  label='No of Guest'
-                  variant='outlined'
-                  onChange={setVal}
-                  value={inpval.guest}
-                  name='guest'
-                />
-                <Dropdown
-                  value={selectedArtists}
-                  onChange={(e) => {
-                    setSelectedArtists(e.value);
-                  }}
-                  options={artists}
-                  optionLabel='name'
-                  placeholder='Select Required Artists'
-                  className='w-full md:w-14rem'
-                />
-                <span className='p-float-label w-full'>
-                  <InputText
-                    readOnly
-                    tooltip={`${
-                      selectedArtists
-                        ? `${selectedArtists?.name} price added, ₹: ${selectedArtists?.price}/-`
-                        : ''
-                    }`}
-                    tooltipOptions={{ position: 'top' }}
-                    id='username'
-                    className='w-full'
-                    value={totalPrice}
-                  />
-                  <label htmlFor='username'>Total Price</label>
-                </span>
-
-                <div className='mx-auto'>
-                  <Button
-                    onClick={bookVenue}
-                    className='lg:w-[20em]'
-                    variant='outlined'
-                  >
-                    Book
-                  </Button>
+      <section>
+        <div className='flex md:flex-row justify-evenly flex-col'>
+          <div className='mt-5 items-start px-5 md:w-[60%] mx-auto'>
+            <>
+              {venueData?.length === 0 ? (
+                <div className='mt-5 items-start px-5 md:w-[60%] mx-auto'>
+                  <div style={{ color: '#482967', fontWeight: 'bolder' }}>
+                    Event Photos:
+                  </div>
+                  {errorImages.map((data, index) => (
+                    <PhotosCarousel
+                      error={true}
+                      images={data?.imgCollection}
+                      index={index}
+                    />
+                  ))}
                 </div>
+              ) : (
+                <div className='mt-5 items-start px-5 md:w-[60%] mx-auto'>
+                  <div style={{ color: '#482967', fontWeight: 'bolder' }}>
+                    Event Photos:
+                  </div>
+                  {venueData?.map((data, index) => (
+                    <PhotosCarousel
+                      images={data?.imgCollection}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+            {organisersData?.details?.length === 0 ? null : (
+              <div className='border rounded-b-xl border-x-0 shadow-xl border-t-0 border-purple-950 p-4'>
+                {organisersData?.details?.map((item, index) => (
+                  <>
+                    <div className='font-bold text-12 text-blue-500'>
+                      {'Details :'}
+                    </div>
+                    <span
+                      className='text-black Montserrat_font text-12 '
+                      dangerouslySetInnerHTML={{
+                        __html: item?.htmlValue,
+                      }}
+                    ></span>
+                  </>
+                ))}
               </div>
-            </form>
-          </section>
+            )}
+          </div>
+
+          <div className='flex flex-col gap-4 mt-5 items-end px-5 md:w-[40%]'>
+            <section>
+              <form>
+                <div className='flex flex-col gap-6 mt-5 items-end'>
+                  <TextField
+                    className='w-full'
+                    value={inpval.Name}
+                    onChange={setVal}
+                    id='outlined-basic'
+                    label='Name'
+                    name='Name'
+                    variant='outlined'
+                  />
+                  <span className='p-float-label w-[100%]'>
+                    <Calendar
+                      inputId='booking_date'
+                      value={datetime12h}
+                      onChange={(e) => setDateTime12h(e.value)}
+                      showIcon
+                      name='bookingDate'
+                      yearNavigator={true}
+                      minDate={new Date()}
+                      dateFormat='dd/mm/yy'
+                      yearRange='2023:2050'
+                    />
+                    <label htmlFor='booking_date'>Booking Date</label>
+                  </span>
+                  <TextField
+                    className='w-full'
+                    value={inpval.eventName}
+                    onChange={setVal}
+                    id='outlined-basic'
+                    label='Event Name'
+                    name='eventName'
+                    variant='outlined'
+                  />
+                  <Dropdown
+                    value={selectedCities}
+                    onChange={(e) => setSelectedCities(e.value)}
+                    options={cities}
+                    optionLabel='name'
+                    placeholder='Select Dishes Price'
+                    className='w-full md:w-14rem'
+                  />
+                  <TextField
+                    className='w-full'
+                    id='outlined-basic'
+                    label='No of Guest'
+                    variant='outlined'
+                    onChange={setVal}
+                    value={inpval.guest}
+                    name='guest'
+                  />
+                  <Dropdown
+                    value={selectedArtists}
+                    onChange={(e) => {
+                      setSelectedArtists(e.value);
+                    }}
+                    options={artists}
+                    optionLabel='name'
+                    placeholder='Select Required Artists'
+                    className='w-full md:w-14rem'
+                  />
+                  <span className='p-float-label w-full'>
+                    <InputText
+                      readOnly
+                      tooltip={`${
+                        selectedArtists
+                          ? `${selectedArtists?.name} price added, ₹: ${selectedArtists?.price}/-`
+                          : ''
+                      }`}
+                      tooltipOptions={{ position: 'top' }}
+                      id='totalPrice'
+                      className='w-full'
+                      value={totalPrice}
+                    />
+                    <label htmlFor='totalPrice'>Total Price</label>
+                  </span>
+
+                  <div className='mx-auto'>
+                    <Button
+                      onClick={bookVenue}
+                      className='lg:w-[20em]'
+                      variant='outlined'
+                    >
+                      Book
+                    </Button>
+                  </div>
+                  <Dialog
+                    header='Please Pay Your advance'
+                    headerStyle={{ textAlign: 'center' }}
+                    closable={false}
+                    draggable={false}
+                    visible={visible}
+                    style={{ width: '50vw' }}
+                    onHide={() => setVisible(false)}
+                  >
+                    <div className='flex flex-col gap-4 items-center justify-center'>
+                      <div>
+                        <p className='text-xs'>
+                          <i className='pi pi-exclamation-circle text-red-500'></i>
+                          Please don't click on back and Refresh!!
+                        </p>
+                      </div>
+                      <Button variant='outlined'>
+                        <a href={`/payment/${bookingId}`}>Pay Advance</a>
+                      </Button>
+                    </div>
+                  </Dialog>
+                </div>
+              </form>
+            </section>
+          </div>
+          <ToastContainer />
         </div>
-      </div>
+      </section>
+      <section>
+        <div id='ratings'>
+          <RelatedVenues city={organisersData?.city} />
+        </div>
+      </section>
+      <section>
+        <>
+          {organisersData?.ratings?.length === 0 ? null : (
+            <div className='flex justify-center pt-2 mx-10 mb-5 border shadow-xl rounded-lg md:w-[30rem] w-[23rem] flex-col mt-8 md:text-12 text-10'>
+              <div
+                style={{ color: '#482967', fontWeight: 'bolder' }}
+                className='flex justify-center'
+              >
+                Ratings and reviews:
+              </div>
+              {organisersData?.ratings?.map((item, index) => (
+                <RatingList ratings={item} />
+              ))}
+            </div>
+          )}
+        </>
+      </section>
     </>
   );
 }

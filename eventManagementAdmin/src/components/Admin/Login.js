@@ -79,7 +79,7 @@ const AdminLogin = () => {
           position: 'top-center',
         });
         setTimeout(function () {
-          window.location.href = '/admin/dashboard'; //will redirect to your blog page (an ex: blog.html)
+          window.location.href = '/admin/profile'; //will redirect to your blog page (an ex: blog.html)
         }, 2000);
 
         setInpval({ ...inpval, email: '', password: '' });

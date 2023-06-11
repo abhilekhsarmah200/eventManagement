@@ -70,7 +70,7 @@ const Register = () => {
     const url = 'http://localhost:8080/artistsregister';
     const formdata = new FormData();
 
-    formdata.append('myFile', inpval.photo, inpval.photo.name);
+    formdata.append('myFile', inpval.photo);
     formdata.append('email', inpval.email);
     formdata.append('fname', inpval.fname);
     formdata.append('artistsType', checked);
@@ -85,12 +85,10 @@ const Register = () => {
       password,
       cpassword,
       phone,
-      artistsType,
       address,
       pinCode,
       photo,
     } = inpval;
-    let regx = /[a-zA-Z]/g;
 
     if (fname === '') {
       toast.warning('fname is required!', {
@@ -144,7 +142,7 @@ const Register = () => {
       toast.error('PIN Code required', {
         position: 'top-center',
       });
-    } else if (photo === '') {
+    } else if (profileImage?.length === 0) {
       toast.error('Photo is required', {
         position: 'top-center',
       });

@@ -13,7 +13,6 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
-import { Avatar, Button } from '@mui/material';
 
 export default function ViewDetailedOrganisers() {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -25,44 +24,6 @@ export default function ViewDetailedOrganisers() {
   const [data, setData] = useState(false);
 
   const history = useNavigate();
-
-  const addUserdata = async (e) => {
-    e.preventDefault();
-
-    let token = localStorage.getItem('usersdatatoken');
-
-    const url = 'http://localhost:8010/rating';
-
-    const { star, organiserId, comments } = inpval;
-
-    // console.log("user registration succesfully done");
-
-    try {
-      const res = await fetch('http://localhost:8010/rating', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify({
-          star,
-          organiserId,
-          comments,
-        }),
-      });
-
-      if (res.status === 422) {
-        toast.error('Your Rating not uploaded', {
-          position: 'top-center',
-        });
-      } else {
-        toast.success('Your Rating updated successfully!!', {
-          position: 'top-center',
-        });
-        window.location = '/';
-      }
-    } catch (error) {}
-  };
 
   const viewDetails = async () => {
     const res = await fetch(`http://localhost:8080/viewAllDetails/${id}`, {
@@ -107,12 +68,6 @@ export default function ViewDetailedOrganisers() {
     organiserId: id,
     comments: '',
   });
-
-  const setVal = (e) => {
-    // console.log(e.target.value);
-
-    setInpval({ ...inpval, [e.target.name]: e.target.value });
-  };
 
   useEffect(() => {
     DashboardValid();
@@ -233,38 +188,6 @@ export default function ViewDetailedOrganisers() {
                 ))}
               </div>
             </div>
-            <section>
-              <div className='form_data'>
-                <form>
-                  <div className='form_input'>
-                    <label htmlFor='star'>Give Your Rating:</label>
-                    <input
-                      type='number'
-                      min={0}
-                      onChange={setVal}
-                      value={inpval.star}
-                      name='star'
-                      id='star'
-                      placeholder='Rating'
-                    />
-                  </div>
-                  <div className='form_input'>
-                    <label htmlFor='star'>Add Your Comments:</label>
-                    <input
-                      type='text'
-                      onChange={setVal}
-                      value={inpval.comments}
-                      name='comments'
-                      id='comments'
-                      placeholder='Give Us Feedback'
-                    />
-                  </div>
-                  <Button className='btn' onClick={addUserdata}>
-                    Add Rating+
-                  </Button>
-                </form>
-              </div>
-            </section>
           </div>
         </>
       ) : (

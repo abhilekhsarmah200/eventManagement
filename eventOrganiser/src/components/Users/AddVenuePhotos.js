@@ -34,7 +34,12 @@ export default function AddVenuePhotos() {
     } else {
       console.log('user verify');
       setLoginData(data);
-      history('/organiser/add_venue');
+      const photoavailable = localStorage.getItem('photoavailable');
+      if (photoavailable) {
+        history(`/organiser/view_venuePhotos/${logindata?.ValidUserOne?._id}`);
+      } else {
+        history('/organiser/add_venue');
+      }
     }
   };
 

@@ -10,6 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import MenuIcon from '@mui/icons-material/Menu';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -40,12 +41,12 @@ export default function SideBar() {
     {
       text: 'Home',
       icon: <HomeIcon style={{ fill: 'grey' }} />,
-      to: '/admin/dashboard',
+      to: '/admin/profile',
     },
     {
       text: 'View Bookings',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
+      to: '/admin/view-bookings',
     },
     {
       text: 'View Artist',
@@ -90,7 +91,11 @@ export default function SideBar() {
     <div className='m-5'>
       {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button variant='outlined' onClick={toggleDrawer(anchor, true)}>
+          <Button
+            startIcon={<MenuIcon className='text-white' />}
+            variant='outlined'
+            onClick={toggleDrawer(anchor, true)}
+          >
             <div className='text-white'>Event Admin Menu</div>
           </Button>
           <SwipeableDrawer

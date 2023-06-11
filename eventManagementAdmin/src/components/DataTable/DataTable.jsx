@@ -19,6 +19,7 @@ import ViewDetailedOrganisers from '../Admin/ViewDetailedOrganisers';
 import CustomizedDialogs from '../DialogBox/DialogBox.tsx';
 import DraggableDialog from '../CustomComponents/ConfirmPopup/ConfirmPopup.tsx';
 import DraggableDialogVerified from '../CustomComponents/ConfirmPopup/ConfirmPopupVerified/ConfirmPopupForValidation.tsx';
+import SmallDevicesTable from './SmallDevicesTable';
 
 export default function BasicTable(props) {
   const history = useNavigate();
@@ -43,116 +44,133 @@ export default function BasicTable(props) {
   };
 
   return (
-    <div>
-      <TableContainer component={Paper}>
-        {props?.users?.length === 0 ? (
-          <div>Data not Available...</div>
-        ) : (
-          <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-            <TableHead>
-              <TableRow>
-                <TableCell width='10%' align='center'>
-                  <b>Image</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Venue Name</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Manager Name</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Email</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Mobile</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Address</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>PIN Code</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Action</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {props?.users?.map((row, index) => (
-                <TableRow
-                  key={row?.fname}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component='th' scope='row'>
-                    {row?.photo ? (
-                      <div className='flex justify-center'>
-                        <CustomizedDialogs img={row?.photo} path={props.path} />
-                      </div>
-                    ) : (
-                      <div className='flex justify-center'>
-                        <ImageIcon
-                          style={{ fontSize: '3rem', color: 'grey' }}
-                        />
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell align='center'>{row?.venueName}</TableCell>
-                  <TableCell align='center'>{row?.fname}</TableCell>
-                  <TableCell align='center'>
-                    <div className='w-[50%] break-words mx-auto'>
-                      {row?.email}
-                    </div>
-                  </TableCell>
-                  <TableCell align='center'>{row?.phone}</TableCell>
-                  <TableCell align='center'>
-                    {row?.address}, {row?.city} ({row?.state})
-                  </TableCell>
-                  <TableCell align='center'>{row?.pinCode}</TableCell>
-                  <TableCell align='center'>
-                    <div className='flex'>
-                      {row?.validUser === false ? (
-                        <div className='flex'>
-                          <Tooltip title='verify user'>
-                            {loading ? (
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                }}
-                              >
-                                Loading... &nbsp;
-                                <CircularProgress />
-                              </Box>
+    <>
+      <div className='lg:block hidden'>
+        <div className='w-[90vw] mx-auto'>
+          <TableContainer component={Paper}>
+            {props?.users?.length === 0 ? (
+              <div>Data not Available...</div>
+            ) : (
+              <>
+                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell width='10%' align='center'>
+                        <b>Image</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>Venue Name</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>Manager Name</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>Email</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>Mobile</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>Address</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>PIN Code</b>
+                      </TableCell>
+                      <TableCell width='10%' align='center'>
+                        <b>Action</b>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {props?.users?.map((row, index) => (
+                      <TableRow
+                        key={row?.fname}
+                        sx={{
+                          '&:last-child td, &:last-child th': { border: 0 },
+                        }}
+                      >
+                        <TableCell component='th' scope='row'>
+                          {row?.photo ? (
+                            <div className='flex justify-center'>
+                              <CustomizedDialogs
+                                img={row?.photo}
+                                path={props.path}
+                              />
+                            </div>
+                          ) : (
+                            <div className='flex justify-center'>
+                              <ImageIcon
+                                style={{ fontSize: '3rem', color: 'grey' }}
+                              />
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell align='center'>{row?.venueName}</TableCell>
+                        <TableCell align='center'>{row?.fname}</TableCell>
+                        <TableCell align='center'>
+                          <div className='w-[50%] break-words mx-auto'>
+                            {row?.email}
+                          </div>
+                        </TableCell>
+                        <TableCell align='center'>{row?.phone}</TableCell>
+                        <TableCell align='center'>
+                          {row?.address}, {row?.city} ({row?.state})
+                        </TableCell>
+                        <TableCell align='center'>{row?.pinCode}</TableCell>
+                        <TableCell align='center'>
+                          <div className='flex'>
+                            {row?.validUser === false ? (
+                              <div className='flex'>
+                                <Tooltip title='verify user'>
+                                  {loading ? (
+                                    <Box
+                                      sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                      }}
+                                    >
+                                      Loading... &nbsp;
+                                      <CircularProgress />
+                                    </Box>
+                                  ) : (
+                                    <DraggableDialogVerified id={row._id} />
+                                  )}
+                                </Tooltip>
+                              </div>
                             ) : (
-                              <DraggableDialogVerified id={row._id} />
+                              <div className='flex'>
+                                <Tooltip title='view'>
+                                  <Button
+                                    variant='outlined'
+                                    className='cursor-pointer'
+                                    color='success'
+                                    onClick={() => getUserById(row._id)}
+                                  >
+                                    <VisibilityIcon />
+                                  </Button>
+                                </Tooltip>
+                              </div>
                             )}
-                          </Tooltip>
-                        </div>
-                      ) : (
-                        <div className='flex'>
-                          <Tooltip title='view'>
-                            <Button
-                              variant='outlined'
-                              className='cursor-pointer'
-                              color='success'
-                              onClick={() => getUserById(row._id)}
-                            >
-                              <VisibilityIcon />
-                            </Button>
-                          </Tooltip>
-                        </div>
-                      )}
-                      <div className='text-4xl px-1'>/</div>
-                      <DraggableDialog id={row._id} />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </TableContainer>
-    </div>
+                            <div className='text-4xl px-1'>/</div>
+                            <DraggableDialog id={row._id} />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </>
+            )}
+          </TableContainer>
+        </div>
+      </div>
+      <SmallDevicesTable
+        users={props?.users}
+        path={props.path}
+        getUserById={getUserById}
+        loading={loading}
+      />
+    </>
   );
 }

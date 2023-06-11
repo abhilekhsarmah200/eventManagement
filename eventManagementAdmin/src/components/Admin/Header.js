@@ -68,7 +68,7 @@ const AdminHeader = ({ loading }) => {
         <nav style={{ background: '#472967' }}>
           <div className='flex justify-between p-5 border shadow-md items-center'>
             <div className='flex flex-col items-center'>
-              <NavLink to='/admin/dashboard'>
+              <NavLink to='/admin/profile'>
                 <img className='h-20' src={logo} />
               </NavLink>{' '}
               <SideBar />

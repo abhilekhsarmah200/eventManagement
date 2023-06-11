@@ -10,6 +10,9 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const organiserdb = require('../models/OrganiserSchema');
 const bookingdb = require('../models/Booking');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+const paymentdb = require('../models/Payment');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -251,7 +254,9 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     guest,
     organiser_Id,
     organiserPhoto,
+    paymentStatus,
     organiserPhone,
+    balance,
     venueName,
   } = req.body;
 
@@ -265,16 +270,50 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     foodDishPrice,
     totalPrice,
     guest,
+    paymentStatus,
     organiser_Id,
     organiserPhoto,
     venueName,
+    balance,
     organiserPhone,
     bookedBy: _id,
   });
 
   let response = await data.save();
 
-  res.status(200).json({ message: 'Booking SuccessFully Done!!' });
+  res.status(200).json({ res: response });
+});
+
+router.post('/joinVenue', authenticate, async (req, res) => {
+  const { _id } = req.userId;
+
+  const { organiser_Id } = req.params.id;
+
+  let data = new bookingdb({
+    organiser_Id: organiser_Id,
+    bookedBy: _id,
+  });
+
+  let response = await data.save();
+
+  res.status(200).json({ res: response });
+});
+
+router.post('/payment', authenticate, async (req, res) => {
+  const { _id } = req.userId;
+
+  let { payAmount, bookingId, percentage } = req.body;
+
+  let data = new paymentdb({
+    payAmount,
+    bookingId,
+    percentage,
+    bookedBy: _id,
+  });
+
+  let response = await data.save();
+
+  res.status(200).json({ res: response });
 });
 
 router.patch(`/cancelBookingById/:id`, async (req, res) => {
@@ -287,7 +326,24 @@ router.patch(`/cancelBookingById/:id`, async (req, res) => {
         new: true,
       }
     );
-    res.status(200).json({ message: 'User Added SuccessFully' });
+    res.status(200).json({ message: 'Booking Cancel SuccessFully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
+
+router.patch(`/CalculateTotalBalanceByBookingId/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bookingData = await bookingdb.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.status(200).json({ message: 'Balance Updated SuccessFully' });
     // res.status(200).json(bookingData);
   } catch (error) {
     res.status(500).json({ msg: error.message });
@@ -302,6 +358,32 @@ router.get('/delete/:id', authenticate, (req, res) => {
   res.render('bookings/all', {
     bookings: organiser_Ids,
   });
+});
+
+//get all payment details by orderId
+router.get('/viewPaymentsByOrderId/:id', async (req, res) => {
+  const organisersData = await paymentdb
+    .find({ bookingId: req.params.id })
+    .populate('bookingId')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(bookingData);
+    });
+});
+
+//Get Users Rating by UserId
+
+router.get('/getUserById/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userData = [];
+    let users = await userdb.findById({ _id: id });
+    userData.push(users);
+    res.status(200).send(userData);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
 });
 
 //Get Booking Details by Id
@@ -386,6 +468,17 @@ router.post('/viewBookingsByOrganiserId/', async (req, res) => {
       if (err) console.log(err);
       res.json(organisersData);
     });
+});
+
+//get all booking details
+
+router.get('/getallBookingDetails', async (req, res) => {
+  try {
+    const bookingDetails = await bookingdb.find({});
+    res.status(200).send(bookingDetails);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
 });
 
 // verify user for forgot password time

@@ -77,6 +77,7 @@ export default function DraggableDialog({ id }) {
         onClose={handleClose}
         PaperComponent={PaperComponent}
         aria-labelledby='draggable-dialog-title'
+        draggable={false}
       >
         <DialogTitle style={{ cursor: 'move' }} id='draggable-dialog-title'>
           Delete Organiser

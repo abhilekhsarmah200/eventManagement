@@ -4,17 +4,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { LoginContext } from '../../ContextProvider/Context';
 import { ToastContainer, toast } from 'react-toastify';
 import Moment from 'react-moment';
+import { Dialog } from 'primereact/dialog';
+import Rate from '../Rate';
 
 export default function ViewBookingDetails() {
   const [userData, setUserData] = useState([]);
+  const [paymentData, setPaymentData] = useState([]);
   const [organisersData, setOrganisersData] = useState([]);
   const { logindata, setLoginData } = useContext(LoginContext);
   const [loading, setLoading] = useState(true);
 
   const history = useNavigate();
   const { id } = useParams();
+  const [visible, setVisible] = useState(false);
 
   const [data, setData] = useState(false);
+  const [paid, setPaid] = useState(false);
 
   const date = new Date();
   let currentDay = String(date.getDate()).padStart(2, '0');
@@ -55,6 +60,23 @@ export default function ViewBookingDetails() {
     }
   };
 
+  const viewPaymentDetailsByBookingId = async () => {
+    const res = await fetch(
+      `http://localhost:8010/viewPaymentsByOrderId/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const data = await res.json();
+    setPaymentData(data);
+  };
+
+  console.log({ userData });
+
   const organiser_Id = userData.organiser_Id;
   console.log({ userData });
 
@@ -72,26 +94,43 @@ export default function ViewBookingDetails() {
   };
 
   const cancelBooking = async () => {
-    const res = await fetch(`http://localhost:8010/cancelBookingById/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        is_canceled: true,
-      }),
-    });
+    if (visible) {
+      if (remainingDate <= 1) {
+        toast.error(
+          `You cann't Cancel your Booking before 1 day!!! you have to pay 50% of total ${userData?.totalPrice}/-`,
+          {
+            position: 'top-center',
+          }
+        );
+        setPaid(true);
+      } else {
+        const res = await fetch(
+          `http://localhost:8010/CalculateTotalBalanceByBookingId/${id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              paymentStatus: 'canceled',
+            }),
+          }
+        );
 
-    const data = await res.json();
-    if (res.status === 200) {
-      toast.success(`booking canceled`, {
-        position: 'top-center',
-      });
-      setTimeout(function () {
-        window.location = `/viewBookingDetails/${id}`;
-      }, 2000);
+        const data = await res.json();
+        if (res.status === 200) {
+          toast.success(`booking canceled`, {
+            position: 'top-center',
+          });
+          setTimeout(function () {
+            window.location = `/viewBookingDetails/${id}`;
+          }, 2000);
+        }
+      }
     }
   };
+
+  const gst = (userData?.totalPrice * 18) / 100;
 
   // const viewOrganiserDetails = async () => {
   //   const res = await fetch(
@@ -115,8 +154,40 @@ export default function ViewBookingDetails() {
     viewDetails();
     setData(true);
     DashboardValid();
+    viewPaymentDetailsByBookingId();
     // viewOrganiserDetails();
   }, []);
+
+  const yesNoContent = (
+    <div>
+      <Button
+        variant='outlined'
+        onClick={() => setVisible(false)}
+        className='p-button-text'
+      >
+        <i className='pi pi-times'></i>&nbsp;No
+      </Button>
+
+      {remainingDate <= 1 ? (
+        <Button
+          variant='outlined'
+          onClick={() => setVisible(false)}
+          className='p-button-text'
+        >
+          <i className='pi pi-check'></i>&nbsp;Ok
+        </Button>
+      ) : (
+        <Button
+          label='Yes'
+          variant='outlined'
+          onClick={cancelBooking}
+          autoFocus
+        >
+          <i className='pi pi-check'></i>&nbsp;Yes
+        </Button>
+      )}
+    </div>
+  );
   return (
     <div>
       {userData ? (
@@ -132,62 +203,92 @@ export default function ViewBookingDetails() {
                   <Moment format='D MMM YYYY'>{userData?.createdAt}</Moment>
                 </div>
               </div>
-              {userData?.is_canceled === false && (
-                <div className='flex justify-end h-10'>
-                  {remainingDate === 1 ? (
-                    <Tooltip title="You cann't Cancel your Booking you have to pay 50% amount">
-                      <div className='cursor-pointer'>
-                        <Button
-                          disabled
-                          onClick={cancelBooking}
-                          variant='outlined'
-                        >
-                          Cancel Request
-                        </Button>
-                      </div>
-                    </Tooltip>
-                  ) : (
-                    <Button onClick={cancelBooking} variant='outlined'>
+              {userData?.paymentStatus === 'canceled' ? null : (
+                <>
+                  <div className='flex justify-end h-10'>
+                    <Button onClick={() => setVisible(true)} variant='outlined'>
                       Cancel Request
                     </Button>
-                  )}
-                </div>
+                  </div>
+                  <Dialog
+                    header='Cancel Booking'
+                    headerClassName='text-center'
+                    visible={visible}
+                    style={{ width: '50vw' }}
+                    draggable={false}
+                    onHide={() => setVisible(false)}
+                    footer={yesNoContent}
+                  >
+                    <div className='text-center'>
+                      <p>Are you want to cancel your booking?</p>
+                      <sup className='text-red-300 mt-5'>
+                        {remainingDate <= 1 &&
+                          ' *if you cancel your booking before one day you will not get any refund and also you have to pay 50% of total amount !!'}
+                      </sup>
+                    </div>
+                  </Dialog>
+                </>
               )}
             </div>
           </nav>
           <div>
-            <div className='flex lg:flex-row flex-col sm:gap-6 gap-2 justify-center lg:items-start items-center m-10'>
+            <div className='flex lg:flex-row justify-evenly lg:gap-8 flex-col lg:items-start items-center m-10'>
               <div>
-                <div className='sm:my-10 my-4 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                <div className='sm:my-10 my-4 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-5 items-center border border-t-0 border-x-0 border-b-black'>
                     <div>
-                      {userData?.is_canceled === false ? (
-                        <i
-                          className='pi pi-check-circle rounded-full p-1'
-                          style={{
-                            fontSize: '1rem',
-                            color: 'white',
-                            background: 'green',
-                          }}
-                        ></i>
-                      ) : (
-                        <i
-                          className='pi pi-exclamation-circle rounded-full p-1'
-                          style={{
-                            fontSize: '1rem',
-                            color: 'white',
-                            background: 'red',
-                          }}
-                        ></i>
-                      )}
+                      <>
+                        {userData?.paymentStatus === 'confirmed' ? (
+                          <i
+                            className='pi pi-check-circle rounded-full p-1'
+                            style={{
+                              fontSize: '1rem',
+                              color: 'white',
+                              background: 'green',
+                            }}
+                          ></i>
+                        ) : userData?.paymentStatus === 'pending' ? (
+                          <i
+                            className='pi pi-info-circle rounded-full p-1'
+                            style={{
+                              fontSize: '1rem',
+                              color: 'white',
+                              background: 'orange',
+                            }}
+                          ></i>
+                        ) : userData?.paymentStatus === 'Completed' ? (
+                          <i
+                            className='pi pi-check-circle rounded-full p-1'
+                            style={{
+                              fontSize: '1rem',
+                              color: 'white',
+                              background: 'blue',
+                            }}
+                          ></i>
+                        ) : (
+                          <i
+                            className='pi pi-times-circle rounded-full p-1'
+                            style={{
+                              fontSize: '1rem',
+                              color: 'white',
+                              background: 'red',
+                            }}
+                          ></i>
+                        )}
+                      </>
                     </div>
-                    {userData?.is_canceled === false ? (
-                      <div>Booking Confirmed</div>
-                    ) : (
-                      <div className='text-red-600'>
-                        You Canceled Your Booking
-                      </div>
-                    )}
+
+                    <>
+                      {userData?.paymentStatus === 'confirmed' ? (
+                        <div>Booking Confirmed</div>
+                      ) : userData?.paymentStatus === 'pending' ? (
+                        <div>Payment pending</div>
+                      ) : userData?.paymentStatus === 'Completed' ? (
+                        <div>Booking Completed</div>
+                      ) : (
+                        <div>Booking Canceled</div>
+                      )}
+                    </>
                   </div>
                   <div className='flex p-4 gap-2 items-center border-b-1 border border-t-0 border-x-0 border-b-black'>
                     <div className='shadow-xl rounded-xl'>
@@ -205,15 +306,22 @@ export default function ViewBookingDetails() {
                       </span>{' '}
                       {userData?.is_canceled === false ? (
                         <span>
-                          "Confirmed "
-                          <b>
-                            (Please Contact with Event manager before 1 day)
-                            <span>
-                              <a href={`tel:+91 ${userData?.organiserPhone}`}>
-                                <i className='pi pi-phone text-black'></i>
-                              </a>
-                            </span>
-                          </b>
+                          {userData?.paymentStatus === 'pending'
+                            ? 'Pending '
+                            : userData?.paymentStatus === 'confirmed'
+                            ? 'Confirmed'
+                            : userData?.paymentStatus === 'completed'
+                            ? 'completed'
+                            : 'canceled'}{' '}
+                          <a
+                            className='underline'
+                            href={`tel:+91 ${userData?.organiserPhone}`}
+                          >
+                            <b>
+                              (Please Contact with Event manager before 1 day)
+                              <span></span>
+                            </b>
+                          </a>
                         </span>
                       ) : (
                         'Canceled'
@@ -221,7 +329,7 @@ export default function ViewBookingDetails() {
                     </div>
                   </div>
                   <div className='flex p-4 gap-2 items-end'>
-                    {userData?.is_canceled === false ? (
+                    {remainingDate >= 1 ? (
                       <div className=''>
                         Your Event Date is <br />
                         <div>
@@ -256,10 +364,10 @@ export default function ViewBookingDetails() {
                     )}
                   </div>
                 </div>
-                <div className='sm:my-6 my-2 relative lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                <div className='sm:my-6 my-2 relative lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-2 items-center'>
-                    {userData?.is_canceled === false ? (
-                      <div>
+                    {userData?.paymentStatus === 'canceled' ? (
+                      <div className='opacity-25'>
                         <b>Service Checklist</b>
                         <div className='flex flex-row  justify-around w-full items-end'>
                           <div className='text-gray-400 text-xs'>
@@ -271,7 +379,7 @@ export default function ViewBookingDetails() {
                         </div>
                       </div>
                     ) : (
-                      <div className='opacity-25'>
+                      <div>
                         <b>Service Checklist</b>
                         <div className='flex flex-row  justify-around w-full items-end'>
                           <div className='text-gray-400 text-xs'>
@@ -285,11 +393,13 @@ export default function ViewBookingDetails() {
                     )}
                   </div>
                 </div>
-                <div className='sm:my-6 my-2 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[80%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
-                  <div className='flex gap-2 py-2 items-center'>
+                <div className='sm:my-6 my-2 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                  <div className=''>
                     <div>
-                      <b>Need Our Help?</b>
-                      <div className='flex flex-row  justify-around w-full items-start'>
+                      <div>
+                        <b>Need Our Help?</b>
+                      </div>
+                      <div className='flex justify-between w-full items-center'>
                         <div className='text-gray-400 text-xs'>
                           Call us in case you face any issue in Our service.
                         </div>
@@ -303,7 +413,14 @@ export default function ViewBookingDetails() {
                     </div>
                   </div>
                 </div>
+                <section>
+                  <Rate
+                    is_canceled={userData?.is_canceled}
+                    organiser_Id={userData?.organiser_Id}
+                  />
+                </section>
               </div>
+
               <div className='sm:my-10 my-4 lg:mr-10 m-4 sm:p-4 p-2 lg:w-[40%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                 <div className='flex gap-2 items-center border border-t-0 border-x-0 border-b-black'>
                   <div>Payment Summary</div>
@@ -344,14 +461,27 @@ export default function ViewBookingDetails() {
                                 {userData?.guest}
                               </div>
                             </div>
+                            <div className='grid grid-cols-2'>
+                              <div>GST (18%):</div>
+                              <div className='flex justify-end'>{gst}/-</div>
+                            </div>
                           </div>
                           <div className='grid grid-cols-2 mt-2'>
                             <div>Grand Total:</div>
                             <div className='flex justify-end'>
                               ₹{userData?.totalPrice}/-
-                              <span className='text-xs mt-1'>
-                                (GST inclusive)
-                              </span>
+                            </div>
+                          </div>
+                          <div className='grid grid-cols-2 mt-2'>
+                            <div>Already Paid :</div>
+                            <div className='flex justify-end'>
+                              {userData?.totalPrice - userData?.balance}/-
+                            </div>
+                          </div>
+                          <div className='grid grid-cols-2 mt-2 border-t-2 border-t-black'>
+                            <div>Balance :</div>
+                            <div className='flex justify-end'>
+                              {userData?.balance}/-
                             </div>
                           </div>
                         </div>
@@ -360,10 +490,10 @@ export default function ViewBookingDetails() {
                       <div className='flex justify-end mt-4'>
                         <div>
                           <Button
-                            disabled={userData?.is_canceled === true}
+                            disabled={userData?.paymentStatus === 'canceled'}
                             variant='outlined'
                           >
-                            Pay Advance
+                            Pay the Balance
                           </Button>
                         </div>
                       </div>

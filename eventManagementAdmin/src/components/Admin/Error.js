@@ -59,7 +59,7 @@ const AdminError = () => {
           {/* <h1 className="mb-3">404 ERROR </h1> */}
           <h2 className='mb-3'>PAGE NOT FOUND</h2>
           <NavLink
-            to='/admin/dashboard'
+            to='/admin/profile'
             className='btn btn-primary'
             style={{ fontSize: 18 }}
           >

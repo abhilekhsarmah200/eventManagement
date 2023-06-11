@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { LoginContext } from '../ContextProvider/Context';
 import DataTable from '../DataTable/DataTable';
 import { Box, CircularProgress } from '@mui/material';
+import SmallDevicesTable from '../DataTable/SmallDevicesTable';
 export default function ViewUsers({ datas }) {
   const [users, setUsers] = useState(null);
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -77,14 +78,13 @@ export default function ViewUsers({ datas }) {
   const path = 'http://localhost:8080/public/images/';
   return (
     <>
-      <div className='p-5 flex justify-center flex-col'>
+      <div className='lg:p-5 p-2 flex justify-center flex-col'>
         <div>
           {logindata ? (
             <>
-              <div className='lg:block hidden py-1'>
+              <div className=' py-1'>
                 <DataTable users={users} path={path} />
               </div>
-              <div></div>
             </>
           ) : (
             <Box

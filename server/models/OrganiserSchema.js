@@ -44,6 +44,9 @@ const organisersSchema = new mongoose.Schema(
       type: String,
       minlength: 6,
     },
+    details: {
+      type: Array,
+    },
     validUser: {
       type: Boolean,
       default: false,
@@ -60,6 +63,7 @@ const organisersSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
+      unique: true,
     },
     address: {
       type: String,

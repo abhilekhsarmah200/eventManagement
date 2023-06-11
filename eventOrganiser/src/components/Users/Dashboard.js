@@ -12,6 +12,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import pIcon from '../../assets/img/man.png';
+import { Button } from '@mui/material';
 
 const Dashboard = () => {
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -31,6 +32,18 @@ const Dashboard = () => {
       },
     });
 
+    // const [inpval, setInpval] = useState({
+    //   fname: '',
+    //   phone: '',
+    //   address: '',
+    //   pinCode: '',
+    //   photo: '',
+    //   venueCategory: selectedVenueCategory || '',
+    //   city: '',
+    //   state: '',
+    //   country: '',
+    // });
+
     const data = await res.json();
 
     if (data.status == 401 || !data) {
@@ -44,6 +57,28 @@ const Dashboard = () => {
       console.log('user verify');
       setLoginData(data);
       history('/organiser/profile');
+    }
+  };
+
+  const updateOrganiserDetails = async (id) => {
+    const res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        validUser: true,
+      }),
+    });
+
+    const data = await res.json();
+    if (res.status === 200) {
+      toast.success(`Organiser Updated Successfully!!`, {
+        position: 'top-center',
+      });
+      setTimeout(function () {
+        window.location = `/organiser/profile`;
+      }, 2000);
     }
   };
 
@@ -73,6 +108,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <TextField
+                  disabled={true}
                   id='outlined-basic'
                   type='email'
                   value={logindata ? logindata.ValidUserOne.email : ''}
@@ -94,6 +130,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <TextField
+                  disabled={true}
                   id='outlined-basic'
                   type='text'
                   value={logindata ? logindata.ValidUserOne.fname : ''}
@@ -115,6 +152,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <TextField
+                  disabled={true}
                   id='outlined-basic'
                   type='text'
                   value={logindata ? logindata.ValidUserOne.address : ''}
@@ -137,6 +175,7 @@ const Dashboard = () => {
               <div className='flex gap-4'>
                 <div>
                   <TextField
+                    disabled={true}
                     id='outlined-basic'
                     type='tel'
                     value={logindata ? logindata.ValidUserOne.phone : ''}
@@ -158,6 +197,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <TextField
+                    disabled={true}
                     id='outlined-basic'
                     type='text'
                     value={logindata ? logindata.ValidUserOne.pinCode : ''}
@@ -177,6 +217,15 @@ const Dashboard = () => {
                     readOnly
                   />
                 </div>
+              </div>
+              <div>
+                <Button
+                  variant='outlined'
+                  className='btn'
+                  onClick={updateOrganiserDetails}
+                >
+                  Sign Up
+                </Button>
               </div>
             </>
           )}

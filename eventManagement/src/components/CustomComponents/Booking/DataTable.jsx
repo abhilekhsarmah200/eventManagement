@@ -36,6 +36,9 @@ export default function BasicTable(props) {
             <TableHead>
               <TableRow>
                 <TableCell width='10%' align='center'>
+                  <b>SL No</b>
+                </TableCell>
+                <TableCell width='10%' align='center'>
                   <b>Venue Name</b>
                 </TableCell>
                 <TableCell width='10%' align='center'>
@@ -59,6 +62,9 @@ export default function BasicTable(props) {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell align='center'>
+                    <div className='uppercase'>{index + 1}</div>
+                  </TableCell>
+                  <TableCell align='center'>
                     <div className='uppercase'>{row?.venueName}</div>
                   </TableCell>
                   <TableCell align='center'>
@@ -72,22 +78,46 @@ export default function BasicTable(props) {
                     <Moment format='DD-MM-YYYY'>{row?.bookingDate}</Moment>
                   </TableCell>
                   <TableCell align='center'>
-                    <div>
-                      <Button
-                        onClick={() => vewBookingById(row._id)}
-                        variant='contained'
-                      >
-                        View Booking
-                      </Button>
-                    </div>
-                    {/* <div>
-                      <Button
-                        variant='contained'
-                        onClick={() => getUserById(row._id)}
-                      >
-                        View Users
-                      </Button>
-                    </div> */}
+                    {row?.paymentStatus === 'canceled' ? (
+                      <div>
+                        <Button
+                          onClick={() => vewBookingById(row._id)}
+                          variant='outlined'
+                          color='error'
+                        >
+                          Booking Canceled
+                        </Button>
+                      </div>
+                    ) : row?.paymentStatus === 'confirmed' ? (
+                      <div>
+                        <Button
+                          onClick={() => vewBookingById(row._id)}
+                          variant='outlined'
+                          color='success'
+                        >
+                          Booking Confirmed
+                        </Button>
+                      </div>
+                    ) : row?.paymentStatus === 'completed' ? (
+                      <div>
+                        <Button
+                          onClick={() => vewBookingById(row._id)}
+                          variant='outlined'
+                        >
+                          Booking Completed
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <Button
+                          onClick={() => vewBookingById(row._id)}
+                          variant='outlined'
+                          color='warning'
+                        >
+                          Payment Pending...
+                        </Button>
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
