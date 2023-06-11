@@ -47,7 +47,7 @@ const Register = () => {
     const url = 'http://localhost:8010/register';
     const formdata = new FormData();
 
-    formdata.append('myFile', inpval.photo.name);
+    formdata.append('myFile', inpval.photo);
     formdata.append('email', inpval.email);
     formdata.append('fname', inpval.fname);
     formdata.append('password', inpval.password);

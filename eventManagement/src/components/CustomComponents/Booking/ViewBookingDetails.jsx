@@ -33,7 +33,6 @@ export default function ViewBookingDetails() {
   console.log(bookingCurrentDate);
 
   const remainingDate = bookingCurrentDate - currentDate;
-  console.log(remainingDate);
 
   const DashboardValid = async () => {
     let token = localStorage.getItem('usersdatatoken');
@@ -413,12 +412,14 @@ export default function ViewBookingDetails() {
                     </div>
                   </div>
                 </div>
-                <section>
-                  <Rate
-                    is_canceled={userData?.is_canceled}
-                    organiser_Id={userData?.organiser_Id}
-                  />
-                </section>
+                {remainingDate === 0 && (
+                  <section>
+                    <Rate
+                      is_canceled={userData?.is_canceled}
+                      organiser_Id={userData?.organiser_Id}
+                    />
+                  </section>
+                )}
               </div>
 
               <div className='sm:my-10 my-4 lg:mr-10 m-4 sm:p-4 p-2 lg:w-[40%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
