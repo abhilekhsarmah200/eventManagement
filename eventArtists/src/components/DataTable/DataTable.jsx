@@ -15,35 +15,91 @@ import Tooltip from '@mui/material/Tooltip';
 import { useNavigate, NavLink } from 'react-router-dom';
 // import ViewDetailedOrganisers from '../Admin/ViewDetailedOrganisers';
 import CustomizedDialogs from '../DialogBox/DialogBox.tsx';
+import axios from 'axios';
+import ViewYourBookings from '../Users/ViewYourBookings.jsx';
 
 export default function BasicTable(props) {
   const history = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [organisersData, setOrganisersData] = useState('');
+  const [organisersData, setOrganisersData] = useState(null);
+
+  const [inpval, setInpval] = useState({
+    artistsName: '',
+    requestDate: '',
+    eventName: '',
+    bookedBy: '',
+    bookedFor: '',
+    requestedBy: '',
+  });
+
+  const organiserId = localStorage.getItem('organiserId');
 
   const handleJoinedVenue = async (id) => {
     let token = localStorage.getItem('artistsdatatoken');
 
-    let res = [];
+    const response = await fetch(
+      `http://localhost:8080/getOrganiserById/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+
+    const data = await response.json();
+    setOrganisersData(data);
+    console.log({ organisersData });
+
+    const url1 = `http://localhost:8080/updateArtistsforOrganiser/${props?.logindata?.ValidUserOne?._id}`;
+
+    setLoading(true);
+    const text = 'Are you want to Join?';
+
+    let res = await fetch(url1, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        organiserId: data?._id,
+      }),
+    });
+
+    const url = `http://localhost:8080/JoinWithVenues`;
+
     try {
       setLoading(true);
-      const text = 'Are you want to delete?';
+      const text = 'Are you want to Join?';
 
       if (window.confirm(text) == true) {
-        res = await fetch(`http://localhost:8080/deleteorganiser/${id}`, {
-          method: 'DELETE',
+        let res = await fetch(url, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: token,
           },
+          body: JSON.stringify({
+            artistsName: props?.logindata?.ValidUserOne?.fname,
+            eventName: data?.venueName,
+            requestedBy: props?.logindata?.ValidUserOne?._id,
+            requestDate: new Date(),
+            joinWith: data?._id,
+            photo: data?.photo,
+            artistsPhoto: props?.logindata?.ValidUserOne?.photo,
+          }),
         });
-        toast.success('User deleted successfully');
+        toast.success(`your request is send to ${data?.venueName} !!`);
+
+        localStorage.setItem('organiserId', data?._id);
+
         setTimeout(function () {
-          window.location = '/admin/view-users';
+          window.location = `/artists/join_venue`;
         }, 2000);
       } else {
-        toast.error('User not deleted');
+        toast.error("Request cann't send");
         // setLoading(false);
         // setTimeout(function () {
         //   return;
@@ -59,17 +115,12 @@ export default function BasicTable(props) {
     //   }, 2000);
     // }
   };
-
+  const path = 'http://localhost:8080/public/images/';
   const getUserById = async (id) => {
     // let token = localStorage.getItem('artistsdatatoken');
 
     history(`/admin/view-users/${id}`);
   };
-
-  console.log({ organisersData });
-  const [inpval, setInpval] = useState({
-    validUser: false,
-  });
 
   const setVal = (e) => {
     // console.log(e.target.value);
@@ -116,87 +167,103 @@ export default function BasicTable(props) {
   };
 
   return (
-    <div>
-      <TableContainer component={Paper}>
-        {props?.users?.length === 0 ? (
-          <div>Data not Available...</div>
-        ) : (
-          <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-            <TableHead>
-              <TableRow>
-                <TableCell width='10%' align='center'>
-                  <b>Image</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Venue Name</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Manager Name</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Email</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Mobile</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Address</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>PIN Code</b>
-                </TableCell>
-                <TableCell width='10%' align='center'>
-                  <b>Action</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {props?.users?.map((row, index) => (
-                <TableRow
-                  key={row?.fname}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component='th' scope='row'>
-                    {row?.photo ? (
-                      <div className='flex justify-center'>
-                        <CustomizedDialogs img={row?.photo} path={props.path} />
-                      </div>
-                    ) : (
-                      <div className='flex justify-center'>
-                        <ImageIcon
-                          style={{ fontSize: '3rem', color: 'grey' }}
-                        />
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell align='center'>{row?.venueName}</TableCell>
-                  <TableCell align='center'>{row?.fname}</TableCell>
-                  <TableCell align='center'>
-                    <div className='w-[50%] break-words mx-auto'>
-                      {row?.email}
-                    </div>
-                  </TableCell>
-                  <TableCell align='center'>{row?.phone}</TableCell>
-                  <TableCell align='center'>{row?.address}</TableCell>
-                  <TableCell align='center'>{row?.pinCode}</TableCell>
-                  <TableCell align='center'>
-                    <Tooltip title='Join Venue'>
-                      <Button
-                        variant='outlined'
-                        className='cursor-pointer'
-                        color='info'
-                        onClick={() => handleJoinedVenue(row._id)}
-                      >
-                        <AddBusinessIcon />
-                      </Button>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </TableContainer>
-    </div>
+    <>
+      {props?.logindata?.ValidUserOne?.organiserId ===
+      '643654594db3ac9a63fb4f1a' ? (
+        <div>
+          <TableContainer component={Paper}>
+            {props?.users?.length === 0 ? (
+              <div>Data not Available...</div>
+            ) : (
+              <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                <TableHead>
+                  <TableRow>
+                    <TableCell width='10%' align='center'>
+                      <b>Image</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>Venue Name</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>Manager Name</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>Email</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>Mobile</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>Address</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>PIN Code</b>
+                    </TableCell>
+                    <TableCell width='10%' align='center'>
+                      <b>Action</b>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {props?.users?.map((row, index) => (
+                    <TableRow
+                      key={row?.fname}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell component='th' scope='row'>
+                        {row?.photo ? (
+                          <div className='flex justify-center'>
+                            <CustomizedDialogs
+                              img={row?.photo}
+                              path={props.path}
+                            />
+                          </div>
+                        ) : (
+                          <div className='flex justify-center'>
+                            <ImageIcon
+                              style={{ fontSize: '3rem', color: 'grey' }}
+                            />
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell align='center'>{row?.venueName}</TableCell>
+                      <TableCell align='center'>{row?.fname}</TableCell>
+                      <TableCell align='center'>
+                        <div className='w-[50%] break-words mx-auto'>
+                          {row?.email}
+                        </div>
+                      </TableCell>
+                      <TableCell align='center'>{row?.phone}</TableCell>
+                      <TableCell align='center'>{row?.address}</TableCell>
+                      <TableCell align='center'>{row?.pinCode}</TableCell>
+                      <TableCell align='center'>
+                        <Tooltip title='Join Venue'>
+                          <Button
+                            variant='outlined'
+                            className='cursor-pointer'
+                            color='info'
+                            onClick={() => handleJoinedVenue(row?._id)}
+                          >
+                            <AddBusinessIcon />
+                          </Button>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </TableContainer>
+        </div>
+      ) : (
+        <div>
+          <ViewYourBookings
+            path={path}
+            logindata={props?.logindata}
+            id={props?.logindata?.ValidUserOne?.organiserId}
+          />
+        </div>
+      )}
+    </>
   );
 }

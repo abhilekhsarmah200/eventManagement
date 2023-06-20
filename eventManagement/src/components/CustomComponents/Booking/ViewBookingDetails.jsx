@@ -8,7 +8,7 @@ import { Dialog } from 'primereact/dialog';
 import Rate from '../Rate';
 
 export default function ViewBookingDetails() {
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserDatasetUserData] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
   const [organisersData, setOrganisersData] = useState([]);
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -88,9 +88,11 @@ export default function ViewBookingDetails() {
     });
 
     const data = await res.json();
-    setUserData(data);
+    setUserDatasetUserData(data);
     console.log({ data });
   };
+
+  const CompleteTheBooking = async () => {};
 
   const cancelBooking = async () => {
     if (visible) {
@@ -335,7 +337,7 @@ export default function ViewBookingDetails() {
                           <Moment format='D MMM YYYY'>
                             {userData?.bookingDate}
                           </Moment>{' '}
-                          at{' '}
+                          @{' '}
                           <span
                             className='font-bold'
                             style={{ color: '#482967' }}
@@ -351,7 +353,7 @@ export default function ViewBookingDetails() {
                           <Moment format='D MMM YYYY'>
                             {userData?.bookingDate}
                           </Moment>{' '}
-                          at{' '}
+                          @{' '}
                           <span
                             className='font-bold'
                             style={{ color: '#482967' }}
@@ -412,7 +414,7 @@ export default function ViewBookingDetails() {
                     </div>
                   </div>
                 </div>
-                {remainingDate === 0 && (
+                {remainingDate <= -1 && (
                   <section>
                     <Rate
                       is_canceled={userData?.is_canceled}

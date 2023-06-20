@@ -65,6 +65,9 @@ const Login = () => {
 
       if (res.status === 201) {
         localStorage.setItem('artistsdatatoken', res.result.token);
+
+        localStorage.setItem('artistsId', res.result.userValid._id);
+
         history('/artists/profile');
         setInpval({ ...inpval, email: '', password: '' });
       } else {

@@ -21,6 +21,7 @@ import ViewVenueImages from './components/Users/ViewVenueImages';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import ViewArtistsRequests from './components/CustomComponent/ViewArtistsRequests/ViewArtistsRequests';
 
 function App() {
   const [data, setData] = useState(false);
@@ -81,6 +82,10 @@ function App() {
             <Route
               path='/organiser/view_venuePhotos/:id'
               element={<ViewVenueImages />}
+            />
+            <Route
+              path='/organiser/artistsRequest/:id'
+              element={<ViewArtistsRequests />}
             />
           </Routes>
         </>

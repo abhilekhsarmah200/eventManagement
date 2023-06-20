@@ -142,7 +142,7 @@ const Register = () => {
       toast.error('PIN Code required', {
         position: 'top-center',
       });
-    } else if (profileImage?.length === 0) {
+    } else if (photo?.length === 0) {
       toast.error('Photo is required', {
         position: 'top-center',
       });

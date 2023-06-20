@@ -6,6 +6,7 @@ const artistsAuthenticate = require('../middleware/artistsAuthenticate');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const artistorganisersdb = require('../models/ArtistLinkWithOrganisers');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -33,8 +34,8 @@ const fileFilter = (req, file, cb) => {
   const allowedFileTypes = [
     'image/jpeg',
     'image/jpg',
-    'Image/png',
-    'Image/webp',
+    'image/png',
+    'image/webp',
   ];
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -43,6 +44,18 @@ const fileFilter = (req, file, cb) => {
   }
 };
 let upload = multer({ storage, fileFilter });
+
+//Get all artistsvenueRequest
+artistsRouter.get('/getartistorganisers/:id', async (req, res) => {
+  try {
+    const users = await artistorganisersdb.findById({
+      joinWith: req.params.id,
+    });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
 
 // for user registration
 
@@ -178,6 +191,118 @@ artistsRouter.get('/artistsvalid', artistsAuthenticate, async (req, res) => {
     res.status(401).json({ status: 401, error });
   }
 });
+
+//Join artists with a venue
+artistsRouter.post(`/JoinWithVenues`, async (req, res) => {
+  let {
+    artistsName,
+    requestDate,
+    eventName,
+    requestedBy,
+    joinWith,
+    photo,
+    artistsPhoto,
+  } = req.body;
+
+  let data = new artistorganisersdb({
+    artistsName,
+    requestDate,
+    eventName,
+    requestedBy,
+    joinWith,
+    photo,
+    artistsPhoto,
+  });
+
+  let response = await data.save();
+
+  res.status(200).json({ res: response.data });
+});
+
+//Get joinedData details using organiser id
+artistsRouter.get('/viewJoinedDataUsingOrganiser/:id', async (req, res) => {
+  const organisersData = await artistorganisersdb
+    .find({ joinWith: req.params.id })
+    .populate('joinWith')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(bookingData);
+    });
+});
+
+//Get joinedData details using artists id
+artistsRouter.get('/getJoinedDataUsingArtistsId/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const users = await artistorganisersdb.findById({ _id: id });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
+artistsRouter.delete(
+  '/deleteJoinedDataUsingArtistsId/:id',
+  async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      await artistorganisersdb.findByIdAndRemove({ _id: id });
+      res.status(200).send('User Deleted successfully');
+    } catch (error) {
+      res.status(404).json({ message: error.stack });
+    }
+  }
+);
+
+//Get joinedData details using artists id
+artistsRouter.get('/viewJoinedDataUsingArtistsId/:id', async (req, res) => {
+  const organisersData = await artistorganisersdb
+    .find({ requestedBy: req.params.id })
+    .populate('requestedBy')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(bookingData);
+    });
+});
+
+//Update OrganisersId in database
+
+artistsRouter.patch(`/updateArtistsforOrganiser/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await artistsdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Updated data successfully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
+
+//Update requestAccepted in database
+
+artistsRouter.patch(
+  `/updateArtistsforRequestAccepted/:id`,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await artistorganisersdb.findByIdAndUpdate(
+        { _id: id },
+        req.body,
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({ message: 'Updated data successfully' });
+      // res.status(200).json(bookingData);
+    } catch (error) {
+      res.status(500).json({ msg: error.message });
+    }
+  }
+);
 
 // user logout
 

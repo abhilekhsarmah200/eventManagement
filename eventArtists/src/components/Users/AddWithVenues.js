@@ -67,7 +67,6 @@ export default function AddWithVenues() {
     }
   };
 
-  localStorage.setItem('organiserId', logindata?.ValidUserOne?._id);
   const path = 'http://localhost:8080/public/images/';
 
   let compaireOrganiserId = localStorage.getItem('organiserId');
@@ -86,7 +85,7 @@ export default function AddWithVenues() {
           <div>
             {logindata ? (
               <div className='py-1'>
-                <DataTable users={users} path={path} />
+                <DataTable users={users} logindata={logindata} path={path} />
               </div>
             ) : (
               <Box

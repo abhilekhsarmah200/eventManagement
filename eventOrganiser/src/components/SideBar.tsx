@@ -53,9 +53,9 @@ export default function SideBar({ images }) {
       to: '/add-todo',
     },
     {
-      text: 'View Artist',
+      text: 'View Artist Requests',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
+      to: `/organiser/artistsRequest/${organiserId}`,
     },
     {
       text: 'Profile',

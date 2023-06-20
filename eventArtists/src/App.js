@@ -17,6 +17,7 @@ import SideBar from './components/SideBar.tsx';
 import AddVenue from './components/Users/AddVenue';
 import AddWithVenues from './components/Users/AddWithVenues';
 import './style/custom.css';
+import ViewYourBookings from './components/Users/ViewYourBookings';
 
 function App() {
   const [data, setData] = useState(false);

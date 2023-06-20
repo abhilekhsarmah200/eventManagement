@@ -51,7 +51,7 @@ export default function SideBar() {
     {
       text: 'View Bookings',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
+      to: '/artists/view-your-booking/:id',
     },
     {
       text: 'View Artist',

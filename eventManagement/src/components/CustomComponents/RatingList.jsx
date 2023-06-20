@@ -45,7 +45,7 @@ export default function RatingList({ ratings }) {
                   textTransform: 'capitalize',
                 }}
               >
-                {item.fname[0].toUpperCase()}
+                {item?.fname?.[0]?.toUpperCase()}
               </Avatar>
             </div>
           ))}

@@ -13,6 +13,7 @@ const bookingdb = require('../models/Booking');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const paymentdb = require('../models/Payment');
+const artistorganisersdb = require('../models/ArtistLinkWithOrganisers');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -284,20 +285,20 @@ router.post('/bookEvents', authenticate, async (req, res) => {
   res.status(200).json({ res: response });
 });
 
-router.post('/joinVenue', authenticate, async (req, res) => {
-  const { _id } = req.userId;
+// router.post('/joinVenue', authenticate, async (req, res) => {
+//   const { _id } = req.userId;
 
-  const { organiser_Id } = req.params.id;
+//   const { organiser_Id } = req.params.id;
 
-  let data = new bookingdb({
-    organiser_Id: organiser_Id,
-    bookedBy: _id,
-  });
+//   let data = new bookingdb({
+//     organiser_Id: organiser_Id,
+//     bookedBy: _id,
+//   });
 
-  let response = await data.save();
+//   let response = await data.save();
 
-  res.status(200).json({ res: response });
-});
+//   res.status(200).json({ res: response });
+// });
 
 router.post('/payment', authenticate, async (req, res) => {
   const { _id } = req.userId;
@@ -349,6 +350,21 @@ router.patch(`/CalculateTotalBalanceByBookingId/:id`, async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 });
+
+// router.post(`/JoinWithVenues`, async (req, res) => {
+//   let { artistsName, requestDate, eventName, requestedBy } = req.body;
+
+//   let data = new artistorganisersdb({
+//     artistsName,
+//     requestDate,
+//     eventName,
+//     requestedBy,
+//   });
+
+//   let response = await data.save();
+
+//   res.status(200).json({ res: response });
+// });
 
 router.get('/delete/:id', authenticate, (req, res) => {
   id = req.params.id;

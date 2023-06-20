@@ -42,6 +42,8 @@ const AdminHeader = () => {
     if (data.status == 201) {
       console.log('artists logout');
       localStorage.removeItem('artistsdatatoken');
+      localStorage.removeItem('artistsId');
+
       setLoginData(false);
       window.location = '/artists/profile';
     } else {

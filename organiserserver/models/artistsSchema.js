@@ -22,6 +22,10 @@ const artistsSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    organiserId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: '643654594db3ac9a63fb4f1a',
+    },
     email: {
       type: String,
       required: true,
