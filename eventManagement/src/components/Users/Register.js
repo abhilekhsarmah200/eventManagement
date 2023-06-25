@@ -6,22 +6,36 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Stack from '@mui/material/Stack';
+import { Dropdown } from 'primereact/dropdown';
 
 const Register = () => {
   const [passShow, setPassShow] = useState(false);
   const [cpassShow, setCPassShow] = useState(false);
   const [profileImage, setProfileImage] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [selectedRole, setSelectedRole] = useState(null);
+  const users = [
+    // { id: 1, name: 'ADMIN' },
+    { id: 2, name: 'USER' },
+    { id: 2, name: 'ORGANISER' },
+    { id: 3, name: 'ARTISTS' },
+  ];
+  console.log({ selectedRole });
 
   const [inpval, setInpval] = useState({
     fname: '',
+    venueName: '',
     email: '',
     password: '',
     cpassword: '',
     phone: '',
-    address: '',
+    area: '',
+    role: selectedRole?.name || '',
     pinCode: '',
     photo: '',
+    city: '',
+    state: '',
+    country: '',
+    organiserValid: false || '',
   });
 
   const setVal = (e) => {
@@ -53,21 +67,37 @@ const Register = () => {
     formdata.append('password', inpval.password);
     formdata.append('cpassword', inpval.cpassword);
     formdata.append('phone', inpval.phone);
-    formdata.append('address', inpval.address);
+    formdata.append('area', inpval.area);
     formdata.append('pinCode', inpval.pinCode);
+    formdata.append('city', inpval.city);
+    formdata.append('state', inpval.state);
+    formdata.append('country', inpval.country);
+    formdata.append('role', selectedRole.name);
+    if (selectedRole?.name === 'ORGANISER') {
+      formdata.append('venueName', inpval.venueName);
+      formdata.append('organiserValid', false);
+    }
     const {
       fname,
+      venueName,
       email,
       password,
       cpassword,
       phone,
-      address,
+      area,
       pinCode,
       photo,
+      city,
+      state,
+      country,
     } = inpval;
 
     if (fname === '') {
       toast.warning('fname is required!', {
+        position: 'top-center',
+      });
+    } else if (selectedRole?.name === 'ORGANISER' && venueName === '') {
+      toast.error('venueName is required!', {
         position: 'top-center',
       });
     } else if (email === '') {
@@ -106,12 +136,28 @@ const Register = () => {
       toast.error('please provide a valid number', {
         position: 'top-center',
       });
-    } else if (address === '') {
-      toast.error('Address required', {
+    } else if (phone.length > 10) {
+      toast.error('please provide a 10 digit number', {
+        position: 'top-center',
+      });
+    } else if (area === '') {
+      toast.error('Area required', {
         position: 'top-center',
       });
     } else if (pinCode === '') {
       toast.error('PIN Code required', {
+        position: 'top-center',
+      });
+    } else if (city === '') {
+      toast.error('city required', {
+        position: 'top-center',
+      });
+    } else if (state === '') {
+      toast.error('state required', {
+        position: 'top-center',
+      });
+    } else if (country === '') {
+      toast.error('country required', {
         position: 'top-center',
       });
     } else if (photo.length === 0) {
@@ -132,7 +178,7 @@ const Register = () => {
             position: 'top-center',
           });
           setTimeout(function () {
-            window.location = '/';
+            window.location = '/login';
           }, 2000);
         }
       } catch (error) {}
@@ -146,149 +192,233 @@ const Register = () => {
           <div className='form_heading'>
             <h1>Sign Up</h1>
             <p style={{ textAlign: 'center' }}>
-              We are glad that you will be using Project Cloud to manage <br />
-              your tasks! We hope that you will get like it.
+              We are glad that you will be using Event Partners to Book for{' '}
+              <br />
+              your Parties,Marriage event!! We hope that you will get like it.
             </p>
           </div>
 
           <form>
-            <div className='flex justify-center mb-4'>
-              {profileImage && (
-                <div>
-                  {profileImage?.map((img, index) => {
-                    return <img src={img} className='w-40 h-40 rounded-full' />;
-                  })}
+            {selectedRole === null ? null : (
+              <>
+                <div className='flex justify-center mb-4'>
+                  {profileImage && (
+                    <div>
+                      {profileImage?.map((img, index) => {
+                        return (
+                          <img
+                            src={img}
+                            className={
+                              selectedRole?.name === 'ORGANISER'
+                                ? 'w-60 h-40 rounded-lg'
+                                : 'w-40 h-40 rounded-full'
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <div className='flex justify-center'>
-              <Stack direction='row' alignItems='center' spacing={2}>
-                <Button variant='contained' component='label'>
-                  Upload
+
+                <div className='flex justify-center'>
+                  <Stack direction='row' alignItems='center' spacing={2}>
+                    <Button variant='contained' component='label'>
+                      Upload
+                      <input
+                        onChange={setImage}
+                        hidden
+                        accept='image/*'
+                        multiple
+                        type='file'
+                      />
+                    </Button>
+                    <IconButton
+                      color='primary'
+                      aria-label='upload picture'
+                      component='label'
+                    >
+                      <input
+                        onChange={setImage}
+                        hidden
+                        accept='image/*'
+                        type='file'
+                      />
+                      <PhotoCamera />
+                    </IconButton>
+                  </Stack>
+                </div>
+              </>
+            )}
+            <Dropdown
+              value={selectedRole}
+              onChange={(e) => {
+                setSelectedRole(e.value);
+              }}
+              options={users}
+              optionLabel='name'
+              placeholder='Select Users Role'
+              className='w-full md:w-14rem mt-10'
+            />
+            {selectedRole === null ? null : (
+              <div className='mt-2'>
+                <div className='form_input'>
+                  <label htmlFor='fname'>
+                    {selectedRole?.name === 'ORGANISER'
+                      ? 'Manager Name'
+                      : selectedRole?.name === 'ARTISTS'
+                      ? 'Artists Name'
+                      : 'Name'}
+                  </label>
                   <input
-                    onChange={setImage}
-                    hidden
-                    accept='image/*'
-                    multiple
-                    type='file'
+                    type='text'
+                    onChange={setVal}
+                    value={inpval.fname}
+                    name='fname'
+                    id='fname'
+                    placeholder='Enter Your Name'
                   />
-                </Button>
-                <IconButton
-                  color='primary'
-                  aria-label='upload picture'
-                  component='label'
-                >
+                </div>
+                {selectedRole?.name === 'ORGANISER' && (
+                  <div className='form_input'>
+                    <label htmlFor='venueName'>Venue Name</label>
+                    <input
+                      type='text'
+                      onChange={setVal}
+                      value={inpval.venueName}
+                      name='venueName'
+                      id='venueName'
+                      placeholder='Enter Your Venue Name'
+                    />
+                  </div>
+                )}
+                <div className='form_input'>
+                  <label htmlFor='email'>Email</label>
                   <input
-                    onChange={setImage}
-                    hidden
-                    accept='image/*'
-                    type='file'
+                    type='email'
+                    onChange={setVal}
+                    value={inpval.email}
+                    name='email'
+                    id='email'
+                    placeholder='Enter Your Email Address'
                   />
-                  <PhotoCamera />
-                </IconButton>
-              </Stack>
-            </div>
-            <div className='form_input'>
-              <label htmlFor='fname'>Name</label>
-              <input
-                type='text'
-                onChange={setVal}
-                value={inpval.fname}
-                name='fname'
-                id='fname'
-                placeholder='Enter Your Name'
-              />
-            </div>
-            <div className='form_input'>
-              <label htmlFor='email'>Email</label>
-              <input
-                type='email'
-                onChange={setVal}
-                value={inpval.email}
-                name='email'
-                id='email'
-                placeholder='Enter Your Email Address'
-              />
-            </div>
-            <div className='form_input'>
-              <label htmlFor='password'>Password</label>
-              <div className='two'>
-                <input
-                  type={!passShow ? 'password' : 'text'}
-                  value={inpval.password}
-                  onChange={setVal}
-                  name='password'
-                  id='password'
-                  placeholder='Enter Your password'
-                />
-                <div
-                  className='showpass'
-                  onClick={() => setPassShow(!passShow)}
-                >
-                  {!passShow ? 'Show' : 'Hide'}
                 </div>
-              </div>
-            </div>
-
-            <div className='form_input'>
-              <label htmlFor='password'>Confirm Password</label>
-              <div className='two'>
-                <input
-                  type={!cpassShow ? 'password' : 'text'}
-                  value={inpval.cpassword}
-                  onChange={setVal}
-                  name='cpassword'
-                  id='cpassword'
-                  placeholder='Confirm password'
-                />
-                <div
-                  className='showpass'
-                  onClick={() => setCPassShow(!cpassShow)}
-                >
-                  {!cpassShow ? 'Show' : 'Hide'}
+                <div className='form_input'>
+                  <label htmlFor='password'>Password</label>
+                  <div className='two'>
+                    <input
+                      type={!passShow ? 'password' : 'text'}
+                      value={inpval.password}
+                      onChange={setVal}
+                      name='password'
+                      id='password'
+                      placeholder='Enter Your password'
+                    />
+                    <div
+                      className='showpass'
+                      onClick={() => setPassShow(!passShow)}
+                    >
+                      {!passShow ? 'Show' : 'Hide'}
+                    </div>
+                  </div>
                 </div>
+
+                <div className='form_input'>
+                  <label htmlFor='password'>Confirm Password</label>
+                  <div className='two'>
+                    <input
+                      type={!cpassShow ? 'password' : 'text'}
+                      value={inpval.cpassword}
+                      onChange={setVal}
+                      name='cpassword'
+                      id='cpassword'
+                      placeholder='Confirm password'
+                    />
+                    <div
+                      className='showpass'
+                      onClick={() => setCPassShow(!cpassShow)}
+                    >
+                      {!cpassShow ? 'Show' : 'Hide'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className='form_input'>
+                  <label htmlFor='phone'>Mobile Number</label>
+                  <input
+                    type='tel'
+                    onChange={setVal}
+                    value={inpval.phone}
+                    name='phone'
+                    id='phone'
+                    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                    placeholder='Enter Your Mobile Number'
+                  />
+                </div>
+                <div className='flex gap-3'>
+                  <div className='form_input'>
+                    <label htmlFor='area'>Area Location</label>
+                    <input
+                      type='text'
+                      onChange={setVal}
+                      value={inpval.area}
+                      name='area'
+                      id='area'
+                      placeholder='Enter Your Area location'
+                    />
+                  </div>
+                  <div className='form_input'>
+                    <label htmlFor='city'>City</label>
+                    <input
+                      type='text'
+                      onChange={setVal}
+                      value={inpval.city}
+                      name='city'
+                      id='city'
+                      placeholder='Enter Your City'
+                    />
+                  </div>
+                </div>
+                <div className='flex gap-3'>
+                  <div className='form_input'>
+                    <label htmlFor='state'>State</label>
+                    <input
+                      type='text'
+                      onChange={setVal}
+                      value={inpval.state}
+                      name='state'
+                      id='state'
+                      placeholder='Enter Your state'
+                    />
+                  </div>
+                  <div className='form_input'>
+                    <label htmlFor='country'>Country</label>
+                    <input
+                      type='text'
+                      onChange={setVal}
+                      value={inpval.country}
+                      name='country'
+                      id='country'
+                      placeholder='Country'
+                    />
+                  </div>
+                </div>
+                <div className='form_input'>
+                  <label htmlFor='pinCode'>PIN Code</label>
+                  <input
+                    type='text'
+                    onChange={setVal}
+                    value={inpval.pinCode}
+                    name='pinCode'
+                    id='pinCode'
+                    placeholder='PIN Code'
+                  />
+                </div>
+
+                <button className='btn' onClick={addUserdata}>
+                  Sign Up
+                </button>
               </div>
-            </div>
-
-            <div className='form_input'>
-              <label htmlFor='phone'>Mobile Number</label>
-              <input
-                type='tel'
-                onChange={setVal}
-                value={inpval.phone}
-                name='phone'
-                id='phone'
-                pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
-                placeholder='Enter Your Mobile Number'
-              />
-            </div>
-            <div className='form_input'>
-              <label htmlFor='address'>Location Address</label>
-              <input
-                type='text'
-                onChange={setVal}
-                value={inpval.address}
-                name='address'
-                id='address'
-                placeholder='Enter Your location Address'
-              />
-            </div>
-
-            <div className='form_input'>
-              <label htmlFor='pinCode'>PIN Code</label>
-              <input
-                type='text'
-                onChange={setVal}
-                value={inpval.pinCode}
-                name='pinCode'
-                id='pinCode'
-                placeholder='PIN Code'
-              />
-            </div>
-
-            <button className='btn' onClick={addUserdata}>
-              Sign Up
-            </button>
+            )}
             <p>
               Already have an account? <NavLink to='/login'>Log In</NavLink>
             </p>

@@ -2,13 +2,22 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import './mix.css';
+import { Dropdown } from 'primereact/dropdown';
 
 const Login = () => {
   const [passShow, setPassShow] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const users = [
+    { id: 1, name: 'ADMIN' },
+    { id: 2, name: 'USER' },
+    { id: 2, name: 'ORGANISER' },
+    { id: 3, name: 'ARTISTS' },
+  ];
 
   const [inpval, setInpval] = useState({
     email: '',
     password: '',
+    role: selectedRole?.name || '',
   });
 
   const history = useNavigate();
@@ -28,7 +37,7 @@ const Login = () => {
   const loginuser = async (e) => {
     e.preventDefault();
 
-    const { email, password } = inpval;
+    const { email, password, role } = inpval;
 
     if (email === '') {
       toast.error('email is required!', {
@@ -57,6 +66,7 @@ const Login = () => {
         body: JSON.stringify({
           email,
           password,
+          role: selectedRole?.name,
         }),
       });
 
@@ -71,7 +81,7 @@ const Login = () => {
         window.location = '/';
         setInpval({ ...inpval, email: '', password: '' });
       } else {
-        toast.error('Email/Password is wrong', {
+        toast.error(`${res?.message}`, {
           position: 'top-center',
         });
       }
@@ -88,6 +98,18 @@ const Login = () => {
           </div>
 
           <form>
+            <div className='font-bold'>Role</div>
+            <Dropdown
+              value={selectedRole}
+              onChange={(e) => {
+                setSelectedRole(e.value);
+              }}
+              options={users}
+              optionLabel='name'
+              placeholder='Select Users Role'
+              className='w-full md:w-14rem mt-2'
+            />
+
             <div className='form_input'>
               <label htmlFor='email'>Email</label>
               <input

@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 require('./db/conn');
 const router = require('./routes/router');
+const venuerouter = require('./routes/venuesrouter');
 const adminRouter = require('./routes/adminRouter');
 const organiserRouter = require('./routes/organiserRouter');
 const cors = require('cors');
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(cookiParser());
 app.use(cors());
 app.use(router);
+app.use(venuerouter);
 app.use(adminRouter);
 app.use(organiserRouter);
 

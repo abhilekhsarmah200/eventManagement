@@ -11,7 +11,7 @@ import axios from 'axios';
 
 export default function ViewUsers({ datas }) {
   const initialSearchProps = [
-    { label: 'Address', name: 'address' },
+    { label: 'Area', name: 'area' },
     { label: 'Venue Name', name: 'venueName' },
     { label: 'Manager Name', name: 'fname' },
     { label: 'Venue Category', name: 'venueCategory' },
@@ -36,31 +36,6 @@ export default function ViewUsers({ datas }) {
   const open = Boolean(anchorEl);
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const DashboardValid = async () => {
-    let token = localStorage.getItem('usersdatatoken');
-
-    const res = await fetch('http://localhost:8010/validuser', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-    });
-
-    const data = await res.json();
-
-    if (data.status == 401 || !data) {
-      toast.error(`please login first!`, {
-        position: 'top-center',
-      });
-      history('/login');
-    } else {
-      console.log('user verify');
-      setLoginData(data);
-      history('/');
-    }
   };
 
   const UsersList = async () => {
@@ -111,10 +86,9 @@ export default function ViewUsers({ datas }) {
   console.log({ users });
 
   useEffect(() => {
-    DashboardValid();
     UsersList();
   }, []);
-  const path = 'http://localhost:8080/public/images/';
+  const path = 'http://localhost:8010/public/images/';
   return (
     <>
       <div className='flex justify-center align-center py-8'>

@@ -46,13 +46,16 @@ export default function BookingDetails() {
             <BasicTable users={userData} />
           </div>
         ) : (
-          <div>
-            No Booking Yet...&nbsp;
-            <span>
-              <a className='underline text-blue-500' href='/'>
-                search your event
-              </a>
-            </span>
+          <div className='flex justify-center flex-col items-center gap-3'>
+            <div>
+              <img
+                className='md:h-96 h-60'
+                src='https://cdn.dribbble.com/users/8436/screenshots/3139896/media/826c6e7d67e456b67d99574bc8d2453e.gif'
+              />
+            </div>
+            <div className='font-secondary font-bold uppercase text-base md:text-3xl'>
+              No Booking Yet...&nbsp;
+            </div>
           </div>
         )}
       </div>

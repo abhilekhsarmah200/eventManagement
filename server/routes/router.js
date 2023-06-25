@@ -10,7 +10,6 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const organiserdb = require('../models/OrganiserSchema');
 const bookingdb = require('../models/Booking');
-const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const paymentdb = require('../models/Payment');
 const artistorganisersdb = require('../models/ArtistLinkWithOrganisers');
@@ -56,7 +55,21 @@ let upload = multer({ storage, fileFilter });
 
 router.post('/register', upload.single('myFile'), async (req, res) => {
   let photo = req.file ? req.file.filename : null;
-  let { fname, email, password, cpassword, phone, address, pinCode } = req.body;
+  let {
+    fname,
+    venueName,
+    email,
+    password,
+    cpassword,
+    phone,
+    area,
+    pinCode,
+    role,
+    city,
+    state,
+    country,
+    organiserValid,
+  } = req.body;
   let preuser = await userdb.findOne({ email: email });
   if (preuser) {
     res.status(422).json({ error: 'This Email is Already Exist' });
@@ -65,13 +78,19 @@ router.post('/register', upload.single('myFile'), async (req, res) => {
   }
   let data = new userdb({
     fname,
+    venueName,
     email,
     password,
     cpassword,
     phone,
-    address,
+    area,
     pinCode,
     photo,
+    role,
+    city,
+    state,
+    country,
+    organiserValid,
   });
   let response = await data.save();
   res.status(200).json({ message: 'User Added SuccessFully' });
@@ -104,20 +123,26 @@ router.post('/register', upload.single('myFile'), async (req, res) => {
 router.post('/login', async (req, res) => {
   console.log(req.body);
 
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
-  if (!email || !password) {
+  if (!email || !password || !role) {
     res.status(422).json({ error: 'fill all the details' });
   }
 
   try {
-    const userValid = await userdb.findOne({ email: email });
+    const userValid = await userdb.findOne({
+      email: email,
+      role: role,
+      organiserValid: true,
+    });
 
     if (userValid) {
       const isMatch = await bcrypt.compare(password, userValid.password);
 
       if (!isMatch) {
-        res.status(422).json({ error: 'invalid details' });
+        res
+          .status(422)
+          .json({ message: 'email and password is not matched!!' });
       } else {
         // token generate
         const token = await userValid.generateAuthtoken();
@@ -135,11 +160,24 @@ router.post('/login', async (req, res) => {
         res.status(201).json({ status: 201, result });
       }
     } else {
-      res.status(401).json({ status: 401, message: 'invalid details' });
+      if (role === 'ORGANISER') {
+        res.status(401).json({
+          status: 401,
+          message:
+            'email and password is not matched!! Or You are not verified yet!!',
+        });
+      } else {
+        res.status(401).json({
+          status: 401,
+          message: 'email and password is not matched!!',
+        });
+      }
     }
   } catch (error) {
-    res.status(401).json({ status: 401, error });
-    console.log('catch block');
+    res
+      .status(401)
+      .json({ status: 401, message: 'email and password is not matched!!' });
+    console.log({ error });
   }
 });
 
@@ -150,6 +188,16 @@ router.get('/validuser', authenticate, async (req, res) => {
     res.status(201).json({ status: 201, ValidUserOne });
   } catch (error) {
     res.status(401).json({ status: 401, error });
+  }
+});
+
+//Get all organisers
+router.get('/getallorganisers', async (req, res) => {
+  try {
+    const users = await userdb.find({ role: 'ORGANISER' });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
   }
 });
 
@@ -168,16 +216,6 @@ router.get('/logout', authenticate, async (req, res) => {
     res.status(201).json({ status: 201 });
   } catch (error) {
     res.status(401).json({ status: 401, error });
-  }
-});
-
-//Get all organisers
-router.get('/getallorganisers', async (req, res) => {
-  try {
-    const users = await organiserdb.find({ validUser: true });
-    res.status(200).send(users);
-  } catch (error) {
-    res.status(404).json({ message: error.stack });
   }
 });
 
@@ -366,6 +404,28 @@ router.patch(`/CalculateTotalBalanceByBookingId/:id`, async (req, res) => {
 //   res.status(200).json({ res: response });
 // });
 
+router.delete('/deleteorganiser/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await userdb.findByIdAndRemove({ _id: id });
+    res.status(200).send('User Deleted successfully');
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
+router.get('/getOrganiserById/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const users = await userdb.findById({ _id: id });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
 router.get('/delete/:id', authenticate, (req, res) => {
   id = req.params.id;
   user = req.user;
@@ -412,6 +472,19 @@ router.get('/getBookingDetails/:id', async (req, res) => {
     res.status(200).send(booking);
   } catch (error) {
     res.status(404).json({ message: error.stack });
+  }
+});
+
+router.patch(`/updateorganiser/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Organiser Validate SuccessFully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
   }
 });
 

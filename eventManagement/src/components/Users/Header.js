@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import './header.css';
 import { LoginContext } from '../ContextProvider/Context';
@@ -9,7 +9,24 @@ import { ToastContainer, toast } from 'react-toastify';
 import logo from '../../assets/img/cover.png';
 import SideBar from '../CustomComponents/SideBar.tsx';
 
-const AdminHeader = () => {
+const AdminHeader = ({ logindatas }) => {
+  const [images, setImages] = React.useState([]);
+
+  const viewDetails = async () => {
+    const res = await fetch(
+      `http://localhost:8010/viewAllDetails/${logindatas?.ValidUserOne?._id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const data = await res.json();
+    console.log({ images });
+    setImages(data);
+  };
   const { logindata, setLoginData } = useContext(LoginContext);
 
   const history = useNavigate();
@@ -44,7 +61,7 @@ const AdminHeader = () => {
       localStorage.removeItem('usersdatatoken');
       localStorage.removeItem('userId');
       setLoginData(false);
-      history('/');
+      window.location = '/login';
     } else {
       console.log('error');
     }
@@ -61,19 +78,24 @@ const AdminHeader = () => {
     });
     history('/login');
   };
+  useEffect(() => {
+    viewDetails();
+  }, []);
   const path = 'http://localhost:8010/public/images/';
+  const data = images.map((item, index) => item);
 
   return (
     <>
       <header>
         <nav style={{ background: '#472967' }}>
           <div className='flex justify-between p-5 border shadow-md items-center'>
+            <SideBar logindata={logindatas} images={data} />
             <div className='flex flex-col items-center'>
               <NavLink to='/'>
-                <img className='h-20' src={logo} />
+                <img className='sm:h-20 h-12' src={logo} />
               </NavLink>{' '}
-              <SideBar />
             </div>
+
             <div className='avtar'>
               {logindata ? (
                 <div className='cursor-pointer' onClick={handleClick}>

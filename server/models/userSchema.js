@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  venueName: {
+    type: String,
+  },
+  role: {
+    type: String,
+  },
   email: {
     type: String,
     required: true,
@@ -28,6 +34,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6,
+  },
+  organiserValid: {
+    type: Boolean,
+    default: true,
   },
   cpassword: {
     type: String,
@@ -48,8 +58,34 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: Number,
   },
-  address: {
+  area: {
     type: String,
+  },
+  details: {
+    type: Array,
+  },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  ratings: [
+    {
+      star: Number,
+      comments: String,
+      postedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+      },
+    },
+  ],
+  totalRating: {
+    type: String,
+    default: 0,
   },
   pinCode: {
     type: Number,

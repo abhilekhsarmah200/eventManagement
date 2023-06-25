@@ -3,16 +3,17 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LoginContext } from '../../ContextProvider/Context';
 import { toast } from 'react-toastify';
-import { Button } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import { RadioButton } from 'primereact/radiobutton';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import successfullPayment from '../../../assets/img/Payment+successful.png';
 
 export default function Payment() {
   const { id } = useParams();
   const { logindata, setLoginData } = useContext(LoginContext);
   const [userData, setUserData] = useState([]);
-  const [payment, setPayment] = useState([]);
+  const [payment, setPayment] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [ingredient, setIngredient] = useState('20%');
   const [visible, setVisible] = useState(false);
@@ -74,6 +75,10 @@ export default function Payment() {
       toast.success('Paid Successfully 😃!', {
         position: 'top-center',
       });
+
+      setTimeout(function () {
+        setPayment(true);
+      }, 2000);
       const response = await fetch(
         `http://localhost:8010/CalculateTotalBalanceByBookingId/${id}`,
         {
@@ -89,8 +94,9 @@ export default function Payment() {
       );
 
       const data = await response.json();
-
-      history(`/viewBookingDetails/${id}`);
+      setTimeout(function () {
+        history(`/viewBookingDetails/${id}`);
+      }, 5000);
     }
   };
 
@@ -224,31 +230,55 @@ export default function Payment() {
         style={{ width: '60vw', height: '90vh' }}
         onHide={() => setVisible(false)}
       >
-        <div className='flex flex-col gap-4 items-center justify-center'>
-          <div className='flex flex-col w-[70%]'>
-            <label className='form_input'>Card Number:</label>
-            <InputText
-              type='text'
-              value={cc_format(val)}
-              placeholder='_ _ _ _  _ _ _ _  _ _ _ _  _ _ _ _ '
-              maxLength={19}
-              onChange={onChange}
-            />
-          </div>
-          <div className='flex w-[70%] gap-4'>
-            <div className='flex flex-col w-full'>
-              <label className='form_input'>Expiry Date:</label>
-              <InputText type='text' placeholder='_ _ /_ _ ' maxLength={5} />
+        {payment === true ? (
+          <div className='relative h-[80vh]'>
+            <div>
+              <img src={successfullPayment} className='w-[60vw]' />
             </div>
-            <div className='flex flex-col w-full'>
-              <label className='form_input'>CVV:</label>
-              <InputText type='text' placeholder='_ _ _' maxLength={3} />
+            <div className='absolute bottom-0 right-0'>
+              <div className='flex items-center gap-2'>
+                <div>Please wait we redirecting you to Your booking...</div>
+                <div>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                </div>
+              </div>
             </div>
           </div>
-          <Button onClick={payments} variant='outlined'>
-            <a>Pay Now</a>
-          </Button>
-        </div>
+        ) : (
+          <div className='flex flex-col gap-4 items-center justify-center'>
+            <div className='flex flex-col w-[70%]'>
+              <label className='form_input'>Card Number:</label>
+              <InputText
+                type='text'
+                value={cc_format(val)}
+                placeholder='_ _ _ _  _ _ _ _  _ _ _ _  _ _ _ _ '
+                maxLength={19}
+                onChange={onChange}
+              />
+            </div>
+            <div className='flex w-[70%] gap-4'>
+              <div className='flex flex-col w-full'>
+                <label className='form_input'>Expiry Date:</label>
+                <InputText type='text' placeholder='_ _ /_ _ ' maxLength={5} />
+              </div>
+              <div className='flex flex-col w-full'>
+                <label className='form_input'>CVV:</label>
+                <InputText type='text' placeholder='_ _ _' maxLength={3} />
+              </div>
+            </div>
+            <Button onClick={payments} variant='outlined'>
+              <a>Pay Now</a>
+            </Button>
+          </div>
+        )}
       </Dialog>
     </div>
   );

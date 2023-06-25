@@ -46,7 +46,7 @@ export default function BasicTable(props) {
       const text = 'Are you want to verify this Organiser?';
 
       if (window.confirm(text) === true) {
-        res = await fetch(`http://localhost:8080/updateorganiser/${id}`, {
+        res = await fetch(`http://localhost:8010/updateorganiser/${id}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export default function BasicTable(props) {
                   <TableCell align='center'>{row?.venueName}</TableCell>
                   <TableCell align='center'>{row?.fname}</TableCell>
                   <TableCell align='center'>
-                    {row?.address}, {row?.city} ({row?.state})
+                    {row?.area}, {row?.city} ({row?.state})
                   </TableCell>
                   <TableCell align='center'>{row?.pinCode}</TableCell>
                   <TableCell align='center'>

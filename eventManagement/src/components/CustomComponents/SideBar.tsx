@@ -10,10 +10,12 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import MenuIcon from '@mui/icons-material/Menu';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
-export default function SideBar() {
+export default function SideBar({ logindata, images }) {
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -56,6 +58,65 @@ export default function SideBar() {
     },
   ];
 
+  const itemList2 = [
+    {
+      text: 'Home',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: '/admin/profile',
+    },
+    {
+      text: 'View Bookings',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: '/admin/view-bookings',
+    },
+    {
+      text: 'View Artist',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: '/add-todo',
+    },
+    {
+      text: 'View Organisers',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: '/admin/view-users',
+    },
+    {
+      text: 'Profile',
+      icon: <AccountCircleIcon style={{ fill: 'grey' }} />,
+      to: '/admin/profile',
+    },
+  ];
+
+  const itemList3 = [
+    {
+      text: 'Home',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: '/',
+    },
+    {
+      text: images?.length === 0 ? 'Add Venue Photos' : 'View Venue Photos',
+      icon: <AddPhotoAlternateIcon style={{ fill: 'grey' }} />,
+      to:
+        images?.length === 0
+          ? `/organiser/add_venue`
+          : `/organiser/view_venuePhotos/${userId}`,
+    },
+    {
+      text: 'View Bookings',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: '/add-todo',
+    },
+    {
+      text: 'View Artist Requests',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: `/organiser/artistsRequest/${userId}`,
+    },
+    {
+      text: 'Profile',
+      icon: <AccountCircleIcon style={{ fill: 'grey' }} />,
+      to: '/organiser/profile',
+    },
+  ];
+
   const list = (anchor: Anchor) => (
     <Box
       sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
@@ -64,22 +125,54 @@ export default function SideBar() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {itemList.map((text, index) => (
-          <ListItem key={index} disablePadding>
-            <ListItemButton>
-              <a className='flex items-center w-full' href={text.to}>
-                <ListItemIcon>{text.icon}</ListItemIcon>
-                <ListItemText primary={text.text} />
-              </a>
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {logindata?.ValidUserOne?.role === 'USER' ? (
+          <>
+            {itemList.map((text, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton>
+                  <a className='flex items-center w-full' href={text.to}>
+                    <ListItemIcon>{text.icon}</ListItemIcon>
+                    <ListItemText primary={text.text} />
+                  </a>
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </>
+        ) : logindata?.ValidUserOne?.role === 'ADMIN' ? (
+          <>
+            {itemList2.map((text, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton>
+                  <a className='flex items-center w-full' href={text.to}>
+                    <ListItemIcon>{text.icon}</ListItemIcon>
+                    <ListItemText primary={text.text} />
+                  </a>
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </>
+        ) : (
+          logindata?.ValidUserOne?.role === 'ORGANISER' && (
+            <>
+              {itemList3.map((text, index) => (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton>
+                    <a className='flex items-center w-full' href={text.to}>
+                      <ListItemIcon>{text.icon}</ListItemIcon>
+                      <ListItemText primary={text.text} />
+                    </a>
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </>
+          )
+        )}
       </List>
     </Box>
   );
 
   return (
-    <div className='mt-5'>
+    <div>
       {(['left'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
           <Button
@@ -87,7 +180,7 @@ export default function SideBar() {
             style={{ color: 'white' }}
             onClick={toggleDrawer(anchor, true)}
           >
-            Event Partners
+            <MenuIcon className='text-white' />
           </Button>
           <SwipeableDrawer
             anchor={anchor}
