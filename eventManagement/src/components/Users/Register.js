@@ -13,6 +13,15 @@ const Register = () => {
   const [cpassShow, setCPassShow] = useState(false);
   const [profileImage, setProfileImage] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [checked, setChecked] = useState([]); // categories
+  const [formData, setFormData] = useState('');
+
+  const [artistsType, setArtistsType] = useState([
+    { id: 1, name: 'DJ', slug: 'dj' },
+    { id: 2, name: 'PhotoGraphy', slug: 'photography' },
+    { id: 3, name: 'VideoGraphy', slug: 'videography' },
+  ]);
+
   const users = [
     // { id: 1, name: 'ADMIN' },
     { id: 2, name: 'USER' },
@@ -20,6 +29,21 @@ const Register = () => {
     { id: 3, name: 'ARTISTS' },
   ];
   console.log({ selectedRole });
+
+  const handleToggle = (c) => () => {
+    // return the first index or -1
+    const clickedCategory = checked.indexOf(c);
+    const all = [...checked];
+
+    if (clickedCategory === -1) {
+      all.push(c);
+    } else {
+      all.splice(clickedCategory, 1);
+    }
+    console.log(all);
+    setChecked(all);
+    formData?.set('artistsType', all);
+  };
 
   const [inpval, setInpval] = useState({
     fname: '',
@@ -29,6 +53,7 @@ const Register = () => {
     cpassword: '',
     phone: '',
     area: '',
+    artistsType: artistsType || [],
     role: selectedRole?.name || '',
     pinCode: '',
     photo: '',
@@ -73,6 +98,9 @@ const Register = () => {
     formdata.append('state', inpval.state);
     formdata.append('country', inpval.country);
     formdata.append('role', selectedRole.name);
+    if (selectedRole?.name === 'ARTISTS') {
+      formdata.append('artistsType', checked);
+    }
     if (selectedRole?.name === 'ORGANISER') {
       formdata.append('venueName', inpval.venueName);
       formdata.append('organiserValid', false);
@@ -183,6 +211,23 @@ const Register = () => {
         }
       } catch (error) {}
     }
+  };
+
+  const showCategories = () => {
+    return (
+      <div className='flex gap-2'>
+        {artistsType.map((c, i) => (
+          <div className='flex items-center' key={i}>
+            <input
+              onChange={handleToggle(c.name)}
+              type='checkbox'
+              className='mr-1 cursor-pointer'
+            />
+            <label className='form-check-label'>{c.name}</label>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -341,6 +386,10 @@ const Register = () => {
                     </div>
                   </div>
                 </div>
+
+                {selectedRole?.name === 'ARTISTS' && (
+                  <div>{showCategories()}</div>
+                )}
 
                 <div className='form_input'>
                   <label htmlFor='phone'>Mobile Number</label>

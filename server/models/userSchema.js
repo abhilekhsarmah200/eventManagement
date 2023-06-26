@@ -39,6 +39,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  organiserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: '643654594db3ac9a63fb4f1a',
+  },
+  validArtists: {
+    type: Boolean,
+    default: false,
+  },
+  artistsType: {
+    type: Array,
+  },
   cpassword: {
     type: String,
     required: true,

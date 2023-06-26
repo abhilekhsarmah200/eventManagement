@@ -53,7 +53,7 @@ function SwipeableTextMobileStepper({ images, index }) {
   };
 
   return (
-    <div className='flex justify-center'>
+    <div className='flex w-[50%] mx-auto justify-center'>
       <Box className='w-[50vw]'>
         {/* images */}
         <AutoPlaySwipeableViews

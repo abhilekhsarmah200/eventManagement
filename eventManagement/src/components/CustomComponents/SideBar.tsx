@@ -12,6 +12,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -116,6 +117,33 @@ export default function SideBar({ logindata, images }) {
       to: '/organiser/profile',
     },
   ];
+  const itemList4 = [
+    {
+      text: 'Home',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: '/',
+    },
+    {
+      text: 'Join with Venues',
+      icon: <AddBusinessIcon style={{ fill: 'grey' }} />,
+      to: '/artists/join_venue',
+    },
+    {
+      text: 'View Bookings',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: '/artists/view-your-booking/:id',
+    },
+    {
+      text: 'View Artist',
+      icon: <PreviewIcon style={{ fill: 'grey' }} />,
+      to: '/add-todo',
+    },
+    {
+      text: 'Profile',
+      icon: <AccountCircleIcon style={{ fill: 'grey' }} />,
+      to: '/artists/profile',
+    },
+  ];
 
   const list = (anchor: Anchor) => (
     <Box
@@ -151,21 +179,32 @@ export default function SideBar({ logindata, images }) {
               </ListItem>
             ))}
           </>
+        ) : logindata?.ValidUserOne?.role === 'ORGANISER' ? (
+          <>
+            {itemList3.map((text, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton>
+                  <a className='flex items-center w-full' href={text.to}>
+                    <ListItemIcon>{text.icon}</ListItemIcon>
+                    <ListItemText primary={text.text} />
+                  </a>
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </>
         ) : (
-          logindata?.ValidUserOne?.role === 'ORGANISER' && (
-            <>
-              {itemList3.map((text, index) => (
-                <ListItem key={index} disablePadding>
-                  <ListItemButton>
-                    <a className='flex items-center w-full' href={text.to}>
-                      <ListItemIcon>{text.icon}</ListItemIcon>
-                      <ListItemText primary={text.text} />
-                    </a>
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </>
-          )
+          <>
+            {itemList4.map((text, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton>
+                  <a className='flex items-center w-full' href={text.to}>
+                    <ListItemIcon>{text.icon}</ListItemIcon>
+                    <ListItemText primary={text.text} />
+                  </a>
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </>
         )}
       </List>
     </Box>

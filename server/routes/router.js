@@ -13,6 +13,7 @@ const bookingdb = require('../models/Booking');
 const crypto = require('crypto');
 const paymentdb = require('../models/Payment');
 const artistorganisersdb = require('../models/ArtistLinkWithOrganisers');
+const venuedb = require('../models/venuesSchema');
 
 const keysecret = process.env.SECRET_KEY;
 
@@ -51,6 +52,43 @@ const fileFilter = (req, file, cb) => {
 };
 let upload = multer({ storage, fileFilter });
 
+router.get('/viewAllDetails/:id', async (req, res) => {
+  const organisersData = await venuedb
+    .find({ organiser_Id: req.params.id })
+    .populate('organiser_Id')
+    .exec(function (err, organisersData) {
+      if (err) console.log(err);
+      res.json(organisersData);
+    });
+});
+
+//Join artists with a venue
+router.post(`/JoinWithVenues`, async (req, res) => {
+  let {
+    artistsName,
+    requestDate,
+    eventName,
+    requestedBy,
+    joinWith,
+    photo,
+    artistsPhoto,
+  } = req.body;
+
+  let data = new artistorganisersdb({
+    artistsName,
+    requestDate,
+    eventName,
+    requestedBy,
+    joinWith,
+    photo,
+    artistsPhoto,
+  });
+
+  let response = await data.save();
+
+  res.status(200).json({ res: response.data });
+});
+
 // for user registration
 
 router.post('/register', upload.single('myFile'), async (req, res) => {
@@ -69,6 +107,7 @@ router.post('/register', upload.single('myFile'), async (req, res) => {
     state,
     country,
     organiserValid,
+    artistsType,
   } = req.body;
   let preuser = await userdb.findOne({ email: email });
   if (preuser) {
@@ -91,6 +130,7 @@ router.post('/register', upload.single('myFile'), async (req, res) => {
     state,
     country,
     organiserValid,
+    artistsType,
   });
   let response = await data.save();
   res.status(200).json({ message: 'User Added SuccessFully' });

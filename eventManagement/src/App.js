@@ -30,6 +30,8 @@ import ViewUsers from './components/CustomComponents/ViewUsers';
 import AdminProfile from './components/Admin/components/Admin/AdminProfile';
 import ViewUsersAdmin from './components/Admin/components/Admin/ViewUsers';
 import AdminViewDetailedOrganisers from './components/Admin/components/Admin/ViewDetailedOrganisers';
+import ArtistsDashboard from './components/Artists/Dashboard';
+import AddWithVenues from './components/Artists/AddWithVenues';
 
 function App() {
   const [data, setData] = useState(false);
@@ -126,6 +128,26 @@ function App() {
                 />
                 <Route
                   path='/admin/viewOrganiser/:id'
+                  element={<AdminViewDetailedOrganisers />}
+                />
+              </>
+            )}
+            {logindata?.ValidUserOne?.role === 'ARTISTS' && (
+              <>
+                {/* <Route
+                  path='/artists/view-users'
+                  element={<ViewUsersAdmin logindata={logindata} />}
+                /> */}
+                <Route
+                  path='/artists/join_venue'
+                  element={<AddWithVenues logindata={logindata} />}
+                />
+                <Route
+                  path='/artists/profile'
+                  element={<ArtistsDashboard logindata={logindata} />}
+                />
+                <Route
+                  path='/artists/viewOrganiser/:id'
                   element={<AdminViewDetailedOrganisers />}
                 />
               </>
