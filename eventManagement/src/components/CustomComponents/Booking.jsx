@@ -129,7 +129,7 @@ export default function Booking() {
   console.log({ bookings });
   const organiserById = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/getOrganiserById/${id}`, {
+      const res = await fetch(`http://localhost:8010/getOrganiserById/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ export default function Booking() {
 
   const VenueImagesById = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/viewAllDetails/${id}`, {
+      const res = await fetch(`http://localhost:8010/viewAllDetails/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

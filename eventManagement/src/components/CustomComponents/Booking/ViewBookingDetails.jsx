@@ -149,7 +149,7 @@ export default function ViewBookingDetails() {
   //   console.log({ data });
   // };
 
-  const path = 'http://localhost:8080/public/images/';
+  const path = 'http://localhost:8010/public/images/';
 
   useEffect(() => {
     viewDetails();
