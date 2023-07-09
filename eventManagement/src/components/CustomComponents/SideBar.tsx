@@ -40,6 +40,13 @@ export default function SideBar({ logindata, images }) {
 
       setState({ ...state, [anchor]: open });
     };
+  const itemListLogin = [
+    {
+      text: 'Please Login ...',
+      icon: <HomeIcon style={{ fill: 'grey' }} />,
+      to: `/login`,
+    },
+  ];
 
   const itemList = [
     {
@@ -73,7 +80,7 @@ export default function SideBar({ logindata, images }) {
     {
       text: 'View Artist',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
+      to: '/admin/artists_list',
     },
     {
       text: 'View Organisers',
@@ -104,7 +111,7 @@ export default function SideBar({ logindata, images }) {
     {
       text: 'View Bookings',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
+      to: '/organiser/view-bookings',
     },
     {
       text: 'View Artist Requests',
@@ -153,48 +160,65 @@ export default function SideBar({ logindata, images }) {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {logindata?.ValidUserOne?.role === 'USER' ? (
+        {logindata ? (
           <>
-            {itemList.map((text, index) => (
-              <ListItem key={index} disablePadding>
-                <ListItemButton>
-                  <a className='flex items-center w-full' href={text.to}>
-                    <ListItemIcon>{text.icon}</ListItemIcon>
-                    <ListItemText primary={text.text} />
-                  </a>
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </>
-        ) : logindata?.ValidUserOne?.role === 'ADMIN' ? (
-          <>
-            {itemList2.map((text, index) => (
-              <ListItem key={index} disablePadding>
-                <ListItemButton>
-                  <a className='flex items-center w-full' href={text.to}>
-                    <ListItemIcon>{text.icon}</ListItemIcon>
-                    <ListItemText primary={text.text} />
-                  </a>
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </>
-        ) : logindata?.ValidUserOne?.role === 'ORGANISER' ? (
-          <>
-            {itemList3.map((text, index) => (
-              <ListItem key={index} disablePadding>
-                <ListItemButton>
-                  <a className='flex items-center w-full' href={text.to}>
-                    <ListItemIcon>{text.icon}</ListItemIcon>
-                    <ListItemText primary={text.text} />
-                  </a>
-                </ListItemButton>
-              </ListItem>
-            ))}
+            {logindata?.ValidUserOne?.role === 'USER' ? (
+              <>
+                {itemList.map((text, index) => (
+                  <ListItem key={index} disablePadding>
+                    <ListItemButton>
+                      <a className='flex items-center w-full' href={text.to}>
+                        <ListItemIcon>{text.icon}</ListItemIcon>
+                        <ListItemText primary={text.text} />
+                      </a>
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </>
+            ) : logindata?.ValidUserOne?.role === 'ADMIN' ? (
+              <>
+                {itemList2.map((text, index) => (
+                  <ListItem key={index} disablePadding>
+                    <ListItemButton>
+                      <a className='flex items-center w-full' href={text.to}>
+                        <ListItemIcon>{text.icon}</ListItemIcon>
+                        <ListItemText primary={text.text} />
+                      </a>
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </>
+            ) : logindata?.ValidUserOne?.role === 'ORGANISER' ? (
+              <>
+                {itemList3.map((text, index) => (
+                  <ListItem key={index} disablePadding>
+                    <ListItemButton>
+                      <a className='flex items-center w-full' href={text.to}>
+                        <ListItemIcon>{text.icon}</ListItemIcon>
+                        <ListItemText primary={text.text} />
+                      </a>
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </>
+            ) : (
+              <>
+                {itemList4.map((text, index) => (
+                  <ListItem key={index} disablePadding>
+                    <ListItemButton>
+                      <a className='flex items-center w-full' href={text.to}>
+                        <ListItemIcon>{text.icon}</ListItemIcon>
+                        <ListItemText primary={text.text} />
+                      </a>
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </>
+            )}
           </>
         ) : (
           <>
-            {itemList4.map((text, index) => (
+            {itemListLogin.map((text, index) => (
               <ListItem key={index} disablePadding>
                 <ListItemButton>
                   <a className='flex items-center w-full' href={text.to}>

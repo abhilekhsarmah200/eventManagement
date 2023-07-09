@@ -18,7 +18,7 @@ const AdminProfile = ({ logindata }) => {
   return (
     <>
       <>
-        <div className='flex flex-col items-center justify-center gap-4 mt-5'>
+        <div className='flex flex-col md:w-[40%] w-[80%] py-4 mx-auto bg-white items-center justify-center gap-4 mt-5'>
           <div>
             <img
               src={logindata ? `${path}${logindata?.ValidUserOne?.photo}` : man}

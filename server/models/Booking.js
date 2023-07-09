@@ -7,16 +7,22 @@ const keysecret = process.env.SECRET_KEY;
 
 const bookingSchema = new mongoose.Schema(
   {
-    userName: { type: String },
-    bookingDate: { type: Date },
-    eventName: { type: String },
+    userName: { type: String, required: true },
+    bookingDate: { type: Date, required: true },
+    eventName: { type: String, required: true },
     requiredArtist: { type: String },
+    artist: { type: String, default: '' },
     requiredArtistPrice: { type: String },
     is_canceled: { type: Boolean, default: false },
-    foodList: { type: String },
+    foodList: { type: String, required: true },
     paymentStatus: { type: String, default: 'Pending' },
     foodDishPrice: { type: String },
-    guest: { type: Number },
+    artistsName: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      default: '643654594db3ac9a63fb4f1a',
+    },
+    guest: { type: Number, required: true },
     totalPrice: { type: Number },
     balance: { type: Number },
     organiserPhoto: { type: Number },
@@ -25,7 +31,11 @@ const bookingSchema = new mongoose.Schema(
     organiserPhoto: { type: String },
     organiser_Id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'organisers',
+      ref: 'users',
+    },
+    ratedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
     },
     bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   },

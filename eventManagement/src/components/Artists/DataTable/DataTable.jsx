@@ -162,6 +162,7 @@ export default function BasicTable(props) {
       window.location = '/admin/view-users';
     }
   };
+  console.log(props?.logindata?.ValidUserOne?.organiserId);
 
   return (
     <>

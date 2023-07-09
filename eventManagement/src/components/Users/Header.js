@@ -12,9 +12,11 @@ import SideBar from '../CustomComponents/SideBar.tsx';
 const AdminHeader = ({ logindatas }) => {
   const [images, setImages] = React.useState([]);
 
+  let organiserId = localStorage.getItem('userId');
+
   const viewDetails = async () => {
     const res = await fetch(
-      `http://localhost:8010/viewAllDetails/${logindatas?.ValidUserOne?._id}`,
+      `http://localhost:8010/viewAllDetails/${organiserId}`,
       {
         method: 'GET',
         headers: {
@@ -25,6 +27,7 @@ const AdminHeader = ({ logindatas }) => {
 
     const data = await res.json();
     console.log({ images });
+
     setImages(data);
   };
   const { logindata, setLoginData } = useContext(LoginContext);
@@ -60,6 +63,7 @@ const AdminHeader = ({ logindatas }) => {
       console.log('use logout');
       localStorage.removeItem('usersdatatoken');
       localStorage.removeItem('userId');
+      localStorage.removeItem('view');
       setLoginData(false);
       window.location = '/login';
     } else {
@@ -78,11 +82,19 @@ const AdminHeader = ({ logindatas }) => {
     });
     history('/login');
   };
+
+  const data = images.map((item, index) => item);
+  console.log({ data });
+
   useEffect(() => {
     viewDetails();
+    if (!data?.length > 0) {
+      localStorage.setItem('view', false);
+    } else {
+      localStorage.setItem('view', true);
+    }
   }, []);
   const path = 'http://localhost:8010/public/images/';
-  const data = images.map((item, index) => item);
 
   return (
     <>

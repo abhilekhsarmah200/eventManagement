@@ -7,7 +7,7 @@ const keysecret = process.env.SECRET_KEY;
 
 const paymentSchema = new mongoose.Schema(
   {
-    payAmount: { type: String },
+    payAmount: { type: String, require: true },
     percentage: { type: Number },
     bookingId: { type: mongoose.Schema.Types.ObjectId, ref: 'bookings' },
     bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },

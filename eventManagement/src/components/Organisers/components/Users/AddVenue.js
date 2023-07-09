@@ -47,6 +47,8 @@ export default class FilesUploadComponent extends Component {
             position: 'top-center',
           });
           localStorage.setItem('photoavailable', true);
+          localStorage.setItem('view', true);
+
           setTimeout(function () {
             window.location.href = `/organiser/view_venuePhotos/${organiserId}`; //will redirect to your blog page (an ex: blog.html)
           }, 2000);

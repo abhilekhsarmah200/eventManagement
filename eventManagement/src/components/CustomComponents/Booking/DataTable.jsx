@@ -93,7 +93,6 @@ export default function BasicTable(props) {
                         <Button
                           onClick={() => vewBookingById(row._id)}
                           variant='outlined'
-                          color='success'
                         >
                           Booking Confirmed
                         </Button>
@@ -103,6 +102,7 @@ export default function BasicTable(props) {
                         <Button
                           onClick={() => vewBookingById(row._id)}
                           variant='outlined'
+                          color='success'
                         >
                           Booking Completed
                         </Button>

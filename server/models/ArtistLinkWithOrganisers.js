@@ -19,10 +19,10 @@ const artistsOrganizationSchema = new mongoose.Schema(
     },
     requestedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Artists',
+      ref: 'users',
     },
     bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
-    joinWith: { type: mongoose.Schema.Types.ObjectId, ref: 'organisers' },
+    joinWith: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   },
   {
     timestamps: true,

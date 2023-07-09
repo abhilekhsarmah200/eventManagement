@@ -8,38 +8,6 @@ import { toast } from 'react-toastify';
 export default function BookingDetails() {
   const [userData, setUserData] = useState([]);
 
-  const { logindata, setLoginData } = useContext(LoginContext);
-
-  const { id } = useParams();
-  const history = useNavigate();
-
-  const [data, setData] = useState(false);
-
-  const DashboardValid = async () => {
-    let token = localStorage.getItem('admindatatoken');
-
-    const res = await fetch('/validadmin', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-    });
-
-    const data = await res.json();
-
-    if (data.status == 401 || !data) {
-      toast.error(`please login first!`, {
-        position: 'top-center',
-      });
-      history('/admin/login');
-    } else {
-      console.log('user verify');
-      setLoginData(data);
-      history('/admin/view-bookings');
-    }
-  };
-
   const viewDetails = async () => {
     const res = await fetch(`http://localhost:8010/getallBookingDetails`, {
       method: 'GET',
@@ -63,8 +31,6 @@ export default function BookingDetails() {
   console.log({ userData });
   useEffect(() => {
     viewDetails();
-    setData(true);
-    DashboardValid();
   }, []);
   return (
     <div className='flex md:flex-row flex-col sm:gap-6 gap-2 justify-center md:items-start items-center my-10'>

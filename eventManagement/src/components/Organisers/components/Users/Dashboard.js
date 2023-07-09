@@ -79,7 +79,7 @@ const DashboardOrganisers = ({ logindata }) => {
                     ),
                   }}
                   name='email'
-                  className='w-[20rem]'
+                  className='w-[20rem] bg-white'
                   placeholder='Enter Your Email'
                   label='Primary Email'
                   variant='outlined'
@@ -101,7 +101,7 @@ const DashboardOrganisers = ({ logindata }) => {
                     ),
                   }}
                   name='fname'
-                  className='w-[20rem] uppercase'
+                  className='w-[20rem] uppercase bg-white'
                   placeholder='Enter Your Name'
                   label='Name'
                   variant='outlined'
@@ -134,7 +134,7 @@ const DashboardOrganisers = ({ logindata }) => {
                     ),
                   }}
                   name='address'
-                  className='w-[20rem]'
+                  className='w-[20rem] bg-white'
                   placeholder='Enter Your Address'
                   label='Address'
                   variant='outlined'
@@ -157,7 +157,7 @@ const DashboardOrganisers = ({ logindata }) => {
                       ),
                     }}
                     name='phone'
-                    className='w-[9.5rem]'
+                    className='w-[9.5rem] bg-white'
                     placeholder='mobile'
                     label='Mobile Number'
                     variant='outlined'
@@ -179,7 +179,7 @@ const DashboardOrganisers = ({ logindata }) => {
                       ),
                     }}
                     name='pinCode'
-                    className='w-[9.5rem]'
+                    className='w-[9.5rem] bg-white'
                     placeholder='PinCode'
                     label='PIN Code'
                     variant='outlined'
@@ -187,7 +187,7 @@ const DashboardOrganisers = ({ logindata }) => {
                   />
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <Button
                   variant='outlined'
                   className='btn'
@@ -195,7 +195,7 @@ const DashboardOrganisers = ({ logindata }) => {
                 >
                   Sign Up
                 </Button>
-              </div>
+              </div> */}
             </>
           )}
         </div>

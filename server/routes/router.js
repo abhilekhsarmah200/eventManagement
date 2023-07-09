@@ -62,6 +62,34 @@ router.get('/viewAllDetails/:id', async (req, res) => {
     });
 });
 
+//Join with organiser
+
+router.patch(`/updateorganiser/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Organiser Validate SuccessFully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
+
+router.patch(`/updateArtistsforOrganiser/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Updated data successfully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
+
 //Join artists with a venue
 router.post(`/JoinWithVenues`, async (req, res) => {
   let {
@@ -241,6 +269,26 @@ router.get('/getallorganisers', async (req, res) => {
   }
 });
 
+// //Get all Bookings
+// router.get('/getallorganisers', async (req, res) => {
+//   try {
+//     const users = await userdb.find({ role: 'ORGANISER' });
+//     res.status(200).send(users);
+//   } catch (error) {
+//     res.status(404).json({ message: error.stack });
+//   }
+// });
+
+//Get all ArtistsList
+router.get('/getAllArtistsList', async (req, res) => {
+  try {
+    const users = await userdb.find({ role: 'ARTISTS' });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
 // user logout
 
 router.get('/logout', authenticate, async (req, res) => {
@@ -262,32 +310,38 @@ router.get('/logout', authenticate, async (req, res) => {
 //Give rating to Organisers
 router.put('/rating', authenticate, async (req, res) => {
   const { _id } = req.userId;
-  const { star, comments, organiserId } = req.body;
+  const { star, comments, organiserId, BookingId } = req.body;
   try {
-    const organiser = await organiserdb.findById(organiserId);
+    const organiser = await userdb.findById(organiserId);
     let alreadyRated = organiser.ratings.find(
       (userId) => userId.postedBy.toString() === _id.toString()
     );
     if (alreadyRated) {
-      const updateRating = await organiserdb.updateOne(
+      const updateRating = await userdb.updateOne(
         {
           ratings: { $elemMatch: alreadyRated },
         },
         {
-          $set: { 'ratings.$.star': star, 'ratings.$.comments': comments },
+          $set: {
+            'ratings.$.star': star,
+            'ratings.$.comments': comments,
+            'ratings.$.BookingId': BookingId,
+          },
         },
         {
           new: true,
         }
       );
+      res.status(201).json({ status: 201, updateRating: alreadyRated });
     } else {
-      const rateOrganiser = await organiserdb.findByIdAndUpdate(
+      const rateOrganiser = await userdb.findByIdAndUpdate(
         organiserId,
         {
           $push: {
             ratings: {
               star: star,
               comments: comments,
+              BookingId: BookingId,
               postedBy: _id,
             },
           },
@@ -296,14 +350,15 @@ router.put('/rating', authenticate, async (req, res) => {
           new: true,
         }
       );
+      res.status(201).json({ status: 201, rateOrganiser });
     }
-    const getAllRatings = await organiserdb.findById(organiserId);
+    const getAllRatings = await userdb.findById(organiserId);
     let totalRating = getAllRatings.ratings.length;
     let ratingSum = getAllRatings.ratings
       .map((item) => item.star)
       .reduce((prev, curr) => prev + curr, 0);
     let actualRating = (ratingSum / totalRating).toFixed(1);
-    let finalRating = await organiserdb.findByIdAndUpdate(
+    let finalRating = await userdb.findByIdAndUpdate(
       organiserId,
       {
         totalRating: actualRating,
@@ -312,9 +367,32 @@ router.put('/rating', authenticate, async (req, res) => {
         new: true,
       }
     );
-    res.json(finalRating);
+    res.status(201).json({ status: 201, finalRating });
   } catch (error) {
     console.log(error);
+  }
+});
+
+router.get('/getRatings/:id', async (req, res) => {
+  const organisersData = await bookingdb
+    .find('ratedBy', req.params.id)
+    .populate('ratedBy')
+    .exec(function (err, organisersData) {
+      if (err) console.log(err);
+      res.json(organisersData);
+    });
+});
+
+router.get('/getRatingsByBookingId/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const users = await userdb.find({
+      'ratings.$.BookingId': id,
+    });
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
   }
 });
 
@@ -339,28 +417,42 @@ router.post('/bookEvents', authenticate, async (req, res) => {
     venueName,
   } = req.body;
 
-  let data = new bookingdb({
-    userName,
-    bookingDate,
-    eventName,
-    requiredArtist,
-    requiredArtistPrice,
-    foodList,
-    foodDishPrice,
-    totalPrice,
-    guest,
-    paymentStatus,
-    organiser_Id,
-    organiserPhoto,
-    venueName,
-    balance,
-    organiserPhone,
-    bookedBy: _id,
-  });
+  try {
+    if (!userName || !bookingDate || !eventName || !foodList || !guest) {
+      res.status(422).json({
+        status: 422,
+        message: 'Please fill all the details properly!!',
+      });
+    } else {
+      let data = new bookingdb({
+        userName,
+        bookingDate,
+        eventName,
+        requiredArtist,
+        requiredArtistPrice,
+        foodList,
+        foodDishPrice,
+        totalPrice,
+        guest,
+        paymentStatus,
+        organiser_Id,
+        organiserPhoto,
+        venueName,
+        balance,
+        organiserPhone,
+        bookedBy: _id,
+      });
 
-  let response = await data.save();
+      let response = await data.save();
 
-  res.status(200).json({ res: response });
+      res.status(200).json({ res: response });
+    }
+  } catch (error) {
+    res
+      .status(422)
+      .json({ status: 422, message: 'Please fill all the details properly!!' });
+    console.log({ error });
+  }
 });
 
 // router.post('/joinVenue', authenticate, async (req, res) => {
@@ -379,20 +471,24 @@ router.post('/bookEvents', authenticate, async (req, res) => {
 // });
 
 router.post('/payment', authenticate, async (req, res) => {
-  const { _id } = req.userId;
+  try {
+    const { _id } = req.userId;
 
-  let { payAmount, bookingId, percentage } = req.body;
+    let { payAmount, bookingId, percentage } = req.body;
 
-  let data = new paymentdb({
-    payAmount,
-    bookingId,
-    percentage,
-    bookedBy: _id,
-  });
+    let data = new paymentdb({
+      payAmount,
+      bookingId,
+      percentage,
+      bookedBy: _id,
+    });
 
-  let response = await data.save();
+    let response = await data.save();
 
-  res.status(200).json({ res: response });
+    res.status(200).json({ res: response });
+  } catch {
+    res.status(500).json({ msg: error.message });
+  }
 });
 
 router.patch(`/cancelBookingById/:id`, async (req, res) => {
@@ -589,13 +685,65 @@ router.get('/viewBookingsByUserId/:id', async (req, res) => {
 });
 
 //get all booking details by organiserId
-router.post('/viewBookingsByOrganiserId/', async (req, res) => {
+router.get('/viewBookingsByOrganiserId/:id', async (req, res) => {
   const organisersData = await bookingdb
-    .find({ organiser_Id: req.body })
+    .find({ organiser_Id: req.params.id })
     .populate('organiser_Id')
     .exec(function (err, bookingData) {
       if (err) console.log(err);
       res.json(organisersData);
+    });
+});
+
+//Get joinedData details using artists id
+router.get('/viewJoinedDataUsingArtistsId/:id', async (req, res) => {
+  const organisersData = await artistorganisersdb
+    .find({ requestedBy: req.params.id })
+    .populate('requestedBy')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(bookingData);
+    });
+});
+
+//Update requestAccepted in database
+
+router.patch(`/updateArtistsforRequestAccepted/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await artistorganisersdb.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.status(200).json({ message: 'Updated data successfully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+});
+
+router.delete('/deleteJoinedDataUsingArtistsId/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await artistorganisersdb.findByIdAndRemove({ _id: id });
+    res.status(200).send('User Deleted successfully');
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
+//Get joinedData details using organiser id
+router.get('/viewJoinedDataUsingOrganiser/:id', async (req, res) => {
+  const organisersData = await artistorganisersdb
+    .find({ joinWith: req.params.id })
+    .populate('joinWith')
+    .exec(function (err, bookingData) {
+      if (err) console.log(err);
+      res.json(bookingData);
     });
 });
 
@@ -607,6 +755,34 @@ router.get('/getallBookingDetails', async (req, res) => {
     res.status(200).send(bookingDetails);
   } catch (error) {
     res.status(404).json({ message: error.stack });
+  }
+});
+
+//get all booking details
+
+router.get('/getOrganiserBookingDetails/:id', async (req, res) => {
+  try {
+    const bookingDetails = await bookingdb.find({
+      organiser_Id: req.params.id,
+    });
+    res.status(200).send(bookingDetails);
+  } catch (error) {
+    res.status(404).json({ message: error.stack });
+  }
+});
+
+//update artists to booking details
+
+router.patch(`/updateArtistsToBooking/:id`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await bookingdb.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({ message: 'Artists Added SuccessFully' });
+    // res.status(200).json(bookingData);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
   }
 });
 

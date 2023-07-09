@@ -162,3 +162,32 @@ form .btn:hover {
   border-bottom-left-radius: 5px !important;
   border-radius: 5px;
 }
+
+.css-rh92k-MuiPaper-root-MuiMobileStepper-root {
+  background: transparent !important;
+}
+
+.angle {
+  font-size: 1.7rem !important;
+}
+@media screen and (max-width: 48rem) {
+  .angle {
+    font-size: 1rem !important;
+  }
+}
+
+.login {
+  background: red !important;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+ol,
+ul,
+menu {
+  list-style: inherit !important;
+  margin: 0;
+  padding: 0;
+}

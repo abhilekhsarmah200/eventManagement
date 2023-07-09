@@ -42,7 +42,7 @@ export default function DraggableDialog({ id, item, logindata, organiserId }) {
     let token = localStorage.getItem('admindatatoken');
 
     let res1 = await fetch(
-      `http://localhost:8080/updateArtistsforOrganiser/${logindata}`,
+      `http://localhost:8010/updateArtistsforOrganiser/${logindata}`,
       {
         method: 'PATCH',
         headers: {
@@ -57,7 +57,7 @@ export default function DraggableDialog({ id, item, logindata, organiserId }) {
     try {
       if (open == true) {
         let res = await fetch(
-          `http://localhost:8080/deleteJoinedDataUsingArtistsId/${id}`,
+          `http://localhost:8010/deleteJoinedDataUsingArtistsId/${id}`,
           {
             method: 'DELETE',
             headers: {
@@ -83,7 +83,7 @@ export default function DraggableDialog({ id, item, logindata, organiserId }) {
   return (
     <div>
       <div
-        className='w-36 border p-3 rounded-xl text-center border-red-400 hover:bg-red-400 hover:text-white cursor-pointer transform duration-300'
+        className='w-36 border p-2 rounded-xl text-center border-red-400 hover:bg-red-400 hover:text-white cursor-pointer transform duration-300'
         onClick={handleClickOpen}
         style={{ fontSize: '0.9rem' }}
       >

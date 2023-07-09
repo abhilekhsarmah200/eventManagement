@@ -20,7 +20,7 @@ export default function BasicTable(props) {
     history(`/viewBookingDetails/${id}`);
   };
 
-  const path = 'http://localhost:8080/public/images/';
+  const path = 'http://localhost:8010/public/images/';
 
   return (
     <div>

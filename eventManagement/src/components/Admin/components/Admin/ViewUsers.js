@@ -5,6 +5,7 @@ import { LoginContext } from '../ContextProvider/Context';
 import DataTable from '../DataTable/DataTable';
 import { Box, CircularProgress } from '@mui/material';
 import SmallDevicesTable from '../DataTable/SmallDevicesTable';
+import SimpleDataTableOrganisers from '../DataTable/OrganisersTable';
 export default function ViewUsersAdmin({ logindata }) {
   const [users, setUsers] = useState(null);
 
@@ -56,7 +57,7 @@ export default function ViewUsersAdmin({ logindata }) {
           {logindata ? (
             <>
               <div className=' py-1'>
-                <DataTable users={users} path={path} />
+                <SimpleDataTableOrganisers users={users} path={path} />
               </div>
             </>
           ) : (

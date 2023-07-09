@@ -118,7 +118,7 @@ export default function RelatedVenues({ datas, city }) {
             {product?.venueName}
           </div>
           <div className='text-10 ml-4'>
-            {product?.address}, {product?.city}
+            {product?.area}, {product?.city}({product?.state})
           </div>
           <div className='text-10'>
             {product?.details?.map((item, index) => (

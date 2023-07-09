@@ -49,7 +49,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-export default function CustomizedDialogs(props) {
+export default function CustomizedDialogs({ img, path }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -65,7 +65,7 @@ export default function CustomizedDialogs(props) {
         <div className='cursor-pointer' onClick={handleClickOpen}>
           <img
             className='h-20 w-20 rounded-full shadow-2xl'
-            src={`${props.path}${props?.img}`}
+            src={`${path}${img}`}
           />
         </div>
       </Tooltip>

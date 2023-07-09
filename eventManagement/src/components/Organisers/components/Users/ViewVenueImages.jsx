@@ -16,7 +16,7 @@ export default function ViewVenueImagesOrganisers({ logindata }) {
 
   let organiserId = JSON.parse(localStorage.getItem('organiserdata'));
 
-  console.log({ organiserId });
+  console.log({ logindata });
 
   const viewDetails = async () => {
     const res = await fetch(
@@ -30,13 +30,14 @@ export default function ViewVenueImagesOrganisers({ logindata }) {
     );
 
     const data = await res.json();
-    console.log({ images });
     setImages(data);
   };
 
+  console.log({ images });
+
   const updateOrganiserDetails = async (id) => {
     const res = await fetch(
-      `http://localhost:8080/updateorganiser/${organiserId}`,
+      `http://localhost:8010/updateorganiser/${logindata?.ValidUserOne?._id}`,
       {
         method: 'PATCH',
         headers: {
@@ -67,7 +68,7 @@ export default function ViewVenueImagesOrganisers({ logindata }) {
 
       if (window.confirm(text) == true) {
         res = await fetch(
-          `http://localhost:8080/deleteVenuesPhotosByOrganiserId/${id}`,
+          `http://localhost:8010/deleteVenuesPhotosByOrganiserId/${id}`,
           {
             method: 'DELETE',
             headers: {
@@ -78,6 +79,7 @@ export default function ViewVenueImagesOrganisers({ logindata }) {
         if (res.status === 200) {
           toast.success('VenuePhotos deleted successfully');
           localStorage.removeItem('photoavailable');
+          localStorage.setItem('view', false);
           setTimeout(function () {
             window.location = '/organiser/add_venue';
           }, 2000);
@@ -113,11 +115,11 @@ export default function ViewVenueImagesOrganisers({ logindata }) {
             </Button>
           </div>
 
-          <div className='flex mb-4 md:mx-20 mx-16 gap-4 flex-col justify-start'>
+          <div className='flex mb-4 md:w-[60%] w-[90%] mt-5 mx-auto gap-4 flex-col justify-start'>
             <div>Add Your Details:</div>
 
             <div className='w-full mx-auto'>
-              {data?.organiser_Id?.details?.map((item, index) => (
+              {logindata?.ValidUserOne?.details?.map((item, index) => (
                 <TextArea
                   placeholder='Section Description'
                   value={item?.htmlValue || details}
@@ -127,7 +129,7 @@ export default function ViewVenueImagesOrganisers({ logindata }) {
                 />
               ))}
 
-              {data?.organiser_Id?.details?.length === 0 && (
+              {logindata?.ValidUserOne?.details?.length === 0 && (
                 <TextArea
                   placeholder='Section Description'
                   value={details}

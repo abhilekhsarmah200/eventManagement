@@ -4,8 +4,6 @@ import { useNavigate, useParams, NavLink } from 'react-router-dom';
 import { LoginContext } from '../ContextProvider/Context';
 import TextField from '@mui/material/TextField';
 import { Button } from '@mui/material';
-import { MultiSelect } from 'primereact/multiselect';
-import DatePickers from './DatePicker/DatePicker';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
@@ -17,11 +15,11 @@ import RelatedVenues from '../RelatedVenues/RelatedVenues';
 import Rate from './Rate';
 
 export default function Booking() {
-  const [selectedCities, setSelectedCities] = useState(null);
+  const [selectedCities, setSelectedCities] = useState('');
   const [guest, setGuest] = useState('');
   const [venueData, setVenueData] = useState([]);
-  const [datetime12h, setDateTime12h] = useState(null);
-  const [selectedArtists, setSelectedArtists] = useState(null);
+  const [datetime12h, setDateTime12h] = useState('');
+  const [selectedArtists, setSelectedArtists] = useState('');
   const [organisersData, setOrganisersData] = useState([]);
   const [bookings, setBookings] = useState(null);
   const { id } = useParams();
@@ -34,7 +32,7 @@ export default function Booking() {
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
 
-  console.log({ selectedArtists });
+  console.log({ organisersData });
 
   const artists = [
     { id: 1, name: 'DJ', price: '5000' },
@@ -51,6 +49,10 @@ export default function Booking() {
     { name: '900/-', code: 'Luxury' },
     { name: '1200/-', code: 'Delux' },
   ];
+
+  const date = new Date();
+
+  let currentYear = String(date.getFullYear());
 
   const errorImages = [
     {
@@ -88,41 +90,44 @@ export default function Booking() {
 
     let token = localStorage.getItem('usersdatatoken');
 
-    const formdata = new FormData();
-
-    formdata.append('organiser_Id', id);
-    formdata.append('userName', inpval.Name);
-    formdata.append('bookingDate', datetime12h);
-    formdata.append('eventName', inpval.eventName);
-    formdata.append('requiredArtist', selectedArtists?.name);
-    formdata.append('requiredArtistPrice', selectedArtists?.price);
-    formdata.append('foodList', selectedCities.code);
-    formdata.append('foodDishPrice', selectedCities.name);
-    formdata.append('totalPrice', totalPrice);
-    formdata.append('balance', totalPrice);
-    formdata.append('guest', inpval.guest);
-    formdata.append('paymentStatus', 'pending');
-    formdata.append('venueName', organisersData.venueName);
-    formdata.append('organiserPhone', organisersData.phone);
-    formdata.append('organiserPhoto', organisersData.photo);
-
-    let res = await axios.post('http://localhost:8010/bookEvents', formdata, {
+    let data = await fetch('http://localhost:8010/bookEvents', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
+      body: JSON.stringify({
+        organiser_Id: id,
+        userName: inpval.Name,
+        bookingDate: datetime12h,
+        eventName: inpval.eventName,
+        requiredArtist: selectedArtists?.name,
+        requiredArtistPrice: selectedArtists?.price,
+        foodList: selectedCities.code,
+        foodDishPrice: selectedCities.name,
+        totalPrice: totalPrice,
+        balance: totalPrice,
+        guest: inpval.guest,
+        paymentStatus: 'pending',
+        venueName: organisersData.venueName,
+        organiserPhone: organisersData.phone,
+        organiserPhoto: organisersData.photo,
+      }),
     });
+
+    const res = await data.json();
+    console.log({ res });
+
     if (res?.status === 422) {
-      // toast.error('email is already taken', {
-      //   position: 'top-center',
-      // });
-    } else if (res.status >= 200 && res.status <= 300) {
+      toast.error(`${res.message}`, {
+        position: 'top-center',
+      });
+    } else {
       toast.success('Booking pending... Please Pay your Advance', {
         position: 'top-center',
       });
-      setBookings(res?.data);
+      setBookings(res);
       setVisible(true);
-      console.log(res?.data);
       window.onpopstate = (e) => {};
     }
   };
@@ -192,7 +197,7 @@ export default function Booking() {
   }, []);
 
   let bookingId = bookings?.res?._id;
-  console.log({ venueData });
+  console.log({ bookingId });
   return (
     <>
       <section>
@@ -227,7 +232,7 @@ export default function Booking() {
               )}
             </>
             {organisersData?.details?.length === 0 ? null : (
-              <div className='border rounded-b-xl border-x-0 shadow-xl border-t-0 border-purple-950 p-4'>
+              <div className='border rounded-b-xl rounded-t-xl border-x-0 mt-4 shadow-xl bg-white border-purple-950 p-4'>
                 {organisersData?.details?.map((item, index) => (
                   <>
                     <div className='font-bold text-12 text-blue-500'>
@@ -250,9 +255,10 @@ export default function Booking() {
               <form>
                 <div className='flex flex-col gap-6 mt-5 items-end'>
                   <TextField
-                    className='w-full'
+                    className='w-full bg-white'
                     value={inpval.Name}
                     onChange={setVal}
+                    required
                     id='outlined-basic'
                     label='Name'
                     name='Name'
@@ -268,14 +274,15 @@ export default function Booking() {
                       yearNavigator={true}
                       minDate={new Date()}
                       dateFormat='dd/mm/yy'
-                      yearRange='2023:2050'
+                      yearRange={`${currentYear}:${currentYear}`}
                     />
                     <label htmlFor='booking_date'>Booking Date</label>
                   </span>
                   <TextField
-                    className='w-full'
+                    className='w-full bg-white'
                     value={inpval.eventName}
                     onChange={setVal}
+                    required
                     id='outlined-basic'
                     label='Event Name'
                     name='eventName'
@@ -290,11 +297,12 @@ export default function Booking() {
                     className='w-full md:w-14rem'
                   />
                   <TextField
-                    className='w-full'
+                    className='w-full bg-white'
                     id='outlined-basic'
                     label='No of Guest'
                     variant='outlined'
                     onChange={setVal}
+                    required
                     value={inpval.guest}
                     name='guest'
                   />
@@ -324,7 +332,7 @@ export default function Booking() {
                     <label htmlFor='totalPrice'>Total Price</label>
                   </span>
 
-                  <div className='mx-auto'>
+                  <div className='mx-auto bg-white'>
                     <Button
                       onClick={bookVenue}
                       className='lg:w-[20em]'
@@ -358,7 +366,6 @@ export default function Booking() {
               </form>
             </section>
           </div>
-          <ToastContainer />
         </div>
       </section>
       <section>
@@ -369,7 +376,7 @@ export default function Booking() {
       <section>
         <>
           {organisersData?.ratings?.length === 0 ? null : (
-            <div className='flex justify-center pt-2 mx-10 mb-5 border shadow-xl rounded-lg md:w-[30rem] w-[23rem] flex-col mt-8 md:text-12 text-10'>
+            <div className='flex bg-white justify-center pt-2 mx-10 mb-5 border shadow-xl rounded-lg md:w-[30rem] w-[23rem] flex-col mt-8 md:text-12 text-10'>
               <div
                 style={{ color: '#482967', fontWeight: 'bolder' }}
                 className='flex justify-center'

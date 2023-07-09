@@ -6,17 +6,24 @@ import { ToastContainer, toast } from 'react-toastify';
 import Moment from 'react-moment';
 import { Dialog } from 'primereact/dialog';
 import Rate from '../Rate';
+import axios from 'axios';
+import { InputText } from 'primereact/inputtext';
+import successfullPayment from '../../../assets/img/Payment+successful.png';
 
 export default function ViewBookingDetails() {
   const [userData, setUserDatasetUserData] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
   const [organisersData, setOrganisersData] = useState([]);
   const { logindata, setLoginData } = useContext(LoginContext);
-  const [loading, setLoading] = useState(true);
+  const [payment, setPayment] = useState(false);
+
+  const [remaining, setRemainig] = useState(false);
+  console.log({ remaining });
 
   const history = useNavigate();
   const { id } = useParams();
   const [visible, setVisible] = useState(false);
+  const [visible2, setVisible2] = useState(false);
 
   const [data, setData] = useState(false);
   const [paid, setPaid] = useState(false);
@@ -24,15 +31,21 @@ export default function ViewBookingDetails() {
   const date = new Date();
   let currentDay = String(date.getDate()).padStart(2, '0');
   let currentDate = `${currentDay}`;
-  console.log(currentDate);
+  let currentMonth = String(date.getMonth() + 1);
+
+  console.log({ currentMonth });
 
   //Booking Date
   const bookingDate = new Date(`${userData?.bookingDate}`);
-  let bookingCurrentDay = String(bookingDate.getDate()).padStart(2, '0');
+  let bookingCurrentDay = String(bookingDate.getDate());
+  let bookingCurrentMonth = String(bookingDate.getMonth() + 1);
   let bookingCurrentDate = `${bookingCurrentDay}`;
-  console.log(bookingCurrentDate);
+
+  console.log({ bookingCurrentMonth });
 
   const remainingDate = bookingCurrentDate - currentDate;
+  const remainingMonth = bookingCurrentMonth - currentMonth;
+  console.log({ remainingMonth });
 
   const DashboardValid = async () => {
     let token = localStorage.getItem('usersdatatoken');
@@ -59,8 +72,72 @@ export default function ViewBookingDetails() {
     }
   };
 
+  const [val, setVal] = useState('');
+
+  const onChange = (e) => {
+    setVal(e.target.value);
+  };
+
+  const cc_format = (value) => {
+    const v = value
+      .replace(/\s+/g, '')
+      .replace(/[^0-9]/gi, '')
+      .substr(0, 16);
+    const parts = [];
+
+    for (let i = 0; i < v.length; i += 4) {
+      parts.push(v.substr(i, 4));
+    }
+
+    return parts.length > 1 ? parts.join(' ') : value;
+  };
+
+  const payTheBalance = async (e) => {
+    e.preventDefault();
+
+    let token = localStorage.getItem('usersdatatoken');
+
+    const formdata = new FormData();
+
+    formdata.append('payAmount', userData?.balance);
+    formdata.append('bookingId', id);
+    formdata.append('percentage', 100);
+
+    let res = await axios.post('http://localhost:8010/payment', formdata, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+    });
+    const res2 = await fetch(
+      `http://localhost:8010/CalculateTotalBalanceByBookingId/${id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentStatus: 'completed',
+          balance: 0,
+        }),
+      }
+    );
+    const data = await res2.json();
+    if (res2.status === 200) {
+      toast.success(`Payment Completed!!`, {
+        position: 'top-center',
+      });
+      setTimeout(function () {
+        setPayment(true);
+      }, 2000);
+      setTimeout(function () {
+        window.location = `/viewBookingDetails/${id}`;
+      }, 3000);
+    }
+  };
+
   const viewPaymentDetailsByBookingId = async () => {
-    const res = await fetch(
+    const res1 = await fetch(
       `http://localhost:8010/viewPaymentsByOrderId/${id}`,
       {
         method: 'GET',
@@ -70,7 +147,7 @@ export default function ViewBookingDetails() {
       }
     );
 
-    const data = await res.json();
+    const data = await res1.json();
     setPaymentData(data);
   };
 
@@ -92,11 +169,9 @@ export default function ViewBookingDetails() {
     console.log({ data });
   };
 
-  const CompleteTheBooking = async () => {};
-
   const cancelBooking = async () => {
     if (visible) {
-      if (remainingDate <= 1) {
+      if (remainingDate <= 1 && remainingMonth < 1) {
         toast.error(
           `You cann't Cancel your Booking before 1 day!!! you have to pay 50% of total ${userData?.totalPrice}/-`,
           {
@@ -156,6 +231,7 @@ export default function ViewBookingDetails() {
     setData(true);
     DashboardValid();
     viewPaymentDetailsByBookingId();
+
     // viewOrganiserDetails();
   }, []);
 
@@ -169,7 +245,7 @@ export default function ViewBookingDetails() {
         <i className='pi pi-times'></i>&nbsp;No
       </Button>
 
-      {remainingDate <= 1 ? (
+      {remainingDate <= 1 && remainingMonth < 1 ? (
         <Button
           variant='outlined'
           onClick={() => setVisible(false)}
@@ -193,7 +269,7 @@ export default function ViewBookingDetails() {
     <div>
       {userData ? (
         <>
-          <nav className='shadow-xl lg:px-20 sm:px-10 px-8 py-4'>
+          <nav className='shadow-xl bg-white lg:px-20 sm:px-10 px-8 py-4'>
             <div className='grid grid-cols-2 items-center'>
               <div className='flex flex-col justify-center items-end'>
                 <div className='font-bold font-serif text-2xl'>
@@ -204,10 +280,18 @@ export default function ViewBookingDetails() {
                   <Moment format='D MMM YYYY'>{userData?.createdAt}</Moment>
                 </div>
               </div>
-              {userData?.paymentStatus === 'canceled' ? null : (
+              {userData?.paymentStatus === 'canceled' ||
+              userData?.paymentStatus === 'completed' ? null : (
                 <>
                   <div className='flex justify-end h-10'>
-                    <Button onClick={() => setVisible(true)} variant='outlined'>
+                    <Button
+                      onClick={
+                        remainingDate <= -1 && remainingMonth < 1
+                          ? null
+                          : () => setVisible(true)
+                      }
+                      variant='outlined'
+                    >
                       Cancel Request
                     </Button>
                   </div>
@@ -235,7 +319,7 @@ export default function ViewBookingDetails() {
           <div>
             <div className='flex lg:flex-row justify-evenly lg:gap-8 flex-col lg:items-start items-center m-10'>
               <div>
-                <div className='sm:my-10 my-4 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                <div className='bg-white sm:my-10 my-4 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-5 items-center border border-t-0 border-x-0 border-b-black'>
                     <div>
                       <>
@@ -245,7 +329,7 @@ export default function ViewBookingDetails() {
                             style={{
                               fontSize: '1rem',
                               color: 'white',
-                              background: 'green',
+                              background: 'blue',
                             }}
                           ></i>
                         ) : userData?.paymentStatus === 'pending' ? (
@@ -257,13 +341,13 @@ export default function ViewBookingDetails() {
                               background: 'orange',
                             }}
                           ></i>
-                        ) : userData?.paymentStatus === 'Completed' ? (
+                        ) : userData?.paymentStatus === 'completed' ? (
                           <i
                             className='pi pi-check-circle rounded-full p-1'
                             style={{
                               fontSize: '1rem',
                               color: 'white',
-                              background: 'blue',
+                              background: 'green',
                             }}
                           ></i>
                         ) : (
@@ -284,7 +368,7 @@ export default function ViewBookingDetails() {
                         <div>Booking Confirmed</div>
                       ) : userData?.paymentStatus === 'pending' ? (
                         <div>Payment pending</div>
-                      ) : userData?.paymentStatus === 'Completed' ? (
+                      ) : userData?.paymentStatus === 'completed' ? (
                         <div>Booking Completed</div>
                       ) : (
                         <div>Booking Canceled</div>
@@ -365,7 +449,7 @@ export default function ViewBookingDetails() {
                     )}
                   </div>
                 </div>
-                <div className='sm:my-6 my-2 relative lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                <div className='sm:my-6 my-2 relative lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border bg-white shadow-xl border-violet-800 rounded-md'>
                   <div className='flex gap-2 py-2 items-center'>
                     {userData?.paymentStatus === 'canceled' ? (
                       <div className='opacity-25'>
@@ -387,14 +471,18 @@ export default function ViewBookingDetails() {
                             Check what's Services we will give you
                           </div>
                           <div className='absolute right-0 bottom-0 mb-5 mr-5'>
-                            <i className='pi pi-arrow-right'></i>
+                            <a href={`/service-checklist/${id}`}>
+                              <Button variant='contained'>
+                                <i className='pi pi-arrow-right'></i>
+                              </Button>
+                            </a>
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className='sm:my-6 my-2 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+                <div className='sm:my-6 my-2 bg-white lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                   <div className=''>
                     <div>
                       <div>
@@ -414,17 +502,18 @@ export default function ViewBookingDetails() {
                     </div>
                   </div>
                 </div>
-                {remainingDate <= -1 && (
+                {remainingDate < 0 ||
+                userData?.paymentStatus === 'completed' ? (
                   <section>
                     <Rate
-                      is_canceled={userData?.is_canceled}
+                      // userData={userData}
                       organiser_Id={userData?.organiser_Id}
                     />
                   </section>
-                )}
+                ) : null}
               </div>
 
-              <div className='sm:my-10 my-4 lg:mr-10 m-4 sm:p-4 p-2 lg:w-[40%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+              <div className='sm:my-10 my-4 bg-white lg:mr-10 m-4 sm:p-4 p-2 lg:w-[40%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
                 <div className='flex gap-2 items-center border border-t-0 border-x-0 border-b-black'>
                   <div>Payment Summary</div>
                 </div>
@@ -493,13 +582,105 @@ export default function ViewBookingDetails() {
                       <div className='flex justify-end mt-4'>
                         <div>
                           <Button
-                            disabled={userData?.paymentStatus === 'canceled'}
+                            disabled={
+                              userData?.paymentStatus === 'canceled' ||
+                              userData?.balance === 0
+                            }
                             variant='outlined'
+                            onClick={() => setVisible2(true)}
                           >
-                            Pay the Balance
+                            {userData?.balance === 0
+                              ? 'You paid full amount'
+                              : 'Pay the Balance'}
                           </Button>
                         </div>
                       </div>
+
+                      <Dialog
+                        header='Please Pay Your advance'
+                        headerStyle={{ textAlign: 'center' }}
+                        closable={false}
+                        draggable={false}
+                        visible={visible2}
+                        dismissableMask={true}
+                        style={{ width: '60vw', height: '90vh' }}
+                        onHide={() => setVisible2(false)}
+                      >
+                        {payment === true ? (
+                          <div className='relative h-[80vh]'>
+                            <div>
+                              <img
+                                src={successfullPayment}
+                                className='w-[60vw]'
+                              />
+                            </div>
+                            <div className='absolute bottom-0 right-0'>
+                              <div className='flex items-center gap-2'>
+                                <div>
+                                  Please wait we redirecting you to Your
+                                  booking...
+                                </div>
+                                <div>
+                                  <Box
+                                    sx={{
+                                      display: 'flex',
+                                      justifyContent: 'center',
+                                      alignItems: 'center',
+                                    }}
+                                  >
+                                    <CircularProgress />
+                                  </Box>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className='flex flex-col gap-4 items-center justify-center'>
+                            <div className='flex'>
+                              <label className='form_input'>
+                                Payable Amount:
+                              </label>{' '}
+                              <div>{userData?.balance}/-</div>
+                            </div>
+                            <div className='flex flex-col w-[70%]'>
+                              <label className='form_input'>Card Number:</label>
+                              <InputText
+                                required={true}
+                                type='text'
+                                value={cc_format(val)}
+                                placeholder='_ _ _ _  _ _ _ _  _ _ _ _  _ _ _ _ '
+                                maxLength={19}
+                                onChange={onChange}
+                              />
+                            </div>
+                            <div className='flex w-[70%] gap-4'>
+                              <div className='flex flex-col w-full'>
+                                <label className='form_input'>
+                                  Expiry Date:
+                                </label>
+                                <InputText
+                                  required={true}
+                                  type='text'
+                                  placeholder='_ _ /_ _ '
+                                  maxLength={5}
+                                />
+                              </div>
+                              <div className='flex flex-col w-full'>
+                                <label className='form_input'>CVV:</label>
+                                <InputText
+                                  required={true}
+                                  type='text'
+                                  placeholder='_ _ _'
+                                  maxLength={3}
+                                />
+                              </div>
+                            </div>
+                            <Button onClick={payTheBalance} variant='outlined'>
+                              <a>Pay Now</a>
+                            </Button>
+                          </div>
+                        )}
+                      </Dialog>
                     </div>
                   ) : (
                     'No Booking Yet...'

@@ -39,7 +39,7 @@ export default function DraggableDialogVerified({ id, organiserId }) {
   const handleVerified = async (id) => {
     if (open == true) {
       const res = await fetch(
-        `http://localhost:8080/updateArtistsforRequestAccepted/${id}`,
+        `http://localhost:8010/updateArtistsforRequestAccepted/${id}`,
         {
           method: 'PATCH',
           headers: {
@@ -68,7 +68,7 @@ export default function DraggableDialogVerified({ id, organiserId }) {
   return (
     <div>
       <div
-        className='w-36 border p-3 rounded-xl text-center border-blue-400 hover:bg-blue-400 hover:text-white cursor-pointer transform duration-300'
+        className='w-36 border p-2 rounded-xl text-center border-blue-400 hover:bg-blue-400 hover:text-white cursor-pointer transform duration-300'
         onClick={handleClickOpen}
         style={{ fontSize: '0.9rem' }}
       >

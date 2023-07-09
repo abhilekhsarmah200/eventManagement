@@ -42,7 +42,7 @@ export default function DraggableDialog({ id, item, logindata }) {
     let token = localStorage.getItem('admindatatoken');
 
     let res1 = await fetch(
-      `http://localhost:8080/updateArtistsforOrganiser/${logindata?.ValidUserOne?._id}`,
+      `http://localhost:8010/updateArtistsforOrganiser/${logindata?.ValidUserOne?._id}`,
       {
         method: 'PATCH',
         headers: {
@@ -57,7 +57,7 @@ export default function DraggableDialog({ id, item, logindata }) {
     try {
       if (open == true) {
         let res = await fetch(
-          `http://localhost:8080/deleteJoinedDataUsingArtistsId/${id}`,
+          `http://localhost:8010/deleteJoinedDataUsingArtistsId/${id}`,
           {
             method: 'DELETE',
             headers: {
@@ -117,7 +117,7 @@ export default function DraggableDialog({ id, item, logindata }) {
             color='error'
             onClick={() => handleDelete(id)}
           >
-            Cancel
+            YES
           </Button>
         </DialogActions>
       </Dialog>

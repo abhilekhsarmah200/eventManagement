@@ -2,18 +2,20 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LoginContext } from '../../ContextProvider/Context';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { Box, Button, CircularProgress } from '@mui/material';
 import { RadioButton } from 'primereact/radiobutton';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import successfullPayment from '../../../assets/img/Payment+successful.png';
+import { Controller, useForm } from 'react-hook-form';
 
 export default function Payment() {
   const { id } = useParams();
   const { logindata, setLoginData } = useContext(LoginContext);
   const [userData, setUserData] = useState([]);
   const [payment, setPayment] = useState(false);
+  const [error, setError] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [ingredient, setIngredient] = useState('20%');
   const [visible, setVisible] = useState(false);
@@ -50,6 +52,10 @@ export default function Payment() {
     }
   };
 
+  const [val, setVal] = useState('');
+
+  console.log({ val });
+
   const payments = async (e) => {
     e.preventDefault();
 
@@ -67,36 +73,47 @@ export default function Payment() {
         Authorization: token,
       },
     });
-    if (res?.status === 422) {
-      toast.error('Payment not successfully Done!!', {
+
+    if (val === '') {
+      toast.error('Required Card Number', {
         position: 'top-center',
       });
-    } else if (res.status >= 200 && res.status <= 300) {
-      toast.success('Paid Successfully 😃!', {
+    } else if (!val.length === 16) {
+      toast.error('Required A Valid Card Number', {
         position: 'top-center',
       });
+    } else {
+      if (res?.status === 422) {
+        toast.error('Payment not successfully Done!!', {
+          position: 'top-center',
+        });
+      } else if (res.status >= 200 && res.status <= 300) {
+        toast.success('Paid Successfully 😃!', {
+          position: 'top-center',
+        });
 
-      setTimeout(function () {
-        setPayment(true);
-      }, 2000);
-      const response = await fetch(
-        `http://localhost:8010/CalculateTotalBalanceByBookingId/${id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            balance: totalBalance,
-            paymentStatus: 'confirmed',
-          }),
-        }
-      );
+        setTimeout(function () {
+          setPayment(true);
+        }, 2000);
+        const response = await fetch(
+          `http://localhost:8010/CalculateTotalBalanceByBookingId/${id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              balance: totalBalance,
+              paymentStatus: percentage === 100 ? 'completed' : 'confirmed',
+            }),
+          }
+        );
 
-      const data = await response.json();
-      setTimeout(function () {
-        history(`/viewBookingDetails/${id}`);
-      }, 5000);
+        const data = await response.json();
+        setTimeout(function () {
+          history(`/viewBookingDetails/${id}`);
+        }, 5000);
+      }
     }
   };
 
@@ -120,8 +137,6 @@ export default function Payment() {
     DashboardValid();
     getBookingById();
   }, []);
-
-  const [val, setVal] = useState('');
 
   const onChange = (e) => {
     setVal(e.target.value);
@@ -255,8 +270,8 @@ export default function Payment() {
         ) : (
           <div className='flex flex-col gap-4 items-center justify-center'>
             <div className='flex flex-col w-[70%]'>
-              <label className='form_input'>Card Number:</label>
               <InputText
+                required={true}
                 type='text'
                 value={cc_format(val)}
                 placeholder='_ _ _ _  _ _ _ _  _ _ _ _  _ _ _ _ '
@@ -264,6 +279,7 @@ export default function Payment() {
                 onChange={onChange}
               />
             </div>
+            {error}
             <div className='flex w-[70%] gap-4'>
               <div className='flex flex-col w-full'>
                 <label className='form_input'>Expiry Date:</label>
@@ -280,6 +296,7 @@ export default function Payment() {
           </div>
         )}
       </Dialog>
+      <ToastContainer />
     </div>
   );
 }

@@ -10,55 +10,10 @@ import { Dialog } from 'primereact/dialog';
 import Moment from 'react-moment';
 import SimpleDataTable from '../DataTable/DataTable';
 
-export default function ViewArtistsRequests() {
-  const { logindata, setLoginData } = useContext(LoginContext);
+export default function ViewArtistsRequests({ logindata }) {
   console.log({ logindata });
 
-  const [data, setData] = useState(false);
-
-  const { id } = useParams();
-
-  const history = useNavigate();
-  let organiserId = localStorage.getItem('organiserId');
-
-  const DashboardValid = async () => {
-    let token = localStorage.getItem('organiserdatatoken');
-
-    const res = await fetch('/organiservalid', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-    });
-
-    const data = await res.json();
-
-    if (data.status == 401 || !data) {
-      toast.error('login first!!', {
-        position: 'top-center',
-      });
-      setTimeout(function () {
-        history('/organiser/login');
-      }, 2000);
-    } else {
-      console.log('user verify');
-      setLoginData(data);
-      history(`/organiser/artistsRequest/${organiserId}`);
-    }
-  };
-
-  useEffect(() => {
-    DashboardValid();
-    setData(true);
-  }, []);
-  const path = 'http://localhost:8080/public/images/';
-
-  const photo = (rowData) => {
-    <div>
-      <img src={`${path}${rowData?.photo}`} />
-    </div>;
-  };
+  const path = 'http://localhost:8010/public/images/';
 
   return (
     <div>

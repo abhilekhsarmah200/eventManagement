@@ -32,9 +32,16 @@ import ViewUsersAdmin from './components/Admin/components/Admin/ViewUsers';
 import AdminViewDetailedOrganisers from './components/Admin/components/Admin/ViewDetailedOrganisers';
 import ArtistsDashboard from './components/Artists/Dashboard';
 import AddWithVenues from './components/Artists/AddWithVenues';
+import AdminBookingDetails from './components/Admin/Booking/BookingDetails';
+import ViewArtistsList from './components/Admin/components/CustomComponents/ViewArtistsList';
+import BookingDetailsOrganiser from './components/Organisers/components/Booking/BookingDetails';
+import { Dialog } from 'primereact/dialog';
+import ShowArtistsDetails from './components/Organisers/components/CustomComponent/ShowArtistsDetails/ShowArtistsDetails';
+import ServiceCheckList from './components/CustomComponents/ServiceCheckList/ServiceCheckList';
 
 function App() {
   const [data, setData] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const { logindata, setLoginData } = useContext(LoginContext);
 
@@ -55,6 +62,7 @@ function App() {
 
     if (data.status == 401 || !data) {
       console.log('user not valid');
+      setVisible(true);
       history.push('/login');
     } else {
       console.log('user verify');
@@ -62,18 +70,19 @@ function App() {
     }
   };
 
+  const photoavailable = localStorage.getItem('photoavailable');
   useEffect(() => {
-    setTimeout(() => {
-      DashboardValid();
-      setData(true);
-    }, 2000);
+    DashboardValid();
+    setData(true);
   }, []);
-  console.log({ logindata });
+  console.log({ photoavailable });
 
   return (
     <>
+      <div className='backgroundImage'></div>
+
       {data ? (
-        <>
+        <div>
           <Header logindatas={logindata} />
 
           <Routes>
@@ -84,6 +93,10 @@ function App() {
                   element={<ViewDetailedOrganisers />}
                 />
                 <Route path='/bookvenue/:id' element={<Booking />} />
+                <Route
+                  path='/service-checklist/:id'
+                  element={<ServiceCheckList />}
+                />
                 <Route path='/view_bookings/:id' element={<BookingDetails />} />
                 <Route
                   path='/viewBookingDetails/:id'
@@ -95,20 +108,36 @@ function App() {
             {logindata?.ValidUserOne?.role === 'ORGANISER' && (
               <>
                 <Route
+                  path='/artists/show-artistsDetails/:id'
+                  element={<ShowArtistsDetails logindata={logindata} />}
+                />
+                <Route
                   path='/organiser/profile'
                   element={<DashboardOrganisers />}
                 />
                 <Route
-                  path='/organiser/add_venue'
-                  element={<AddVenuePhotosOrganisers logindata={logindata} />}
+                  path={'/organiser/add_venue'}
+                  element={
+                    photoavailable === 'true' ? (
+                      <ViewVenueImagesOrganisers logindata={logindata} />
+                    ) : (
+                      <AddVenuePhotosOrganisers logindata={logindata} />
+                    )
+                  }
                 />
+
                 <Route
                   path='/organiser/view_venuePhotos/:id'
                   element={<ViewVenueImagesOrganisers logindata={logindata} />}
                 />
+
                 <Route
                   path='/organiser/artistsRequest/:id'
-                  element={<ViewArtistsRequests />}
+                  element={<ViewArtistsRequests logindata={logindata} />}
+                />
+                <Route
+                  path='/organiser/view-bookings'
+                  element={<BookingDetailsOrganiser logindata={logindata} />}
                 />
               </>
             )}
@@ -120,7 +149,11 @@ function App() {
                 />
                 <Route
                   path='/admin/view-bookings'
-                  element={<BookingDetails />}
+                  element={<AdminBookingDetails logindata={logindata} />}
+                />
+                <Route
+                  path='/admin/artists_list'
+                  element={<ViewArtistsList logindata={logindata} />}
                 />
                 <Route
                   path='/admin/profile'
@@ -134,10 +167,6 @@ function App() {
             )}
             {logindata?.ValidUserOne?.role === 'ARTISTS' && (
               <>
-                {/* <Route
-                  path='/artists/view-users'
-                  element={<ViewUsersAdmin logindata={logindata} />}
-                /> */}
                 <Route
                   path='/artists/join_venue'
                   element={<AddWithVenues logindata={logindata} />}
@@ -157,11 +186,13 @@ function App() {
               path='/'
               exact
               element={
-                logindata && (
+                logindata ? (
                   <Home
                     logindata={logindata}
                     logindataRole={logindata?.ValidUserOne?.role}
                   />
+                ) : (
+                  <Login />
                 )
               }
             />
@@ -176,7 +207,7 @@ function App() {
               element={<ForgotPassword />}
             />
           </Routes>
-        </>
+        </div>
       ) : (
         <Box
           sx={{
@@ -189,6 +220,26 @@ function App() {
           Loading... &nbsp;
           <CircularProgress />
         </Box>
+      )}
+      {window.location.pathname === '/login' ||
+      window.location.pathname === '/register' ||
+      window.location.pathname === '/password-reset' ? null : (
+        <div>
+          <Dialog
+            header='Header'
+            showHeader={false}
+            visible={visible}
+            className='Dialog md:w-[60vw] w-[90vw]'
+            onHide={() => setVisible(false)}
+            contentClassName='login'
+          >
+            <div className='flex justify-center pt-5'>
+              <a href='/login' className='text-white underline'>
+                Please Login Again!!
+              </a>
+            </div>
+          </Dialog>
+        </div>
       )}
     </>
   );

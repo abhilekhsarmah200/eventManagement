@@ -91,7 +91,7 @@ const Login = () => {
   return (
     <>
       <section>
-        <div className='form_data'>
+        <div className='form_data bg-white'>
           <div className='form_heading'>
             <h1>Welcome Back, Log In</h1>
             <p>Hi, we are you glad you are back. Please login.</p>

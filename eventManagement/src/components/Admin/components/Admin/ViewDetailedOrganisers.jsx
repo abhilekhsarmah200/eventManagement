@@ -45,19 +45,22 @@ export default function AdminViewDetailedOrganisers() {
   const path = 'http://localhost:8010/public/images/';
 
   return (
-    <div className='px-10 py-4'>
+    <div className='xs:px-10 px-5 py-4'>
       {organisersData ? (
         <>
           <div className='flex gap-2 max-w-fit py-1 px-3 rounded-md'>
-            <a className='text-black' href='/admin/profile'>
+            <a className='text-black md:text-lg text-xs' href='/admin/profile'>
               Admin Dashboard
             </a>
-            <ArrowForwardIosIcon style={{ color: 'black' }} />
-            <a className='text-black' href='/admin/view-users/'>
+            <i className='pi pi-angle-right angle'></i>
+            <a
+              className='text-black md:text-lg text-xs'
+              href='/admin/view-users/'
+            >
               View Users
             </a>
           </div>
-          <div className='flex gap-4 items-center flex-col'>
+          <div className='flex bg-white py-5 px-5 my-5 md:px-0 mx-auto gap-4 items-center flex-col'>
             <div>
               <img
                 className='h-52 w-52 rounded-full shadow-xl border'

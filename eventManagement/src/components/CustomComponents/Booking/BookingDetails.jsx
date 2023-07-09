@@ -23,7 +23,6 @@ export default function BookingDetails() {
 
     const data = await res.json();
     setUserData(data);
-    console.log({ data });
   };
 
   const foodList = userData?.map((item, index) => item.foodList).toString();
@@ -54,7 +53,7 @@ export default function BookingDetails() {
               />
             </div>
             <div className='font-secondary font-bold uppercase text-base md:text-3xl'>
-              No Booking Yet...&nbsp;
+              <a href={`/`}>No Booking Yet...&nbsp;</a>
             </div>
           </div>
         )}
