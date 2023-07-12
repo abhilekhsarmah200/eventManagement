@@ -21,7 +21,7 @@ export default function SimpleDataTable({ path, logindata }) {
 
   const { id } = useParams();
 
-  const organiserId = localStorage.getItem('organiserId');
+  const organiserId = localStorage.getItem('userId');
 
   const handleOpen = (id) => {
     if (id) {
