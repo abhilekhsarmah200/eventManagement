@@ -1,44 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import Moment from 'react-moment';
-import { Button } from '@mui/material';
-import { Dialog } from 'primereact/dialog';
 
-export default function SimpleDataTableBookings({ id, users, logindata }) {
-  const [organiserData, setOrganiserData] = useState([]);
-  const [visible, setVisible] = useState(false);
+export default function ArtistsList({ id, users, logindata }) {
+  const [userData, setUserData] = useState([]);
 
-  const [artistsData, setArtistsData] = useState([]);
-
-  const organiserId = localStorage.getItem('organiserId');
-
-  const getArtistsRequestByOrganisers = async () => {
-    const res1 = await fetch(`/viewJoinedDataUsingOrganiser/${organiserId}`, {
+  const viewDetails = async () => {
+    const res = await fetch(`http://localhost:8010/getAllArtistsList`, {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-    const data2 = await res1.json();
-    console.log({ data2 });
-    setOrganiserData(data2);
-  };
-  const ViewYourBookings = async (id) => {
-    const res = await fetch(
-      `http://localhost:8010/viewJoinedDataUsingArtistsId/${id}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
 
     const data = await res.json();
-    setArtistsData(data);
-    setVisible(true);
+    setUserData(data.reverse());
+    console.log({ data });
   };
+
   useEffect(() => {
-    ViewYourBookings();
-    getArtistsRequestByOrganisers();
+    viewDetails();
   }, []);
 
   const path = 'http://localhost:8010/public/images/';
@@ -46,9 +27,13 @@ export default function SimpleDataTableBookings({ id, users, logindata }) {
   console.log({ users });
   return (
     <div>
+      <div className='flex justify-center font-bold pt-4 md:text-2xl text-lg'>
+        Artists List:
+      </div>
       <div className='card m-6 rounded-lg border shadow-sm'>
         <DataTable
-          value={users}
+          headerClassName='bg-black'
+          value={userData}
           paginator
           rows={5}
           rowsPerPageOptions={[5, 10, 25, 50]}

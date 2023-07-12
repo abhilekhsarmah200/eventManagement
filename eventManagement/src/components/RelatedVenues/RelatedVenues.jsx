@@ -147,7 +147,7 @@ export default function RelatedVenues({ datas, city }) {
   useEffect(() => {
     UsersList();
   }, []);
-  const path = 'http://localhost:8080/public/images/';
+  const path = 'http://localhost:8010/public/images/';
   return (
     <>
       <div

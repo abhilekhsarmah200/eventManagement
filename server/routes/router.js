@@ -62,6 +62,16 @@ router.get('/viewAllDetails/:id', async (req, res) => {
     });
 });
 
+router.get('/viewArtistsDetailsforBooking/:id', async (req, res) => {
+  const organisersData = await bookingdb
+    .find({ artistsName: req.params.id })
+    .populate('artistsName')
+    .exec(function (err, organisersData) {
+      if (err) console.log(err);
+      res.json(organisersData);
+    });
+});
+
 //Join with organiser
 
 router.patch(`/updateorganiser/:id`, async (req, res) => {

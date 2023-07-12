@@ -121,7 +121,7 @@ export default function SideBar({ logindata, images }) {
     {
       text: 'Profile',
       icon: <AccountCircleIcon style={{ fill: 'grey' }} />,
-      to: '/organiser/profile',
+      to: '/',
     },
   ];
   const itemList4 = [
@@ -143,7 +143,7 @@ export default function SideBar({ logindata, images }) {
     {
       text: 'View Artist',
       icon: <PreviewIcon style={{ fill: 'grey' }} />,
-      to: '/add-todo',
+      to: '/artists/viewArtists',
     },
     {
       text: 'Profile',

@@ -109,9 +109,9 @@ export default function Rate({ organiser_Id, userData }) {
             }),
           }
         );
-        // setTimeout(function () {
-        //   window.location = `/viewBookingDetails/${id}`;
-        // }, 2000);
+        setTimeout(function () {
+          window.location = `/viewBookingDetails/${id}`;
+        }, 2000);
         // setLoading(false);
       }
     } catch (error) {}
@@ -125,9 +125,40 @@ export default function Rate({ organiser_Id, userData }) {
   return (
     <div>
       <section>
-        <div className='sm:my-10 my-4 lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
+        <div className='sm:my-10 my-4 bg-white lg:ml-10 m-4 sm:p-4 p-2 lg:w-[100%] w-[80%] border shadow-xl border-violet-800 rounded-md'>
           <form>
-            {!organiserData?.ratings?.length === 0 || !edited ? (
+            {/* {organiserData?.ratings?.length === 0 || edited === true ? ( */}
+            <>
+              <div>
+                <div className='flex flex-col gap-4'>
+                  <div className='form_input gap-4 flex flex-col items-center'>
+                    <div>Rating:</div>
+                    <Rating
+                      cancel={false}
+                      name='star'
+                      value={inpval.star}
+                      onChange={setVal}
+                    />
+                  </div>
+                  <div>
+                    <InputTextarea
+                      type='text'
+                      onChange={setVal}
+                      value={inpval.comments}
+                      name='comments'
+                      className='w-full'
+                      id='comments'
+                      placeholder='Give Us Your Valuable Feedback'
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Button className='btn' onClick={addUserdata}>
+                Add Rating+
+              </Button>
+            </>
+            {/* ) : (
               <>
                 {organiserData?.ratings?.map((item, index) => (
                   <div key={index}>
@@ -166,38 +197,7 @@ export default function Rate({ organiser_Id, userData }) {
                   </div>
                 ))}
               </>
-            ) : (
-              <>
-                <div>
-                  <div className='flex flex-col gap-4'>
-                    <div className='form_input gap-4 flex flex-col items-center'>
-                      <div>Rating:</div>
-                      <Rating
-                        cancel={false}
-                        name='star'
-                        value={inpval.star}
-                        onChange={setVal}
-                      />
-                    </div>
-                    <div>
-                      <InputTextarea
-                        type='text'
-                        onChange={setVal}
-                        value={inpval.comments}
-                        name='comments'
-                        className='w-full'
-                        id='comments'
-                        placeholder='Give Us Your Valuable Feedback'
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <Button className='btn' onClick={addUserdata}>
-                  Add Rating+
-                </Button>
-              </>
-            )}
+            )} */}
           </form>
         </div>
       </section>

@@ -29,127 +29,25 @@ const ArtistsDashboard = ({ logindata }) => {
                 alt=''
               />
             </div>
-            <div>
-              <TextField
-                disabled
-                id='outlined-basic'
-                type='email'
-                value={logindata ? logindata.ValidUserOne.email : ''}
-                // onChange={setVal}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <EmailIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                name='email'
-                className='w-[20rem]'
-                placeholder='Enter Your Email'
-                label='Primary Email'
-                variant='outlined'
-                readOnly
-              />
-            </div>
-            <div>
-              <TextField
-                disabled
-                id='outlined-basic'
-                type='text'
-                value={logindata ? logindata.ValidUserOne.fname : ''}
-                // onChange={setVal}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <BadgeIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                name='fname'
-                className='w-[20rem] uppercase'
-                placeholder='Enter Your Name'
-                label='Name'
-                variant='outlined'
-                readOnly
-              />
-            </div>
-            <TextField
-              disabled
-              id='outlined-basic'
-              type='artistsType'
-              value={
-                logindata
-                  ? logindata?.ValidUserOne?.artistsType?.map((item, index) =>
-                      item.split(',').join(', ')
-                    )
-                  : ''
-              }
-              // onChange={setVal}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <PsychologyIcon />
-                  </InputAdornment>
-                ),
-              }}
-              name='artistsType'
-              className='w-[20rem]'
-              placeholder='Enter Your artistsType'
-              label='Expertise on'
-              variant='outlined'
-              readOnly
-            />
-            <div>
-              <TextField
-                disabled
-                id='outlined-basic'
-                type='text'
-                value={
-                  logindata
-                    ? logindata?.ValidUserOne?.area +
-                      ', ' +
-                      logindata?.ValidUserOne?.city +
-                      ' ' +
-                      '(' +
-                      logindata.ValidUserOne.state +
-                      ')'
-                    : ''
-                }
-                // onChange={setVal}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <HomeIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                name='address'
-                className='w-[20rem]'
-                placeholder='Enter Your Address'
-                label='Address'
-                variant='outlined'
-                readOnly
-              />
-            </div>
-            <div className='flex gap-4'>
+            <div className='flex flex-col gap-4 bg-white p-6 rounded-md'>
               <div>
                 <TextField
                   disabled
                   id='outlined-basic'
-                  type='tel'
-                  value={logindata ? logindata.ValidUserOne.phone : ''}
+                  type='email'
+                  value={logindata ? logindata.ValidUserOne.email : ''}
                   // onChange={setVal}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position='start'>
-                        <LocalPhoneIcon />
+                        <EmailIcon />
                       </InputAdornment>
                     ),
                   }}
-                  name='phone'
-                  className='w-[9.5rem]'
-                  placeholder='mobile'
-                  label='Mobile Number'
+                  name='email'
+                  className='w-[20rem]'
+                  placeholder='Enter Your Email'
+                  label='Primary Email'
                   variant='outlined'
                   readOnly
                 />
@@ -159,22 +57,126 @@ const ArtistsDashboard = ({ logindata }) => {
                   disabled
                   id='outlined-basic'
                   type='text'
-                  value={logindata ? logindata.ValidUserOne.pinCode : ''}
+                  value={logindata ? logindata.ValidUserOne.fname : ''}
                   // onChange={setVal}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position='start'>
-                        <PersonPinCircleIcon />
+                        <BadgeIcon />
                       </InputAdornment>
                     ),
                   }}
-                  name='pinCode'
-                  className='w-[9.5rem]'
-                  placeholder='PinCode'
-                  label='PIN Code'
+                  name='fname'
+                  className='w-[20rem] uppercase'
+                  placeholder='Enter Your Name'
+                  label='Name'
                   variant='outlined'
                   readOnly
                 />
+              </div>
+              <TextField
+                disabled
+                id='outlined-basic'
+                type='artistsType'
+                value={
+                  logindata
+                    ? logindata?.ValidUserOne?.artistsType?.map((item, index) =>
+                        item.split(',').join(', ')
+                      )
+                    : ''
+                }
+                // onChange={setVal}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <PsychologyIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                name='artistsType'
+                className='w-[20rem]'
+                placeholder='Enter Your artistsType'
+                label='Expertise on'
+                variant='outlined'
+                readOnly
+              />
+              <div>
+                <TextField
+                  disabled
+                  id='outlined-basic'
+                  type='text'
+                  value={
+                    logindata
+                      ? logindata?.ValidUserOne?.area +
+                        ', ' +
+                        logindata?.ValidUserOne?.city +
+                        ' ' +
+                        '(' +
+                        logindata.ValidUserOne.state +
+                        ')'
+                      : ''
+                  }
+                  // onChange={setVal}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <HomeIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  name='address'
+                  className='w-[20rem]'
+                  placeholder='Enter Your Address'
+                  label='Address'
+                  variant='outlined'
+                  readOnly
+                />
+              </div>
+              <div className='flex gap-4'>
+                <div>
+                  <TextField
+                    disabled
+                    id='outlined-basic'
+                    type='tel'
+                    value={logindata ? logindata.ValidUserOne.phone : ''}
+                    // onChange={setVal}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <LocalPhoneIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    name='phone'
+                    className='w-[9.5rem]'
+                    placeholder='mobile'
+                    label='Mobile Number'
+                    variant='outlined'
+                    readOnly
+                  />
+                </div>
+                <div>
+                  <TextField
+                    disabled
+                    id='outlined-basic'
+                    type='text'
+                    value={logindata ? logindata.ValidUserOne.pinCode : ''}
+                    // onChange={setVal}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <PersonPinCircleIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    name='pinCode'
+                    className='w-[9.5rem]'
+                    placeholder='PinCode'
+                    label='PIN Code'
+                    variant='outlined'
+                    readOnly
+                  />
+                </div>
               </div>
             </div>
           </>

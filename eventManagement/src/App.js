@@ -38,6 +38,7 @@ import BookingDetailsOrganiser from './components/Organisers/components/Booking/
 import { Dialog } from 'primereact/dialog';
 import ShowArtistsDetails from './components/Organisers/components/CustomComponent/ShowArtistsDetails/ShowArtistsDetails';
 import ServiceCheckList from './components/CustomComponents/ServiceCheckList/ServiceCheckList';
+import ArtistsList from './components/Artists/ArtistsList/ArtistsList';
 
 function App() {
   const [data, setData] = useState(false);
@@ -179,6 +180,7 @@ function App() {
                   path='/artists/viewOrganiser/:id'
                   element={<AdminViewDetailedOrganisers />}
                 />
+                <Route path='/artists/viewArtists' element={<ArtistsList />} />
               </>
             )}
 

@@ -90,7 +90,7 @@ export default function AddVenuePhotosOrganisers({
                   }}
                 />
               ) : (
-                <div>
+                <div className='p-6'>
                   <span
                     dangerouslySetInnerHTML={{
                       __html: item?.htmlValue,
