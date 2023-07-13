@@ -169,6 +169,11 @@ export default function ViewBookingDetails() {
     console.log({ data });
   };
 
+  const gotToServiceList = () => {
+    window.location = `/service-checklist/${id}`;
+    localStorage.setItem('artistsId', userData?.artistsName);
+  };
+
   const cancelBooking = async () => {
     if (visible) {
       if (remainingDate <= 1 && remainingMonth < 1) {
@@ -471,8 +476,11 @@ export default function ViewBookingDetails() {
                             Check what's Services we will give you
                           </div>
                           <div className='absolute right-0 bottom-0 mb-5 mr-5'>
-                            <a href={`/service-checklist/${id}`}>
-                              <Button variant='contained'>
+                            <a>
+                              <Button
+                                onClick={gotToServiceList}
+                                variant='contained'
+                              >
                                 <i className='pi pi-arrow-right'></i>
                               </Button>
                             </a>

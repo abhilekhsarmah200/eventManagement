@@ -19,10 +19,6 @@ export default function ServiceCheckList() {
     });
     const data = await res.json();
     setBookingData(data);
-    localStorage.setItem(
-      'artistsId',
-      data?.artistsName ? data?.artistsName : ''
-    );
   };
 
   const artistId = localStorage.getItem('artistsId');
@@ -39,6 +35,7 @@ export default function ServiceCheckList() {
     );
 
     const data = await res.json();
+
     setTimeout(() => {
       setArtistsData(data);
     }, 1000);
@@ -224,7 +221,11 @@ export default function ServiceCheckList() {
               </div>
             </div>
             <div className='font-semibold'>Linked Artists:</div>
-            {artistsData === '' ? null : (
+            {artistsData === '' ? (
+              <div className='flex justify-center font-bold text-red-400'>
+                No Artist Provided...
+              </div>
+            ) : (
               <div>
                 <div className='flex flex-col items-center px-4 pt-4 gap-2'>
                   <div>
